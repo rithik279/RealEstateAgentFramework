@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Estate Chatbot MVP</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --panel: rgba(255, 252, 247, 0.88);
+      --card: #fffaf2;
+      --line: #d9ccb8;
+      --text: #2d241c;
+      --muted: #766556;
+      --accent: #0f766e;
+      --accent-strong: #115e59;
+      --lead: #f1dfc4;
+      --agent: #d9efe8;
+      --danger: #9f1239;
+      --shadow: 0 24px 60px rgba(75, 55, 27, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(250, 214, 165, 0.9), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(175, 223, 214, 0.8), transparent 24%),
+        linear-gradient(135deg, #f7f1e8 0%, #efe7da 46%, #f4efe6 100%);
+      padding: 24px;
+    }
+
+    .layout {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 380px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(217, 204, 184, 0.8);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .sidebar {
+      padding: 22px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .chat-shell {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: calc(100vh - 48px);
+      overflow: hidden;
+    }
+
+    .chat-header,
+    .composer {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(217, 204, 184, 0.75);
+    }
+
+    .composer {
+      border-bottom: 0;
+      border-top: 1px solid rgba(217, 204, 184, 0.75);
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    input,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 108px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      transition: transform 0.16s ease, opacity 0.16s ease, background 0.16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: var(--accent-strong);
+    }
+
+    button.secondary {
+      background: #efe4d3;
+      color: var(--text);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(17, 94, 89, 0.08);
+      color: var(--accent-strong);
+      font-size: 0.88rem;
+    }
+
+    .messages {
+      padding: 24px;
+      overflow: auto;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+      background:
+        linear-gradient(rgba(255, 250, 242, 0.8), rgba(255, 250, 242, 0.8)),
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 34px,
+          rgba(217, 204, 184, 0.22) 35px,
+          transparent 36px
+        );
+    }
+
+    .empty {
+      align-self: center;
+      justify-self: center;
+      max-width: 520px;
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .message {
+      max-width: 72%;
+      padding: 16px 18px;
+      border-radius: 22px;
+      box-shadow: 0 16px 28px rgba(75, 55, 27, 0.08);
+      animation: rise 0.22s ease;
+    }
+
+    .message.agent {
+      background: var(--agent);
+      justify-self: start;
+      border-bottom-left-radius: 8px;
+    }
+
+    .message.lead {
+      background: var(--lead);
+      justify-self: end;
+      border-bottom-right-radius: 8px;
+    }
+
+    .message small {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .composer-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .status {
+      margin-top: 16px;
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .split {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1040px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .chat-shell {
+        min-height: 70vh;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .message {
+        max-width: 88%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="panel sidebar">
+      <span class="eyebrow">Facebook Lead Simulator</span>
+      <h1>Chatbot MVP</h1>
+      <p class="muted">Create a lead, send the first text, and test a human-style realtor conversation in one screen.</p>
+
+      <div class="stack">
+        <div class="split">
+          <label>
+            Full name
+            <input id="fullName" value="Sarah Thompson" />
+          </label>
+          <label>
+            Phone
+            <input id="phone" value="+14165550123" />
+          </label>
+        </div>
+
+        <label>
+          Email
+          <input id="email" value="sarah@example.com" />
+        </label>
+
+        <div class="split">
+          <label>
+            City
+            <input id="city" value="Brampton" />
+          </label>
+          <label>
+            Property type
+            <input id="propertyType" value="Detached home" />
+          </label>
+        </div>
+
+        <label>
+          Script or talking points
+          <textarea id="script">Be warm and natural. Acknowledge the Facebook inquiry, speak like a local realtor, and gently qualify the lead over time. Ask about location, budget, timeline, and home type. Keep messages short and human.</textarea>
+        </label>
+
+        <div class="button-row">
+          <button id="createLeadBtn">Create Facebook Lead</button>
+          <button id="startChatBtn" class="secondary" disabled>Send First Text</button>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip" id="modelChip">Model: loading...</span>
+        <span class="chip" id="apiChip">OpenAI: checking...</span>
+        <span class="chip" id="leadChip">Lead: not created</span>
+      </div>
+
+      <div id="status" class="status"></div>
+    </aside>
+
+    <main class="panel chat-shell">
+      <div class="chat-header">
+        <span class="eyebrow">SMS View</span>
+        <h2>Lead conversation</h2>
+        <p class="muted">Agent messages are on the left. Lead replies are on the right.</p>
+      </div>
+
+      <section id="messages" class="messages">
+        <div class="empty" id="emptyState">
+          Once you create a lead, this panel becomes your test conversation. You can adjust the script at any time before sending the next message.
+        </div>
+      </section>
+
+      <div class="composer">
+        <div class="composer-grid">
+          <label>
+            Lead reply
+            <textarea id="leadReply" placeholder="Type what the customer would text back..." style="min-height: 78px;"></textarea>
+          </label>
+          <button id="sendReplyBtn" disabled>Send Reply</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      leadId: null,
+      messages: [],
+      config: null,
+    };
+
+    const els = {
+      fullName: document.getElementById("fullName"),
+      email: document.getElementById("email"),
+      phone: document.getElementById("phone"),
+      city: document.getElementById("city"),
+      propertyType: document.getElementById("propertyType"),
+      script: document.getElementById("script"),
+      createLeadBtn: document.getElementById("createLeadBtn"),
+      startChatBtn: document.getElementById("startChatBtn"),
+      sendReplyBtn: document.getElementById("sendReplyBtn"),
+      leadReply: document.getElementById("leadReply"),
+      messages: document.getElementById("messages"),
+      emptyState: document.getElementById("emptyState"),
+      status: document.getElementById("status"),
+      modelChip: document.getElementById("modelChip"),
+      apiChip: document.getElementById("apiChip"),
+      leadChip: document.getElementById("leadChip"),
+    };
+
+    function setStatus(message, isError = false) {
+      els.status.textContent = message || "";
+      els.status.classList.toggle("error", Boolean(isError));
+    }
+
+    function renderMessages() {
+      els.messages.innerHTML = "";
+      if (!state.messages.length) {
+        els.messages.appendChild(els.emptyState);
+        return;
+      }
+
+      for (const message of state.messages) {
+        const card = document.createElement("article");
+        card.className = `message ${message.direction === "outbound" ? "agent" : "lead"}`;
+
+        const heading = document.createElement("small");
+        heading.textContent = message.direction === "outbound" ? "Agent text" : "Lead reply";
+        card.appendChild(heading);
+
+        const body = document.createElement("div");
+        body.textContent = message.body;
+        card.appendChild(body);
+
+        els.messages.appendChild(card);
+      }
+
+      els.messages.scrollTop = els.messages.scrollHeight;
+    }
+
+    async function request(path, options = {}) {
+      const response = await fetch(path, {
+        headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+        ...options,
+      });
+
+      if (!response.ok) {
+        let detail = `Request failed with status ${response.status}`;
+        try {
+          const data = await response.json();
+          detail = data.detail || detail;
+        } catch (_) {}
+        throw new Error(detail);
+      }
+
+      return response.json();
+    }
+
+    async function loadConfig() {
+      const config = await request("/config-status");
+      state.config = config;
+      els.modelChip.textContent = `Model: ${config.openai_model}`;
+      els.apiChip.textContent = `OpenAI: ${config.openai_configured ? "configured" : "not configured"}`;
+    }
+
+    function currentScript() {
+      return els.script.value.trim();
+    }
+
+    async function createLead() {
+      setStatus("Creating the Facebook lead...");
+      const payload = {
+        full_name: els.fullName.value.trim(),
+        email: els.email.value.trim() || null,
+        phone: els.phone.value.trim() || null,
+        city: els.city.value.trim() || "Brampton",
+        property_type: els.propertyType.value.trim() || null,
+      };
+
+      const lead = await request("/mvp/facebook-leads", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      state.leadId = lead.id;
+      state.messages = [];
+      els.startChatBtn.disabled = false;
+      els.sendReplyBtn.disabled = true;
+      els.leadChip.textContent = `Lead: ${lead.full_name}`;
+      renderMessages();
+      setStatus("Lead created. Send the first text when you're ready.");
+    }
+
+    async function sendInitialMessage() {
+      if (!state.leadId) {
+        setStatus("Create a lead first.", true);
+        return;
+      }
+
+      setStatus("Writing the opening text...");
+      const result = await request(`/mvp/leads/${state.leadId}/start`, {
+        method: "POST",
+        body: JSON.stringify({ script: currentScript() }),
+      });
+
+      state.messages = result.messages;
+      els.sendReplyBtn.disabled = false;
+      renderMessages();
+      setStatus(`Opening text sent after ${result.delay_seconds}s. You can reply as the lead now.`);
+    }
+
+    async function sendLeadReply() {
+      if (!state.leadId) {
+        setStatus("Create a lead first.", true);
+        return;
+      }
+
+      const body = els.leadReply.value.trim();
+      if (!body) {
+        setStatus("Type a lead reply before sending.", true);
+        return;
+      }
+
+      setStatus("Continuing the conversation...");
+      const result = await request(`/mvp/leads/${state.leadId}/reply`, {
+        method: "POST",
+        body: JSON.stringify({
+          body,
+          script: currentScript(),
+        }),
+      });
+
+      state.messages = result.messages;
+      els.leadReply.value = "";
+      renderMessages();
+      setStatus(`Conversation updated after ${result.delay_seconds}s.`);
+    }
+
+    els.createLeadBtn.addEventListener("click", () => createLead().catch((error) => setStatus(error.message, true)));
+    els.startChatBtn.addEventListener("click", () => sendInitialMessage().catch((error) => setStatus(error.message, true)));
+    els.sendReplyBtn.addEventListener("click", () => sendLeadReply().catch((error) => setStatus(error.message, true)));
+
+    loadConfig().catch((error) => setStatus(error.message, true));
+  </script>
+</body>
+</html>
