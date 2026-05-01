@@ -65,12 +65,18 @@ class ChannelSender:
         if self.settings.dry_run:
             return self._simulated("SMS send skipped because APP_DRY_RUN is true.")
 
+        return self.send_sms_to_number(to_number=lead.phone, body=body)
+
+    def send_sms_to_number(self, *, to_number: str, body: str) -> SendResult:
+        if self.settings.dry_run:
+            return self._simulated("SMS send skipped because APP_DRY_RUN is true.")
+
         response = httpx.post(
             f"https://api.twilio.com/2010-04-01/Accounts/{self.settings.twilio_account_sid}/Messages.json",
             auth=(self.settings.twilio_account_sid, self.settings.twilio_auth_token),
             data={
                 "From": self.settings.twilio_from_number,
-                "To": lead.phone,
+                "To": to_number,
                 "Body": body,
             },
             timeout=30.0,

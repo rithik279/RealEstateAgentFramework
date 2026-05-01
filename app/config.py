@@ -34,13 +34,18 @@ class Settings:
     base_url: str = os.getenv("APP_BASE_URL", "http://127.0.0.1:8000")
     data_file: Path = ROOT_DIR / os.getenv("APP_DATA_FILE", "data/store.json")
     ui_file: Path = ROOT_DIR / "app" / "ui" / "index.html"
+    app_timezone: str = os.getenv("APP_TIMEZONE", "America/Toronto")
+    call_window_start_hour: int = int(os.getenv("CALL_WINDOW_START_HOUR", "9"))
+    call_window_end_hour: int = int(os.getenv("CALL_WINDOW_END_HOUR", "20"))
 
     booking_link: str = os.getenv("BOOKING_LINK", "https://calendly.com/your-link")
+    calendly_booking_url: str = os.getenv("CALENDLY_BOOKING_URL", "")
     company_name: str = os.getenv("COMPANY_NAME", "Your Real Estate Advisory")
     advisor_name: str = os.getenv("ADVISOR_NAME", "Your Name")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-    openai_model: str = os.getenv("OPENAI_MODEL", "gpt-5-mini")
+    openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     openai_base_url: str = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
+    openai_temperature: float = float(os.getenv("OPENAI_TEMPERATURE", "0.2"))
 
     smtp_host: str = os.getenv("SMTP_HOST", "")
     smtp_port: int = int(os.getenv("SMTP_PORT", "587"))
@@ -51,9 +56,20 @@ class Settings:
     twilio_account_sid: str = os.getenv("TWILIO_ACCOUNT_SID", "")
     twilio_auth_token: str = os.getenv("TWILIO_AUTH_TOKEN", "")
     twilio_from_number: str = os.getenv("TWILIO_FROM_NUMBER", "")
+    owner_alert_phone: str = os.getenv("OWNER_ALERT_PHONE", "")
 
     meta_page_access_token: str = os.getenv("META_PAGE_ACCESS_TOKEN", "")
     meta_page_id: str = os.getenv("META_PAGE_ID", "")
+
+    database_url: str = os.getenv("DATABASE_URL", "")
+
+    meta_verify_token: str = os.getenv("META_VERIFY_TOKEN", "")
+    meta_app_secret: str = os.getenv("META_APP_SECRET", "")
+    meta_access_token: str = os.getenv("META_ACCESS_TOKEN", "") or os.getenv("META_PAGE_ACCESS_TOKEN", "")
+
+    retell_api_key: str = os.getenv("RETELL_API_KEY", "")
+    retell_agent_id_en: str = os.getenv("RETELL_AGENT_ID_EN", "")
+    retell_base_url: str = os.getenv("RETELL_BASE_URL", "https://api.retellai.com")
 
 
 settings = Settings()

@@ -23,3 +23,12 @@ MVP browser UI:
 OpenAI setup:
 - add `OPENAI_API_KEY` to `.env`
 - default model is `gpt-5-mini`
+
+## Speed-to-Lead (Week 1 MVP)
+
+This repo now also includes a production-style lead orchestrator (Postgres-backed jobs) with:
+- Meta Lead Ads webhooks: `GET /webhooks/meta` + `POST /webhooks/meta`
+- Retell call events: `POST /webhooks/retell`
+- Twilio inbound SMS opt-out: `POST /webhooks/twilio/sms`
+
+To enable it, configure `DATABASE_URL` plus the Meta/Retell/Twilio env vars in `.env.example`.
