@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: real-estate-agent
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DRY_RUN
+        value: "true"
+      - key: PYTHONPATH
+        value: "."
+      - key: DATABASE_URL
+        fromDatabase:
+          name: real-estate-db
+          property: connectionString
+
+databases:
+  - name: real-estate-db
+    databaseName: realestate
+    plan: free

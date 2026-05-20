@@ -24,7 +24,7 @@ def verify_meta_signature(raw_body: bytes, app_secret: str, signature_header: st
     return safe_equals(digest, expected)
 
 
-_RETELL_SIG_RE = re.compile(r"v=(\d+),d=(.*)")
+_RETELL_SIG_RE = re.compile(r"v=(\d+),d=([a-fA-F0-9]+)$")
 
 
 def verify_retell_signature(raw_body_text: str, api_key: str, signature_header: str | None) -> bool:
