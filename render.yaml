@@ -8,15 +8,39 @@ services:
       - key: APP_ENV
         value: production
       - key: APP_DRY_RUN
-        value: "true"
+        value: "false"
       - key: PYTHONPATH
         value: "."
       - key: DATABASE_URL
         fromDatabase:
           name: real-estate-db
           property: connectionString
+      # --- Set these manually in Render dashboard ---
+      # OPENAI_API_KEY
+      # OPENAI_MODEL = gpt-4o-mini
+      # EMBEDDING_MODEL = text-embedding-3-small
+      # COPILOT_TOP_K = 5
+      # TWILIO_ACCOUNT_SID
+      # TWILIO_AUTH_TOKEN
+      # TWILIO_FROM_NUMBER
+      # OWNER_ALERT_PHONE
+      # RETELL_API_KEY
+      # RETELL_AGENT_ID_EN
+      # META_VERIFY_TOKEN
+      # META_APP_SECRET
+      # META_ACCESS_TOKEN
+      # CALENDLY_BOOKING_URL
+      # COMPANY_NAME
+      # ADVISOR_NAME
+      - key: APP_TIMEZONE
+        value: America/Toronto
+      - key: CALL_WINDOW_START_HOUR
+        value: "9"
+      - key: CALL_WINDOW_END_HOUR
+        value: "20"
 
 databases:
   - name: real-estate-db
     databaseName: realestate
     plan: free
+    # Note: Upgrade to "starter" ($7/mo) for production — free tier has limited connections
