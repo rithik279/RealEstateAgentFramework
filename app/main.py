@@ -124,6 +124,12 @@ def mvp_ui() -> FileResponse:
     return FileResponse(settings.ui_file)
 
 
+@app.get("/dashboard", response_class=FileResponse)
+def dashboard_ui() -> FileResponse:
+    """Lead scoring dashboard — view all leads with readiness scores and tags."""
+    return FileResponse(settings.ui_file.parent / "dashboard.html")
+
+
 @app.get("/health")
 def health() -> dict[str, str | bool]:
     return {

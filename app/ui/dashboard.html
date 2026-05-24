@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Dashboard — Brampton Buyer Intelligence</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --hot: #ef4444;
+      --warm: #f59e0b;
+      --early: #22c55e;
+      --cold: #64748b;
+      --accent: #0ea5e9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+    header { background: var(--panel); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
+    header h1 { font-size: 18px; font-weight: 600; }
+    header .subtitle { color: var(--muted); font-size: 13px; }
+    .filters { padding: 16px 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--panel); color: var(--muted); cursor: pointer; font-size: 13px; transition: all 0.15s; }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+    .filter-btn.hot.active { background: var(--hot); border-color: var(--hot); }
+    .filter-btn.warm.active { background: var(--warm); border-color: var(--warm); color: #000; }
+    .filter-btn.early.active { background: var(--early); border-color: var(--early); color: #000; }
+    .stats { padding: 0 24px 16px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; min-width: 120px; }
+    .stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; margin-top: 4px; }
+    .stat-card.hot .value { color: var(--hot); }
+    .stat-card.warm .value { color: var(--warm); }
+    .stat-card.early .value { color: var(--early); }
+    .stat-card.total .value { color: var(--accent); }
+    .leads-table { padding: 0 24px 40px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    tr.lead-row { border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    tr.lead-row:hover { background: rgba(255,255,255,0.03); }
+    td { padding: 12px; font-size: 14px; vertical-align: middle; }
+    .tier-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tier-badge.hot { background: rgba(239,68,68,0.15); color: var(--hot); }
+    .tier-badge.warm { background: rgba(245,158,11,0.15); color: var(--warm); }
+    .tier-badge.early { background: rgba(34,197,94,0.15); color: var(--early); }
+    .tier-badge.cold { background: rgba(100,116,139,0.15); color: var(--cold); }
+    .score-bar { display: flex; align-items: center; gap: 8px; }
+    .score-bar .bar { height: 4px; border-radius: 2px; background: var(--border); width: 60px; overflow: hidden; }
+    .score-bar .fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+    .score-bar .fill.hot { background: var(--hot); }
+    .score-bar .fill.warm { background: var(--warm); }
+    .score-bar .fill.early { background: var(--early); }
+    .score-bar .fill.cold { background: var(--cold); }
+    .score-num { font-size: 13px; font-weight: 600; min-width: 28px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag { background: rgba(14,165,233,0.1); color: var(--accent); border: 1px solid rgba(14,165,233,0.2); border-radius: 4px; padding: 2px 6px; font-size: 11px; }
+    .tag.pre_approved { background: rgba(34,197,94,0.1); color: var(--early); border-color: rgba(34,197,94,0.2); }
+    .tag.hot_buyer { background: rgba(239,68,68,0.1); color: var(--hot); border-color: rgba(239,68,68,0.2); }
+    .tag.warm_buyer { background: rgba(245,158,11,0.1); color: var(--warm); border-color: rgba(245,158,11,0.2); }
+    .tag.already_represented { background: rgba(239,68,68,0.1); color: #fca5a5; border-color: rgba(239,68,68,0.2); }
+    .tag.family_agent_risk { background: rgba(239,68,68,0.1); color: #fca5a5; border-color: rgba(239,68,68,0.2); }
+    .empty { text-align: center; color: var(--muted); padding: 60px; }
+    .empty h2 { font-size: 16px; margin-bottom: 8px; }
+    .phone { color: var(--muted); font-size: 13px; }
+    .time { color: var(--muted); font-size: 12px; }
+    .copilot-panel { position: fixed; bottom: 24px; right: 24px; }
+    .copilot-btn { background: var(--accent); color: white; border: none; border-radius: 12px; padding: 12px 20px; cursor: pointer; font-size: 14px; font-weight: 600; box-shadow: 0 4px 20px rgba(14,165,233,0.3); }
+    .copilot-modal { display: none; position: fixed; bottom: 80px; right: 24px; width: 380px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 8px 40px rgba(0,0,0,0.4); }
+    .copilot-modal.open { display: block; }
+    .copilot-modal h3 { font-size: 14px; margin-bottom: 12px; }
+    .copilot-modal textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px; font-size: 13px; resize: vertical; min-height: 80px; }
+    .copilot-modal .send-btn { margin-top: 8px; background: var(--accent); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 13px; width: 100%; }
+    .copilot-answer { margin-top: 12px; font-size: 13px; line-height: 1.6; color: var(--muted); max-height: 200px; overflow-y: auto; }
+    .copilot-risk { font-size: 11px; margin-top: 8px; padding: 4px 8px; border-radius: 4px; }
+    .copilot-risk.low { background: rgba(34,197,94,0.1); color: var(--early); }
+    .copilot-risk.medium { background: rgba(245,158,11,0.1); color: var(--warm); }
+    .copilot-risk.high, .copilot-risk.critical { background: rgba(239,68,68,0.1); color: var(--hot); }
+    .refresh-btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-size: 13px; margin-left: auto; }
+    .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .loading { color: var(--muted); font-size: 13px; padding: 40px; text-align: center; }
+    .error-msg { color: var(--hot); font-size: 13px; padding: 20px 24px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>🏠 Buyer Intelligence Dashboard</h1>
+      <div class="subtitle">Brampton/GTA Lead Pipeline — Real-time readiness scores</div>
+    </div>
+    <button class="refresh-btn" onclick="loadLeads()">↻ Refresh</button>
+  </header>
+
+  <div class="stats" id="stats">
+    <div class="stat-card total"><div class="label">Total Leads</div><div class="value" id="total-count">—</div></div>
+    <div class="stat-card hot"><div class="label">🔴 Hot</div><div class="value" id="hot-count">—</div></div>
+    <div class="stat-card warm"><div class="label">🟡 Warm</div><div class="value" id="warm-count">—</div></div>
+    <div class="stat-card early"><div class="label">🟢 Early</div><div class="value" id="early-count">—</div></div>
+  </div>
+
+  <div class="filters">
+    <span style="font-size:12px;color:var(--muted);margin-right:4px;">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter(null, this)">All</button>
+    <button class="filter-btn hot" onclick="setFilter('hot', this)">🔴 Hot</button>
+    <button class="filter-btn warm" onclick="setFilter('warm', this)">🟡 Warm</button>
+    <button class="filter-btn early" onclick="setFilter('early', this)">🟢 Early</button>
+    <button class="filter-btn" onclick="setFilter('cold', this)">⚪ Cold</button>
+  </div>
+
+  <div class="leads-table">
+    <div class="loading" id="loading">Loading leads...</div>
+    <div class="error-msg" id="error-msg" style="display:none"></div>
+    <table id="leads-table" style="display:none">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Score</th>
+          <th>Tier</th>
+          <th>Tags</th>
+          <th>Status</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody id="leads-body"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">
+      <h2>No leads yet</h2>
+      <p>Leads appear here after they come through Meta Lead Ads and complete the AI qualification call.</p>
+    </div>
+  </div>
+
+  <div class="copilot-panel">
+    <div class="copilot-modal" id="copilot-modal">
+      <h3>🤖 Ontario Knowledge Copilot</h3>
+      <textarea id="copilot-query" placeholder="Ask a compliance or market question...&#10;e.g. What are RECO dual agency disclosure rules?"></textarea>
+      <button class="send-btn" onclick="askCopilot()">Ask Copilot</button>
+      <div class="copilot-answer" id="copilot-answer" style="display:none"></div>
+      <div class="copilot-risk" id="copilot-risk" style="display:none"></div>
+    </div>
+    <button class="copilot-btn" onclick="toggleCopilot()">💬 Ask Copilot</button>
+  </div>
+
+  <script>
+    const API = window.location.origin;
+    let currentFilter = null;
+    let allLeads = [];
+
+    async function loadLeads() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('leads-table').style.display = 'none';
+      document.getElementById('empty').style.display = 'none';
+      document.getElementById('error-msg').style.display = 'none';
+
+      try {
+        const url = currentFilter
+          ? `${API}/leads-scored?tier=${currentFilter}&limit=100`
+          : `${API}/leads-scored?limit=100`;
+
+        const res = await fetch(url);
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+        allLeads = await res.json();
+        renderLeads(allLeads);
+        updateStats(allLeads);
+      } catch (e) {
+        document.getElementById('loading').style.display = 'none';
+        const errEl = document.getElementById('error-msg');
+        errEl.style.display = 'block';
+        errEl.textContent = `⚠ ${e.message}. Is DATABASE_URL configured and the server running?`;
+      }
+    }
+
+    function renderLeads(leads) {
+      document.getElementById('loading').style.display = 'none';
+      if (!leads.length) {
+        document.getElementById('empty').style.display = 'block';
+        return;
+      }
+      document.getElementById('leads-table').style.display = 'table';
+      const tbody = document.getElementById('leads-body');
+      tbody.innerHTML = leads.map(lead => {
+        const tier = lead.readiness_tier || 'cold';
+        const score = lead.readiness_score ?? '—';
+        const tags = Array.isArray(lead.tags) ? lead.tags : [];
+        const created = lead.created_at ? new Date(lead.created_at).toLocaleDateString() : '—';
+        const scoreNum = typeof score === 'number' ? score : 0;
+        const tierEmoji = {hot:'🔴',warm:'🟡',early:'🟢',cold:'⚪'}[tier] || '⚪';
+
+        return `<tr class="lead-row" onclick="viewProfile('${lead.id}')">
+          <td>
+            <div style="font-weight:500">${lead.name || 'Unknown'}</div>
+            <div class="phone">${lead.phone_e164 || '—'}</div>
+          </td>
+          <td>
+            <div class="score-bar">
+              <span class="score-num" style="color:var(--${tier})">${score}</span>
+              <div class="bar"><div class="fill ${tier}" style="width:${scoreNum}%"></div></div>
+            </div>
+          </td>
+          <td><span class="tier-badge ${tier}">${tierEmoji} ${tier}</span></td>
+          <td>
+            <div class="tags">${tags.slice(0,4).map(t =>
+              `<span class="tag ${t}">${t.replace(/_/g,' ')}</span>`
+            ).join('')}${tags.length > 4 ? `<span class="tag">+${tags.length-4}</span>` : ''}</div>
+          </td>
+          <td><span style="color:var(--muted);font-size:12px">${lead.status || '—'}</span></td>
+          <td><span class="time">${created}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    function updateStats(leads) {
+      document.getElementById('total-count').textContent = leads.length;
+      document.getElementById('hot-count').textContent = leads.filter(l => l.readiness_tier === 'hot').length;
+      document.getElementById('warm-count').textContent = leads.filter(l => l.readiness_tier === 'warm').length;
+      document.getElementById('early-count').textContent = leads.filter(l => l.readiness_tier === 'early').length;
+    }
+
+    function setFilter(tier, btn) {
+      currentFilter = tier;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadLeads();
+    }
+
+    async function viewProfile(leadId) {
+      try {
+        const res = await fetch(`${API}/leads/${leadId}/profile`);
+        if (!res.ok) return;
+        const profile = await res.json();
+        const tags = Array.isArray(profile.tags) ? profile.tags.join(', ') : '—';
+        const bp = profile.buyer_profile ? JSON.stringify(profile.buyer_profile, null, 2) : 'No profile yet';
+        alert(`${profile.name || 'Unknown'}\nScore: ${profile.readiness_score ?? '—'} (${profile.readiness_tier ?? '—'})\nTags: ${tags}\n\nProfile:\n${bp.substring(0,500)}...`);
+      } catch(e) { console.error(e); }
+    }
+
+    function toggleCopilot() {
+      document.getElementById('copilot-modal').classList.toggle('open');
+    }
+
+    async function askCopilot() {
+      const q = document.getElementById('copilot-query').value.trim();
+      if (!q) return;
+      const answerEl = document.getElementById('copilot-answer');
+      const riskEl = document.getElementById('copilot-risk');
+      answerEl.style.display = 'block';
+      answerEl.textContent = 'Thinking...';
+      riskEl.style.display = 'none';
+      try {
+        const res = await fetch(`${API}/copilot/query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          answerEl.textContent = data.detail || 'Error';
+          return;
+        }
+        answerEl.textContent = data.answer;
+        if (data.risk_level && data.risk_level !== 'low') {
+          riskEl.style.display = 'block';
+          riskEl.className = `copilot-risk ${data.risk_level}`;
+          riskEl.textContent = `⚠ Risk: ${data.risk_level.toUpperCase()}${data.requires_review ? ' — Review required before acting' : ''}`;
+        }
+      } catch(e) {
+        answerEl.textContent = 'Connection error. Is the server running?';
+      }
+    }
+
+    document.getElementById('copilot-query').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.metaKey) askCopilot();
+    });
+
+    // Load on startup
+    loadLeads();
+    // Auto-refresh every 30s
+    setInterval(loadLeads, 30000);
+  </script>
+</body>
+</html>
