@@ -71,6 +71,11 @@ class Settings:
     retell_agent_id_en: str = os.getenv("RETELL_AGENT_ID_EN", "")
     retell_base_url: str = os.getenv("RETELL_BASE_URL", "https://api.retellai.com")
 
+    # Knowledge Copilot
+    knowledge_base_path: str = os.getenv("KNOWLEDGE_BASE_PATH", str(ROOT_DIR / "knowledge-base"))
+    embedding_model: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+    copilot_top_k: int = int(os.getenv("COPILOT_TOP_K", "5"))
+
 
 settings = Settings()
 settings.data_file.parent.mkdir(parents=True, exist_ok=True)

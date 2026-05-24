@@ -280,6 +280,60 @@ class OrchestratorRepo:
                 )
             conn.commit()
 
+    # -----------------------------------------------------------------------
+    # v2: Buyer profile + readiness scoring
+    # -----------------------------------------------------------------------
+
+    def set_readiness(
+        self,
+        lead_id: str,
+        *,
+        score: int,
+        tier: str,
+        tags: list[str],
+        components: dict[str, int],
+        buyer_profile: dict[str, Any] | None = None,
+    ) -> None:
+        """Persist scorer output to leads table."""
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    update leads
+                    set readiness_score = %s,
+                        readiness_tier  = %s,
+                        tags            = %s::jsonb,
+                        scores          = %s::jsonb,
+                        buyer_profile   = coalesce(%s::jsonb, buyer_profile)
+                    where id = %s
+                    """,
+                    (
+                        score,
+                        tier,
+                        json.dumps(tags),
+                        json.dumps(components),
+                        json.dumps(buyer_profile) if buyer_profile is not None else None,
+                        lead_id,
+                    ),
+                )
+            conn.commit()
+
+    def get_lead_profile(self, lead_id: str) -> dict[str, Any] | None:
+        """Return full lead row with scoring fields."""
+        with self.db.connect() as conn:
+            with conn.cursor(row_factory=dict_row) as cur:
+                cur.execute(
+                    """
+                    select id, name, phone_e164, email, status,
+                           readiness_score, readiness_tier, tags, scores, buyer_profile,
+                           created_at
+                    from leads
+                    where id = %s
+                    """,
+                    (lead_id,),
+                )
+                return cur.fetchone()
+
     def cancel_jobs_for_lead(self, lead_id: str) -> None:
         with self.db.connect() as conn:
             with conn.cursor() as cur:

@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import random
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
+from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 
 from app.config import settings
+from app.copilot.chunker import chunk_text, chunk_pdf
+from app.copilot.copilot import KnowledgeCopilot, CopilotResponse
+from app.copilot.embedder import Embedder
 from app.db import create_database, migrate
 from app.models import (
     Channel,
@@ -36,12 +42,6 @@ from app.orchestrator.worker import start_worker_in_thread
 from app.storage import JsonStorage
 
 
-app = FastAPI(
-    title="Real Estate Auto Message Bot",
-    description="Automatic real estate lead follow-up by email, SMS, and Facebook Messenger.",
-    version="0.2.0",
-)
-
 storage = JsonStorage(settings.data_file)
 sender = ChannelSender(settings)
 service = FollowUpService(storage, sender, settings)
@@ -50,43 +50,67 @@ chat_service = OpenAIChatService(settings)
 orchestrator_repo: OrchestratorRepo | None = None
 worker_stop = None
 call_scheduler: CallScheduler | None = None
+knowledge_copilot: KnowledgeCopilot | None = None
 
 
 def _parse_meta_created_time(value: str | None) -> datetime | None:
     if not value or not isinstance(value, str):
         return None
     try:
-        # Meta often returns ISO with timezone; this handles "Z" and offsets.
         normalized = value.replace("Z", "+00:00")
         return datetime.fromisoformat(normalized)
     except ValueError:
         return None
 
 
-@app.on_event("startup")
-def _startup() -> None:
-    global orchestrator_repo, worker_stop, call_scheduler
-    if not settings.database_url:
-        return
+@asynccontextmanager
+async def lifespan(app: FastAPI):  # noqa: ARG001
+    global orchestrator_repo, worker_stop, call_scheduler, knowledge_copilot
+    # --- Startup ---
+    if settings.database_url:
+        db = create_database(settings.database_url)
+        migrate(db)
+        orchestrator_repo = OrchestratorRepo(db=db)
+        _thread, worker_stop = start_worker_in_thread(orchestrator_repo, sender, settings)
+        call_scheduler = CallScheduler(settings)
+        call_scheduler.start()
+        print("INFO:     Starting CallScheduler...")
 
-    db = create_database(settings.database_url)
-    migrate(db)
-    orchestrator_repo = OrchestratorRepo(db=db)
+        if settings.openai_api_key:
+            from app.orchestrator.openai_extract import OpenAIClient
+            _oai = OpenAIClient(
+                api_key=settings.openai_api_key,
+                base_url=settings.openai_base_url,
+                model=settings.openai_model,
+                temperature=settings.openai_temperature,
+            )
+            _embedder = Embedder(
+                api_key=settings.openai_api_key,
+                model=settings.embedding_model,
+            )
+            knowledge_copilot = KnowledgeCopilot(
+                db=db,
+                openai_client=_oai,
+                embedder=_embedder,
+                top_k=settings.copilot_top_k,
+            )
+            print("INFO:     Knowledge Copilot initialized.")
 
-    _thread, worker_stop = start_worker_in_thread(orchestrator_repo, sender, settings)
+    yield  # app runs
 
-    call_scheduler = CallScheduler(settings)
-    call_scheduler.start()
-    print("INFO:     Starting CallScheduler...")
-
-
-@app.on_event("shutdown")
-def _shutdown() -> None:
-    global worker_stop, call_scheduler
+    # --- Shutdown ---
     if worker_stop is not None:
         worker_stop.set()
     if call_scheduler is not None:
         call_scheduler.stop()
+
+
+app = FastAPI(
+    title="Real Estate Auto Message Bot",
+    description="Agentic real estate brokerage — Brampton/GTA lead intake, scoring, and copilot.",
+    version="0.3.0",
+    lifespan=lifespan,
+)
 
 
 @app.get("/")
@@ -473,3 +497,135 @@ def run_follow_ups() -> dict[str, object]:
         "sent_count": len(messages),
         "messages": [message.model_dump(mode="json") for message in messages],
     }
+
+
+# ---------------------------------------------------------------------------
+# v2 Endpoints: Lead Profile + Copilot
+# ---------------------------------------------------------------------------
+
+@app.get("/leads/{lead_id}/profile")
+def get_lead_profile(lead_id: str) -> dict[str, Any]:
+    """Return lead row with buyer readiness score, tier, tags, and profile."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="Database not configured.")
+    profile = orchestrator_repo.get_lead_profile(lead_id)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Lead not found.")
+    # Serialize datetime fields
+    result: dict[str, Any] = {}
+    for k, v in profile.items():
+        if hasattr(v, "isoformat"):
+            result[k] = v.isoformat()
+        else:
+            result[k] = v
+    return result
+
+
+class CopilotQueryRequest(BaseModel):
+    query: str
+    jurisdiction: str = "ontario"
+    audience: str | None = None
+
+
+class CopilotIngestRequest(BaseModel):
+    text: str
+    doc_id: str
+    source_path: str
+    topic: str | None = None
+    jurisdiction: str = "ontario"
+    audience: str = "agent"
+    overwrite: bool = False
+
+
+class CopilotIngestPDFRequest(BaseModel):
+    pdf_path: str          # absolute path on server filesystem
+    doc_id: str
+    topic: str | None = None
+    jurisdiction: str = "ontario"
+    audience: str = "agent"
+    overwrite: bool = False
+
+
+@app.post("/copilot/query")
+def copilot_query(payload: CopilotQueryRequest) -> dict[str, Any]:
+    """
+    Query the Ontario Knowledge Copilot.
+    Returns answer, sources, risk level, and review flag.
+    """
+    if knowledge_copilot is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Knowledge Copilot not available. Set OPENAI_API_KEY and DATABASE_URL.",
+        )
+    response = knowledge_copilot.query(
+        payload.query,
+        jurisdiction=payload.jurisdiction,
+        audience=payload.audience,
+    )
+    return {
+        "query": response.query,
+        "answer": response.answer,
+        "risk_level": response.risk_level,
+        "requires_review": response.requires_review,
+        "top_k_used": response.top_k_used,
+        "model": response.model_used,
+        "sources": [
+            {
+                "doc_id": s.doc_id,
+                "source_path": s.source_path,
+                "heading": s.heading,
+                "chunk_index": s.chunk_index,
+                "risk_level": s.risk_level,
+                "similarity": s.similarity,
+            }
+            for s in response.sources
+        ],
+    }
+
+
+@app.post("/copilot/ingest")
+def copilot_ingest_text(payload: CopilotIngestRequest) -> dict[str, Any]:
+    """
+    Ingest plain text or markdown into the knowledge base.
+    Chunks, embeds, classifies risk, and stores in knowledge_chunks.
+    """
+    if knowledge_copilot is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Knowledge Copilot not available. Set OPENAI_API_KEY and DATABASE_URL.",
+        )
+    chunks = chunk_text(
+        payload.text,
+        doc_id=payload.doc_id,
+        source_path=payload.source_path,
+        topic=payload.topic,
+        jurisdiction=payload.jurisdiction,
+        audience=payload.audience,
+    )
+    result = knowledge_copilot.ingest_chunks(chunks, overwrite=payload.overwrite)
+    return {"doc_id": payload.doc_id, "chunks_generated": len(chunks), **result}
+
+
+@app.post("/copilot/ingest-pdf")
+def copilot_ingest_pdf(payload: CopilotIngestPDFRequest) -> dict[str, Any]:
+    """
+    Ingest a PDF from the server filesystem into the knowledge base.
+    The PDF must be accessible at the given path on the server.
+    """
+    if knowledge_copilot is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Knowledge Copilot not available. Set OPENAI_API_KEY and DATABASE_URL.",
+        )
+    try:
+        chunks = chunk_pdf(
+            payload.pdf_path,
+            doc_id=payload.doc_id,
+            topic=payload.topic,
+            jurisdiction=payload.jurisdiction,
+            audience=payload.audience,
+        )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    result = knowledge_copilot.ingest_chunks(chunks, overwrite=payload.overwrite)
+    return {"doc_id": payload.doc_id, "chunks_generated": len(chunks), **result}

@@ -29,7 +29,13 @@ create table if not exists leads (
   consent_timestamp timestamptz,
   language text default 'en',
   status text not null default 'new',
-  do_not_contact boolean not null default false
+  do_not_contact boolean not null default false,
+  -- Brampton buyer profile fields (v2)
+  tags jsonb not null default '[]'::jsonb,
+  readiness_score integer,
+  readiness_tier text,
+  buyer_profile jsonb,
+  scores jsonb
 );
 
 create table if not exists events (
@@ -84,6 +90,33 @@ create table if not exists jobs (
 
 create unique index if not exists jobs_type_dedupe_key_uidx on jobs(type, dedupe_key)
 where dedupe_key is not null;
+
+-- v2: buyer profile columns (safe to run on existing DB — add if not exists)
+alter table leads add column if not exists tags jsonb not null default '[]'::jsonb;
+alter table leads add column if not exists readiness_score integer;
+alter table leads add column if not exists readiness_tier text;
+alter table leads add column if not exists buyer_profile jsonb;
+alter table leads add column if not exists scores jsonb;
+
+-- v2: knowledge copilot
+create table if not exists knowledge_chunks (
+  id bigserial primary key,
+  doc_id text not null,
+  source_path text not null,
+  chunk_index integer not null,
+  heading text,
+  body text not null,
+  topic text,
+  jurisdiction text default 'ontario',
+  audience text default 'agent',
+  risk_level text default 'low',
+  requires_professional_review boolean default false,
+  embedding jsonb,   -- float array stored as JSON; cosine similarity computed in Python
+  created_at timestamptz not null default now(),
+  unique (doc_id, chunk_index)
+);
+
+create index if not exists knowledge_chunks_doc_id_idx on knowledge_chunks(doc_id);
 """
 
 

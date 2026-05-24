@@ -14,6 +14,7 @@ from app.orchestrator.openai_extract import OpenAIClient
 from app.orchestrator.repository import OrchestratorRepo
 from app.orchestrator.retell_client import RetellClient
 from app.orchestrator.schedule import CallWindow
+from app.orchestrator.scoring import score_lead
 from app.services.channels import ChannelSender
 
 
@@ -101,19 +102,48 @@ class JobWorker:
                 extracted_json=extracted_json,
             )
 
+        # --- Score the lead ---
+        call_answered = call_status not in {"no_answer", "busy", "failed", "voicemail"}
+        score_result = score_lead(extracted_json or {}, call_answered=call_answered)
+        self.repo.set_readiness(
+            lead_id,
+            score=score_result.score,
+            tier=score_result.tier,
+            tags=score_result.tags,
+            components=score_result.components,
+            buyer_profile=extracted_json,
+        )
+        self.repo.add_event(
+            lead_id=lead_id,
+            event_type="readiness_scored",
+            payload={
+                "score": score_result.score,
+                "tier": score_result.tier,
+                "tags": score_result.tags,
+                "components": score_result.components,
+                "recommended_action": score_result.recommended_action,
+            },
+        )
+
         # Follow-up SMS (random 3–15s delay) + owner alert
         delay_seconds = random.randint(3, 15)
         self.repo.enqueue_job(
             job_type="send_followup_sms",
             dedupe_key=f"lead:{lead_id}:followup",
-            payload={"lead_id": lead_id},
+            payload={"lead_id": lead_id, "tier": score_result.tier},
             run_at=utc_now() + timedelta(seconds=delay_seconds),
             max_attempts=5,
         )
         self.repo.enqueue_job(
             job_type="notify_owner",
             dedupe_key=f"lead:{lead_id}:owner_alert",
-            payload={"lead_id": lead_id, "extracted_json": extracted_json},
+            payload={
+                "lead_id": lead_id,
+                "extracted_json": extracted_json,
+                "tier": score_result.tier,
+                "score": score_result.score,
+                "recommended_action": score_result.recommended_action,
+            },
             run_at=utc_now(),
             max_attempts=5,
         )
@@ -201,10 +231,24 @@ class JobWorker:
             if isinstance(timeline, str) and timeline.strip():
                 details_parts.append(timeline.strip())
 
+        tier = payload.get("tier", "")
         name = (lead.get("name") or "").strip()
         details = " (" + " / ".join([p for p in details_parts if p]) + ")" if details_parts else ""
         greeting = f"Thanks {name}" if name else "Thanks"
-        body = f"{greeting}{details} — if you want, you can book a quick call here: {booking} Reply STOP to opt out."
+
+        if tier == "hot":
+            body = (
+                f"Hi {name or 'there'}! I just reviewed your inquiry{details}. "
+                f"I have exactly what you're looking for — let's connect today: {booking} "
+                f"Reply STOP to opt out."
+            )
+        elif tier == "warm":
+            body = (
+                f"{greeting}{details} — I'd love to set up a quick buyer consultation. "
+                f"Pick a time that works: {booking} Reply STOP to opt out."
+            )
+        else:
+            body = f"{greeting}{details} — if you want, you can book a quick call here: {booking} Reply STOP to opt out."
 
         send_result = self.sender.send_sms_to_number(to_number=phone, body=body)
         self.repo.create_message(
@@ -225,6 +269,9 @@ class JobWorker:
             return
 
         extracted = payload.get("extracted_json")
+        tier = payload.get("tier")
+        score = payload.get("score")
+        recommended_action = payload.get("recommended_action")
         if self.settings.openai_api_key:
             client = OpenAIClient(
                 api_key=self.settings.openai_api_key,
@@ -232,9 +279,17 @@ class JobWorker:
                 model=self.settings.openai_model,
                 temperature=self.settings.openai_temperature,
             )
-            summary = client.owner_summary(lead.get("name"), lead.get("phone_e164"), extracted)
+            summary = client.owner_summary(
+                lead.get("name"),
+                lead.get("phone_e164"),
+                extracted,
+                tier=tier,
+                score=score,
+                recommended_action=recommended_action,
+            )
         else:
-            summary = f"New lead: {lead.get('name') or 'Unknown'} ({lead.get('phone_e164') or 'Unknown'})."
+            tier_str = f" [{tier.upper()} {score}/100]" if tier and score is not None else ""
+            summary = f"New lead{tier_str}: {lead.get('name') or 'Unknown'} ({lead.get('phone_e164') or 'Unknown'})."
 
         send_result = self.sender.send_sms_to_number(to_number=self.settings.owner_alert_phone, body=summary)
         self.repo.add_event(

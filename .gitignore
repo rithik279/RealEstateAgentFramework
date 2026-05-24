@@ -1,3 +1,17 @@
 .env
 __pycache__/
 *.pyc
+*.pyo
+.pytest_cache/
+data/store.json
+
+# Knowledge base — PDFs are private/owned, don't commit
+knowledge-base/**/*.pdf
+knowledge-base/**/*.PDF
+# But keep folder structure and README
+!knowledge-base/README.md
+!knowledge-base/reco/.gitkeep
+!knowledge-base/fsra/.gitkeep
+!knowledge-base/orea/.gitkeep
+!knowledge-base/brampton/.gitkeep
+!knowledge-base/internal/.gitkeep
