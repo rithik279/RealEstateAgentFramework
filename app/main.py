@@ -115,8 +115,12 @@ app = FastAPI(
 
 
 @app.get("/")
-def root() -> dict[str, str]:
-    return {"message": "Real Estate Auto Message Bot is running."}
+def root() -> dict[str, Any]:
+    return {
+        "status": "ok",
+        "message": "Real Estate Agentic Brokerage API",
+        "version": "0.3.0",
+    }
 
 
 @app.get("/mvp", response_class=FileResponse)
@@ -638,6 +642,78 @@ def copilot_ingest_text(payload: CopilotIngestRequest) -> dict[str, Any]:
     )
     result = knowledge_copilot.ingest_chunks(chunks, overwrite=payload.overwrite)
     return {"doc_id": payload.doc_id, "chunks_generated": len(chunks), **result}
+
+
+class IngestKBRequest(BaseModel):
+    overwrite: bool = False
+
+
+@app.post("/copilot/ingest-kb")
+def copilot_ingest_kb(payload: IngestKBRequest = IngestKBRequest()) -> dict[str, Any]:
+    """
+    Walk the knowledge-base/ folder and ingest all .md, .txt, .pdf files.
+    One-click bulk ingestion — no CLI needed.
+    """
+    if knowledge_copilot is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Knowledge Copilot not available. Set OPENAI_API_KEY and DATABASE_URL.",
+        )
+
+    from pathlib import Path
+
+    FOLDER_METADATA: dict[str, dict] = {
+        "reco": {"topic": "reco_obligations", "jurisdiction": "ontario", "audience": "agent"},
+        "orea": {"topic": "orea_forms", "jurisdiction": "ontario", "audience": "agent"},
+        "fsra": {"topic": "fsra_mortgage", "jurisdiction": "ontario", "audience": "agent"},
+        "brampton": {"topic": "brampton_market", "jurisdiction": "ontario", "audience": "agent"},
+        "internal": {"topic": "internal_process", "jurisdiction": "ontario", "audience": "agent"},
+    }
+
+    kb_path = Path(settings.knowledge_base_path)
+    if not kb_path.exists():
+        raise HTTPException(status_code=404, detail=f"knowledge-base path not found: {kb_path}")
+
+    total_chunks = 0
+    total_inserted = 0
+    total_skipped = 0
+    files_processed: list[str] = []
+    files_errored: list[dict] = []
+
+    for folder in kb_path.iterdir():
+        if not folder.is_dir() or folder.name.startswith("."):
+            continue
+        meta = FOLDER_METADATA.get(
+            folder.name,
+            {"topic": folder.name, "jurisdiction": "ontario", "audience": "agent"},
+        )
+        for file in folder.iterdir():
+            if file.suffix.lower() not in (".md", ".txt", ".pdf"):
+                continue
+            doc_id = f"{folder.name}/{file.stem}"
+            try:
+                if file.suffix.lower() == ".pdf":
+                    chunks = chunk_pdf(str(file), doc_id=doc_id, source_path=str(file), **meta)
+                else:
+                    text = file.read_text(encoding="utf-8", errors="replace")
+                    chunks = chunk_text(text, doc_id=doc_id, source_path=str(file), **meta)
+
+                result = knowledge_copilot.ingest_chunks(chunks, overwrite=payload.overwrite)
+                total_chunks += len(chunks)
+                total_inserted += result.get("inserted", 0)
+                total_skipped += result.get("skipped", 0)
+                files_processed.append(doc_id)
+            except Exception as exc:
+                files_errored.append({"file": doc_id, "error": str(exc)})
+
+    return {
+        "files_processed": len(files_processed),
+        "files_errored": len(files_errored),
+        "total_chunks": total_chunks,
+        "total_inserted": total_inserted,
+        "total_skipped": total_skipped,
+        "errored": files_errored,
+    }
 
 
 @app.post("/leads/{lead_id}/home-fit-report")
