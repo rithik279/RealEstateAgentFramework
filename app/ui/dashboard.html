@@ -84,6 +84,41 @@
     .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
     .loading { color: var(--muted); font-size: 13px; padding: 40px; text-align: center; }
     .error-msg { color: var(--hot); font-size: 13px; padding: 20px 24px; }
+    /* Lead detail modal */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; width: 680px; max-width: 95vw; max-height: 88vh; overflow-y: auto; box-shadow: 0 16px 60px rgba(0,0,0,0.5); }
+    .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; position: sticky; top: 0; background: var(--panel); z-index: 1; }
+    .modal-header h2 { font-size: 18px; font-weight: 600; }
+    .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; padding: 0 4px; line-height: 1; }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 24px; }
+    .detail-section { margin-bottom: 24px; }
+    .detail-section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 12px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .detail-item { }
+    .detail-item .key { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+    .detail-item .val { font-size: 14px; font-weight: 500; }
+    .score-hero { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--bg); border-radius: 8px; margin-bottom: 20px; }
+    .score-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; border: 3px solid; }
+    .score-circle.hot { border-color: var(--hot); color: var(--hot); }
+    .score-circle.warm { border-color: var(--warm); color: var(--warm); }
+    .score-circle.early { border-color: var(--early); color: var(--early); }
+    .score-circle.cold { border-color: var(--cold); color: var(--cold); }
+    .score-meta { }
+    .score-meta .tier-label { font-size: 20px; font-weight: 700; text-transform: capitalize; }
+    .score-meta .rec-action { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .signals-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+    .signals-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+    .signals-table td:first-child { color: var(--muted); width: 50%; }
+    .signal-yes { color: var(--early); font-weight: 600; }
+    .signal-no { color: var(--muted); }
+    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .action-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; font-size: 13px; transition: all 0.15s; }
+    .action-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .action-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+    .action-btn.primary:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -130,6 +165,22 @@
     <div class="empty" id="empty" style="display:none">
       <h2>No leads yet</h2>
       <p>Leads appear here after they come through Meta Lead Ads and complete the AI qualification call.</p>
+    </div>
+  </div>
+
+  <!-- Lead detail modal -->
+  <div class="modal-overlay" id="lead-modal" onclick="closeModal(event)">
+    <div class="modal" id="lead-modal-inner">
+      <div class="modal-header">
+        <div>
+          <h2 id="modal-name">Lead Profile</h2>
+          <div id="modal-phone" style="color:var(--muted);font-size:13px;margin-top:2px"></div>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('lead-modal').classList.remove('open')">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div style="color:var(--muted);padding:20px">Loading...</div>
+      </div>
     </div>
   </div>
 
@@ -229,15 +280,116 @@
       loadLeads();
     }
 
+    function closeModal(e) {
+      if (e.target === document.getElementById('lead-modal')) {
+        document.getElementById('lead-modal').classList.remove('open');
+      }
+    }
+
     async function viewProfile(leadId) {
+      const modal = document.getElementById('lead-modal');
+      const body = document.getElementById('modal-body');
+      document.getElementById('modal-name').textContent = 'Loading...';
+      document.getElementById('modal-phone').textContent = '';
+      body.innerHTML = '<div style="color:var(--muted);padding:20px">Loading...</div>';
+      modal.classList.add('open');
+
       try {
         const res = await fetch(`${API}/leads/${leadId}/profile`);
-        if (!res.ok) return;
-        const profile = await res.json();
-        const tags = Array.isArray(profile.tags) ? profile.tags.join(', ') : '—';
-        const bp = profile.buyer_profile ? JSON.stringify(profile.buyer_profile, null, 2) : 'No profile yet';
-        alert(`${profile.name || 'Unknown'}\nScore: ${profile.readiness_score ?? '—'} (${profile.readiness_tier ?? '—'})\nTags: ${tags}\n\nProfile:\n${bp.substring(0,500)}...`);
-      } catch(e) { console.error(e); }
+        if (!res.ok) {
+          body.innerHTML = `<div style="color:var(--hot);padding:20px">Error loading profile (${res.status})</div>`;
+          return;
+        }
+        const p = await res.json();
+        const tier = p.readiness_tier || 'cold';
+        const score = p.readiness_score ?? '—';
+        const tags = Array.isArray(p.tags) ? p.tags : [];
+        const bp = p.buyer_profile || {};
+        const scores = p.scores || {};
+        const tierEmoji = {hot:'🔴',warm:'🟡',early:'🟢',cold:'⚪'}[tier] || '⚪';
+        const recAction = scores.recommended_action || '—';
+
+        document.getElementById('modal-name').textContent = p.name || 'Unknown';
+        document.getElementById('modal-phone').textContent = p.phone_e164 || '';
+
+        const signalRows = [
+          ['Pre-approved', bp.pre_approval_status === 'approved'],
+          ['Basement income interest', !!bp.basement_income_interest],
+          ['Specific property in mind', !!bp.specific_property],
+          ['Timeline ≤ 90 days', (bp.timeline_days || 999) <= 90],
+          ['Not represented', !bp.currently_represented],
+          ['Down payment confirmed', !!bp.down_payment_confirmed],
+          ['Kitchen priority', !!bp.kitchen_priority],
+          ['Two-family layout needed', !!bp.two_family_interest],
+          ['Investor minded', !!bp.investor_minded],
+          ['First-time buyer', !!bp.first_time_buyer],
+          ['Move-up seller', !!bp.move_up_seller],
+        ].map(([label, val]) =>
+          `<tr><td>${label}</td><td class="${val ? 'signal-yes' : 'signal-no'}">${val ? 'Yes' : 'No'}</td></tr>`
+        ).join('');
+
+        body.innerHTML = `
+          <div class="score-hero">
+            <div class="score-circle ${tier}">${score}</div>
+            <div class="score-meta">
+              <div class="tier-label" style="color:var(--${tier})">${tierEmoji} ${tier.toUpperCase()}</div>
+              <div class="rec-action">${recAction}</div>
+              <div style="margin-top:6px">
+                ${tags.length ? `<div class="tag-list">${tags.map(t =>
+                  `<span class="tag ${t}">${t.replace(/_/g,' ')}</span>`
+                ).join('')}</div>` : '<span style="color:var(--muted);font-size:12px">No tags</span>'}
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Contact</h3>
+            <div class="detail-grid">
+              <div class="detail-item"><div class="key">Email</div><div class="val">${p.email || '—'}</div></div>
+              <div class="detail-item"><div class="key">Status</div><div class="val">${p.status || '—'}</div></div>
+              <div class="detail-item"><div class="key">Created</div><div class="val">${p.created_at ? new Date(p.created_at).toLocaleString() : '—'}</div></div>
+              <div class="detail-item"><div class="key">Source</div><div class="val">${p.source || '—'}</div></div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Buyer Profile</h3>
+            <div class="detail-grid">
+              <div class="detail-item"><div class="key">Budget Max</div><div class="val">${bp.budget_max ? '$' + bp.budget_max.toLocaleString() : '—'}</div></div>
+              <div class="detail-item"><div class="key">Timeline</div><div class="val">${bp.timeline_days ? bp.timeline_days + ' days' : '—'}</div></div>
+              <div class="detail-item"><div class="key">Bedrooms Needed</div><div class="val">${bp.bedrooms_needed || '—'}</div></div>
+              <div class="detail-item"><div class="key">Parking Needed</div><div class="val">${bp.parking_needed || '—'}</div></div>
+              <div class="detail-item"><div class="key">Down Payment</div><div class="val">${bp.down_payment_amount ? '$' + Number(bp.down_payment_amount).toLocaleString() : '—'}</div></div>
+              <div class="detail-item"><div class="key">Pre-Approval</div><div class="val">${bp.pre_approval_status || '—'}</div></div>
+              <div class="detail-item"><div class="key">Family Size</div><div class="val">${bp.family_size || '—'}</div></div>
+              <div class="detail-item"><div class="key">Preferred Area</div><div class="val">${bp.preferred_area || '—'}</div></div>
+            </div>
+            ${bp.specific_property_address ? `<div style="margin-top:10px;padding:10px;background:var(--bg);border-radius:6px;font-size:13px">
+              <span style="color:var(--muted)">Specific property: </span>${bp.specific_property_address}
+            </div>` : ''}
+          </div>
+
+          <div class="detail-section">
+            <h3>Qualification Signals</h3>
+            <table class="signals-table"><tbody>${signalRows}</tbody></table>
+          </div>
+
+          <div class="detail-section">
+            <h3>Actions</h3>
+            <div class="action-btns">
+              <button class="action-btn primary" onclick="alert('Call feature: use Retell dashboard to initiate call to ${p.phone_e164 || p.id}')">📞 Call</button>
+              <button class="action-btn" onclick="copyToClipboard('${p.id}')">Copy Lead ID</button>
+              <button class="action-btn" onclick="window.open('/leads/${p.id}/home-fit-report','_blank')">Home Fit Report</button>
+            </div>
+          </div>
+        `;
+      } catch(e) {
+        body.innerHTML = `<div style="color:var(--hot);padding:20px">Error: ${e.message}</div>`;
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => alert('Copied: ' + text));
     }
 
     function toggleCopilot() {
