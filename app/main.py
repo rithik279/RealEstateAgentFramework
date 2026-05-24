@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from app.config import settings
 from app.copilot.chunker import chunk_text, chunk_pdf
+from app.services.home_fit_report import HomeFitReportGenerator
 from app.copilot.copilot import KnowledgeCopilot, CopilotResponse
 from app.copilot.embedder import Embedder
 from app.db import create_database, migrate
@@ -503,6 +504,28 @@ def run_follow_ups() -> dict[str, object]:
 # v2 Endpoints: Lead Profile + Copilot
 # ---------------------------------------------------------------------------
 
+@app.get("/leads-scored")
+def list_leads_scored(
+    tier: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> list[dict[str, Any]]:
+    """
+    List leads ordered by readiness score (highest first).
+    Optional ?tier=hot|warm|early|cold filter.
+    """
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="Database not configured.")
+    rows = orchestrator_repo.list_leads_scored(tier=tier, limit=limit, offset=offset)
+    result = []
+    for row in rows:
+        d: dict[str, Any] = {}
+        for k, v in row.items():
+            d[k] = v.isoformat() if hasattr(v, "isoformat") else v
+        result.append(d)
+    return result
+
+
 @app.get("/leads/{lead_id}/profile")
 def get_lead_profile(lead_id: str) -> dict[str, Any]:
     """Return lead row with buyer readiness score, tier, tags, and profile."""
@@ -535,6 +558,11 @@ class CopilotIngestRequest(BaseModel):
     jurisdiction: str = "ontario"
     audience: str = "agent"
     overwrite: bool = False
+
+
+class HomeFitReportRequest(BaseModel):
+    lead_id: str
+    listing: dict[str, Any] | None = None   # None = template mode
 
 
 class CopilotIngestPDFRequest(BaseModel):
@@ -604,6 +632,52 @@ def copilot_ingest_text(payload: CopilotIngestRequest) -> dict[str, Any]:
     )
     result = knowledge_copilot.ingest_chunks(chunks, overwrite=payload.overwrite)
     return {"doc_id": payload.doc_id, "chunks_generated": len(chunks), **result}
+
+
+@app.post("/leads/{lead_id}/home-fit-report")
+def generate_home_fit_report(lead_id: str, payload: HomeFitReportRequest) -> dict[str, Any]:
+    """
+    Generate a Home Fit Report for a lead against a listing.
+    If listing is omitted, returns template mode (agent fills in scores).
+    Requires lead to have a buyer_profile (must have completed a call).
+    """
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="Database not configured.")
+
+    profile = orchestrator_repo.get_lead_profile(lead_id)
+    if not profile:
+        raise HTTPException(status_code=404, detail="Lead not found.")
+
+    buyer_profile = profile.get("buyer_profile") or {}
+    # Merge top-level lead fields
+    buyer_profile["lead_id"] = lead_id
+    buyer_profile["lead_name"] = profile.get("name")
+
+    gen = HomeFitReportGenerator()
+    report = gen.generate(buyer_profile, listing=payload.listing)
+
+    return {
+        "lead_id": lead_id,
+        "lead_name": report.lead_name,
+        "listing_address": report.listing_address,
+        "listing_price": report.listing_price,
+        "mls_number": report.mls_number,
+        "overall_score": report.overall_score,
+        "fit_tier": report.fit_tier,
+        "template_mode": report.template_mode,
+        "buyer_signals": report.buyer_signals,
+        "agent_notes": report.agent_notes,
+        "dimensions": [
+            {
+                "name": d.name,
+                "score": d.score,
+                "weight": d.weight,
+                "notes": d.notes,
+                "flags": d.flags,
+            }
+            for d in report.dimensions
+        ],
+    }
 
 
 @app.post("/copilot/ingest-pdf")

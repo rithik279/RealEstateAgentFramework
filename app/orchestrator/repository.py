@@ -334,6 +334,39 @@ class OrchestratorRepo:
                 )
                 return cur.fetchone()
 
+    def list_leads_scored(
+        self,
+        *,
+        tier: str | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        """
+        Return leads ordered by readiness_score desc.
+        Optional filter by tier (hot/warm/early/cold).
+        """
+        conditions = []
+        params: list[Any] = []
+        if tier:
+            conditions.append("readiness_tier = %s")
+            params.append(tier)
+        where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+        params.extend([limit, offset])
+        with self.db.connect() as conn:
+            with conn.cursor(row_factory=dict_row) as cur:
+                cur.execute(
+                    f"""
+                    SELECT id, name, phone_e164, email, status,
+                           readiness_score, readiness_tier, tags, created_at
+                    FROM leads
+                    {where}
+                    ORDER BY readiness_score DESC NULLS LAST, created_at DESC
+                    LIMIT %s OFFSET %s
+                    """,
+                    params,
+                )
+                return cur.fetchall() or []
+
     def cancel_jobs_for_lead(self, lead_id: str) -> None:
         with self.db.connect() as conn:
             with conn.cursor() as cur:

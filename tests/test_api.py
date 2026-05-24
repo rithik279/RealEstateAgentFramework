@@ -92,3 +92,82 @@ def test_list_leads():
     response = client.get("/leads")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+
+
+# ---------------------------------------------------------------------------
+# v2 Endpoint tests — no DB configured, expect 503 with helpful messages
+# ---------------------------------------------------------------------------
+
+def test_leads_scored_503_without_db():
+    from app.main import app
+    client = TestClient(app)
+    response = client.get("/leads-scored")
+    assert response.status_code == 503
+    assert "Database" in response.json()["detail"]
+
+
+def test_lead_profile_503_without_db():
+    from app.main import app
+    client = TestClient(app)
+    response = client.get("/leads/any-id/profile")
+    assert response.status_code == 503
+
+
+def test_home_fit_report_503_without_db():
+    from app.main import app
+    client = TestClient(app)
+    response = client.post(
+        "/leads/any-id/home-fit-report",
+        json={"lead_id": "any-id", "listing": None}
+    )
+    assert response.status_code == 503
+
+
+def test_copilot_query_503_without_db():
+    from app.main import app
+    client = TestClient(app)
+    response = client.post(
+        "/copilot/query",
+        json={"query": "What is dual agency?"}
+    )
+    assert response.status_code == 503
+    assert "OPENAI_API_KEY" in response.json()["detail"] or "Copilot" in response.json()["detail"]
+
+
+def test_copilot_ingest_503_without_db():
+    from app.main import app
+    client = TestClient(app)
+    response = client.post(
+        "/copilot/ingest",
+        json={"text": "test", "doc_id": "test", "source_path": "test.txt"}
+    )
+    assert response.status_code == 503
+
+
+def test_copilot_ingest_pdf_503_without_db():
+    from app.main import app
+    client = TestClient(app)
+    response = client.post(
+        "/copilot/ingest-pdf",
+        json={"pdf_path": "/fake/path.pdf", "doc_id": "test-doc"}
+    )
+    assert response.status_code == 503
+
+
+def test_all_new_routes_registered():
+    from app.main import app
+    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    required = {
+        "/leads-scored",
+        "/leads/{lead_id}/profile",
+        "/leads/{lead_id}/home-fit-report",
+        "/copilot/query",
+        "/copilot/ingest",
+        "/copilot/ingest-pdf",
+    }
+    assert required.issubset(paths), f"Missing routes: {required - paths}"
+
+
+def test_version_updated():
+    from app.main import app
+    assert app.version == "0.3.0"

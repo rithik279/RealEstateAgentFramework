@@ -16,6 +16,7 @@ from app.orchestrator.retell_client import RetellClient
 from app.orchestrator.schedule import CallWindow
 from app.orchestrator.scoring import score_lead
 from app.services.channels import ChannelSender
+from app.services.nurture_sequences import enqueue_sequence
 
 
 def utc_now() -> datetime:
@@ -134,6 +135,19 @@ class JobWorker:
             run_at=utc_now() + timedelta(seconds=delay_seconds),
             max_attempts=5,
         )
+
+        # Enqueue nurture sequence for warm/early/cold
+        if score_result.tier in ("warm", "early", "cold"):
+            lead = self.repo.get_lead_contact(lead_id)
+            booking = self.settings.calendly_booking_url or self.settings.booking_link
+            enqueue_sequence(
+                repo=self.repo,
+                tier=score_result.tier,
+                lead_id=lead_id,
+                name=lead.get("name") if lead else None,
+                extracted=extracted_json or {},
+                booking_url=booking,
+            )
         self.repo.enqueue_job(
             job_type="notify_owner",
             dedupe_key=f"lead:{lead_id}:owner_alert",
@@ -209,6 +223,18 @@ class JobWorker:
 
         phone = lead.get("phone_e164")
         if not phone:
+            return
+
+        # Nurture sequence messages have a pre-built body — send directly
+        body_override = payload.get("body_override")
+        if body_override:
+            send_result = self.sender.send_sms_to_number(to_number=phone, body=body_override)
+            self.repo.create_message(
+                lead_id=lead_id, direction="out", channel="sms", body=body_override,
+                twilio_message_sid=send_result.provider_message_id, status=send_result.status,
+            )
+            self.repo.add_event(lead_id=lead_id, event_type="nurture_sms_sent",
+                                payload={"status": send_result.status})
             return
 
         booking = self.settings.calendly_booking_url or self.settings.booking_link
