@@ -785,3 +785,122 @@ def copilot_ingest_pdf(payload: CopilotIngestPDFRequest) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     result = knowledge_copilot.ingest_chunks(chunks, overwrite=payload.overwrite)
     return {"doc_id": payload.doc_id, "chunks_generated": len(chunks), **result}
+
+
+# ---------------------------------------------------------------------------
+# MLS / RESO listing endpoints
+# ---------------------------------------------------------------------------
+
+class MLSSyncRequest(BaseModel):
+    city: str = "Brampton"
+    price_min: int = 500_000
+    price_max: int = 2_000_000
+
+
+class ListingSearchRequest(BaseModel):
+    city: str = "Brampton"
+    price_min: int | None = None
+    price_max: int | None = None
+    bedrooms_min: int | None = None
+    property_type: str | None = None
+    limit: int = 20
+
+
+@app.get("/mls/status")
+def mls_status() -> dict[str, Any]:
+    """Check PropTx RESO API configuration status."""
+    from app.services.mls_client import create_reso_client, MLSNotConfiguredError
+    try:
+        client = create_reso_client()
+        return {
+            "configured": True,
+            "base_url": client.base_url,
+            "auth_method": "api_key" if client.api_key else "basic",
+        }
+    except MLSNotConfiguredError as e:
+        return {"configured": False, "message": str(e)}
+
+
+@app.post("/mls/sync")
+def mls_sync(payload: MLSSyncRequest) -> dict[str, Any]:
+    """
+    Trigger listing sync from PropTx RESO API.
+    Requires PROPTX_BASE_URL + credentials set in env.
+    """
+    from app.services.mls_client import create_reso_client, ListingIngester, MLSNotConfiguredError
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="Database not configured.")
+    try:
+        client = create_reso_client()
+    except MLSNotConfiguredError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    ingester = ListingIngester(client=client, db=orchestrator_repo.db)
+    result = ingester.sync_active_listings(
+        city=payload.city,
+        price_min=payload.price_min,
+        price_max=payload.price_max,
+    )
+    return {"city": payload.city, **result}
+
+
+@app.post("/mls/search")
+def mls_search(payload: ListingSearchRequest) -> dict[str, Any]:
+    """Search active MLS listings via PropTx RESO API."""
+    from app.services.mls_client import create_reso_client, MLSNotConfiguredError
+    try:
+        client = create_reso_client()
+    except MLSNotConfiguredError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    listings = client.search_listings(
+        city=payload.city,
+        price_min=payload.price_min,
+        price_max=payload.price_max,
+        bedrooms_min=payload.bedrooms_min,
+        property_type=payload.property_type,
+        limit=payload.limit,
+    )
+    return {"count": len(listings), "listings": listings}
+
+
+@app.get("/mls/listing/{mls_number}")
+def mls_get_listing(mls_number: str) -> dict[str, Any]:
+    """Fetch single listing by MLS number from PropTx."""
+    from app.services.mls_client import create_reso_client, MLSNotConfiguredError
+    try:
+        client = create_reso_client()
+    except MLSNotConfiguredError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    listing = client.get_listing(mls_number)
+    if not listing:
+        raise HTTPException(status_code=404, detail=f"Listing {mls_number} not found")
+    return listing
+
+
+# ---------------------------------------------------------------------------
+# Audit log (compliance — RECO best practice)
+# ---------------------------------------------------------------------------
+
+@app.get("/audit-log")
+def get_audit_log(entity_type: str | None = None, limit: int = 50) -> dict[str, Any]:
+    """Compliance audit log — all AI outputs, data access, listing views."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="Database not configured.")
+    try:
+        with orchestrator_repo.db.connect() as conn:
+            with conn.cursor() as cur:
+                if entity_type:
+                    cur.execute(
+                        "SELECT * FROM audit_log WHERE entity_type = %s "
+                        "ORDER BY created_at DESC LIMIT %s",
+                        (entity_type, limit),
+                    )
+                else:
+                    cur.execute(
+                        "SELECT * FROM audit_log ORDER BY created_at DESC LIMIT %s",
+                        (limit,),
+                    )
+                rows = cur.fetchall()
+                cols = [d.name for d in cur.description] if cur.description else []
+                return {"entries": [dict(zip(cols, r)) for r in rows], "total": len(rows)}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e))

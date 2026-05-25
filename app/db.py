@@ -117,6 +117,76 @@ create table if not exists knowledge_chunks (
 );
 
 create index if not exists knowledge_chunks_doc_id_idx on knowledge_chunks(doc_id);
+
+-- v3: MLS listings cache (populated by RESO sync pipeline)
+create table if not exists listings (
+  id bigserial primary key,
+  mls_number text unique not null,
+  status text not null default 'Active',   -- Active | Sold | Expired | Terminated
+  list_price integer,
+  sold_price integer,
+  address text,
+  city text default 'Brampton',
+  province text default 'ON',
+  postal_code text,
+  neighbourhood text,
+  property_type text,
+  property_subtype text,
+  bedrooms integer,
+  bathrooms integer,
+  parking_spaces integer,
+  garage_spaces integer,
+  has_garage boolean default false,
+  square_feet integer,
+  lot_size_sqft numeric,
+  year_built integer,
+  stories integer,
+  -- Basement (critical for Brampton buyers)
+  basement_separate_entrance boolean default false,
+  basement_suite boolean default false,
+  basement_legal boolean default false,
+  basement_finished boolean default false,
+  basement_type text,
+  -- Kitchen
+  kitchen_condition text,   -- renovated | dated | unknown
+  open_concept boolean default false,
+  kitchen_features text,
+  -- Financials
+  property_tax_annual numeric,
+  condo_fee_monthly numeric,
+  -- Dates
+  listed_date date,
+  sold_date date,
+  expiry_date date,
+  days_on_market integer,
+  -- Media
+  photos jsonb default '[]'::jsonb,
+  -- Full normalized payload
+  normalized_data jsonb,
+  -- Raw RESO payload (compliance audit)
+  raw_reso jsonb,
+  -- Sync metadata
+  last_synced_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists listings_city_status_idx on listings(city, status);
+create index if not exists listings_price_idx on listings(list_price) where status = 'Active';
+create index if not exists listings_beds_idx on listings(bedrooms) where status = 'Active';
+
+-- v3: compliance audit log
+create table if not exists audit_log (
+  id bigserial primary key,
+  entity_type text not null,  -- 'lead' | 'listing' | 'copilot_query'
+  entity_id text,
+  action text not null,       -- 'viewed' | 'exported' | 'ai_queried' | 'shared'
+  user_id text,
+  details jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists audit_log_entity_idx on audit_log(entity_type, entity_id);
 """
 
 

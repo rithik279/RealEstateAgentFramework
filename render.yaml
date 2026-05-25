@@ -32,6 +32,11 @@ services:
       # CALENDLY_BOOKING_URL
       # COMPANY_NAME
       # ADVISOR_NAME
+      # --- PropTx RESO API (MLS data — contact support@proptx.ca) ---
+      # PROPTX_BASE_URL = https://query.ampre.ca/odata
+      # PROPTX_API_KEY  (preferred — PropTx provides after agreement approval)
+      # PROPTX_USER     (fallback basic auth)
+      # PROPTX_PASSWORD (fallback basic auth)
       - key: APP_TIMEZONE
         value: America/Toronto
       - key: CALL_WINDOW_START_HOUR
