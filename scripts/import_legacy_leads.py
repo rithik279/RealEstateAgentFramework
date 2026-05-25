@@ -41,7 +41,6 @@ def main() -> None:
     now_utc = datetime.now(timezone.utc)
 
     files = [
-        Path(__file__).parent.parent / "_Anu - Leads Assignment  - importLeads.csv",
         Path(__file__).parent.parent / "Old RE Leads for Reactivation.csv",
     ]
 
@@ -58,14 +57,16 @@ def main() -> None:
         with open(filepath, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                name = (row.get("Customer Name") or row.get("Name") or "").strip()
+                first = (row.get("First Name") or "").strip()
+                last = (row.get("Last Name") or "").strip()
+                name = (row.get("Customer Name") or row.get("Name") or f"{first} {last}".strip() or "").strip()
                 phone_raw = (row.get("Contact Number") or row.get("Phone") or "").strip()
                 email = (row.get("Email") or "").strip()
                 source = "legacy_reactivation"
 
                 phone_e164 = normalize_na_phone_to_e164(phone_raw)
                 if not phone_e164:
-                    print(f"  SKIP (bad phone): {name} | {phone_raw}")
+                    print(f"  SKIP (bad phone): {name.encode('ascii','replace').decode()} | {phone_raw}")
                     total_skipped += 1
                     continue
 
@@ -118,7 +119,7 @@ def main() -> None:
                     payload={"source_file": filepath.name, "name": name, "phone": phone_e164},
                 )
 
-                print(f"  + {name} | {phone_e164} → call @ {run_at.isoformat()}")
+                print(f"  + {name.encode('ascii','replace').decode()} | {phone_e164} -> call @ {run_at.isoformat()}")
                 total_inserted += 1
                 total_jobs += 1
 

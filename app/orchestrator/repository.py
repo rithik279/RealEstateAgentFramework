@@ -213,7 +213,7 @@ class OrchestratorRepo:
                     """
                     insert into jobs (type, dedupe_key, payload, run_at, max_attempts)
                     values (%s,%s,%s::jsonb,%s,%s)
-                    on conflict (type, dedupe_key) do update set
+                    on conflict (type, dedupe_key) where dedupe_key is not null do update set
                       payload=excluded.payload,
                       run_at=least(jobs.run_at, excluded.run_at),
                       updated_at=now()
