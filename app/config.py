@@ -69,7 +69,13 @@ class Settings:
 
     retell_api_key: str = os.getenv("RETELL_API_KEY", "")
     retell_agent_id_en: str = os.getenv("RETELL_AGENT_ID_EN", "")
+    retell_agent_id_reactivation: str = os.getenv("RETELL_AGENT_ID_REACTIVATION", "")
     retell_base_url: str = os.getenv("RETELL_BASE_URL", "https://api.retellai.com")
+
+    # Reactivation SMS drip
+    reactivation_sms_daily_limit: int = int(os.getenv("REACTIVATION_SMS_DAILY_LIMIT", "20"))
+    reactivation_sms_window_start: int = int(os.getenv("REACTIVATION_SMS_WINDOW_START", "16"))  # 4 PM
+    reactivation_sms_window_end: int = int(os.getenv("REACTIVATION_SMS_WINDOW_END", "20"))    # 8 PM
 
     # Knowledge Copilot
     knowledge_base_path: str = os.getenv("KNOWLEDGE_BASE_PATH", str(ROOT_DIR / "knowledge-base"))

@@ -78,7 +78,7 @@ class OrchestratorRepo:
         with self.db.connect() as conn:
             with conn.cursor(row_factory=dict_row) as cur:
                 cur.execute(
-                    "select id, name, phone_e164, email, do_not_contact, status from leads where id=%s",
+                    "select id, name, phone_e164, email, do_not_contact, status, source, area from leads where id=%s",
                     (lead_id,),
                 )
                 return cur.fetchone()

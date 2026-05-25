@@ -11,6 +11,7 @@ from uuid import uuid4
 
 from app.config import Settings
 from app.orchestrator.openai_extract import OpenAIClient
+from app.orchestrator.reactivation import seed_reactivation_sms_jobs
 from app.orchestrator.repository import OrchestratorRepo
 from app.orchestrator.retell_client import RetellClient
 from app.orchestrator.schedule import CallWindow
@@ -66,6 +67,12 @@ class JobWorker:
             return
         if job_type == "notify_owner":
             self._notify_owner(payload)
+            return
+        if job_type == "reactivation_sms":
+            self._send_reactivation_sms(payload)
+            return
+        if job_type == "seed_reactivation_sms":
+            self._seed_reactivation_sms()
             return
 
         raise ValueError(f"Unknown job type: {job_type}")
@@ -199,13 +206,30 @@ class JobWorker:
             self.repo.set_status(lead_id, "retell_not_configured")
             return
 
+        # Route reactivation leads to dedicated agent if configured, else fall back to default
+        source = lead.get("source", "")
+        area = lead.get("area") or "unknown"
+        is_reactivation = source == "legacy_reactivation"
+        agent_id = (
+            self.settings.retell_agent_id_reactivation
+            if is_reactivation and self.settings.retell_agent_id_reactivation
+            else self.settings.retell_agent_id_en
+        )
+
+        from app.orchestrator.area import messaging_area
+        area_label = messaging_area(area)
+
         client = RetellClient(api_key=self.settings.retell_api_key, base_url=self.settings.retell_base_url)
         result = client.create_phone_call(
             from_number=self.settings.twilio_from_number,
             to_number=to_number,
-            agent_id=self.settings.retell_agent_id_en,
-            metadata={"lead_id": lead_id},
-            dynamic_variables={"lead_name": lead.get("name") or "there"},
+            agent_id=agent_id,
+            metadata={"lead_id": lead_id, "source": source, "area": area},
+            dynamic_variables={
+                "lead_name": lead.get("name") or "there",
+                "area": area_label,
+                "is_reactivation": "true" if is_reactivation else "false",
+            },
         )
         retell_call_id = result.get("call_id") or result.get("call", {}).get("call_id")
         self.repo.create_call(lead_id=lead_id, retell_call_id=retell_call_id, started_at=utc_now())
@@ -287,6 +311,36 @@ class JobWorker:
         )
         self.repo.add_event(lead_id=lead_id, event_type="followup_sms_sent", payload={"status": send_result.status})
         self.repo.set_status(lead_id, "sms_sent")
+
+    def _send_reactivation_sms(self, payload: dict[str, Any]) -> None:
+        lead_id = payload["lead_id"]
+        body = payload.get("body", "")
+        lead = self.repo.get_lead_contact(lead_id)
+        if not lead or lead.get("do_not_contact"):
+            return
+        phone = lead.get("phone_e164")
+        if not phone or not body:
+            return
+        self.sender.send_sms_to_number(to_number=phone, body=body)
+        self.repo.create_message(
+            lead_id=lead_id, direction="out", channel="sms", body=body,
+        )
+        self.repo.add_event(
+            lead_id=lead_id,
+            event_type="reactivation_sms_sent",
+            payload={"body": body},
+        )
+
+    def _seed_reactivation_sms(self) -> None:
+        count = seed_reactivation_sms_jobs(
+            db=self.repo.db,
+            tz=self.settings.app_timezone,
+            window_start_hour=self.settings.reactivation_sms_window_start,
+            window_end_hour=self.settings.reactivation_sms_window_end,
+            daily_limit=self.settings.reactivation_sms_daily_limit,
+        )
+        import logging
+        logging.getLogger(__name__).info("Reactivation SMS: seeded %d jobs", count)
 
     def _notify_owner(self, payload: dict[str, Any]) -> None:
         lead_id = payload["lead_id"]

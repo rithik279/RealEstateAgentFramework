@@ -77,6 +77,23 @@ async def lifespan(app: FastAPI):  # noqa: ARG001
         call_scheduler.start()
         print("INFO:     Starting CallScheduler...")
 
+        # Daily reactivation SMS seed — fires at 4 PM Toronto, seeds 20 jobs
+        from app.orchestrator.reactivation import seed_reactivation_sms_jobs as _seed_fn
+        call_scheduler.schedule_job(
+            lambda: _seed_fn(
+                db=db,
+                tz=settings.app_timezone,
+                window_start_hour=settings.reactivation_sms_window_start,
+                window_end_hour=settings.reactivation_sms_window_end,
+                daily_limit=settings.reactivation_sms_daily_limit,
+            ),
+            trigger="cron",
+            cron_hour=settings.reactivation_sms_window_start,
+            cron_minute=0,
+            id="daily_reactivation_sms_seed",
+        )
+        print("INFO:     Reactivation SMS drip scheduled (daily 4 PM Toronto).")
+
         if settings.openai_api_key:
             from app.orchestrator.openai_extract import OpenAIClient
             _oai = OpenAIClient(
@@ -874,6 +891,35 @@ def mls_get_listing(mls_number: str) -> dict[str, Any]:
     if not listing:
         raise HTTPException(status_code=404, detail=f"Listing {mls_number} not found")
     return listing
+
+
+# ---------------------------------------------------------------------------
+# Reactivation SMS drip
+# ---------------------------------------------------------------------------
+
+@app.get("/reactivation/report")
+def reactivation_report() -> dict[str, Any]:
+    """Daily reactivation SMS drip stats — sent, queued, replies, remaining."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    from app.orchestrator.reactivation import daily_reactivation_report
+    return daily_reactivation_report(db=orchestrator_repo.db, tz=settings.app_timezone)
+
+
+@app.post("/reactivation/seed")
+def reactivation_seed_now() -> dict[str, Any]:
+    """Manually trigger today's reactivation SMS seed (bypass daily schedule)."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    from app.orchestrator.reactivation import seed_reactivation_sms_jobs
+    count = seed_reactivation_sms_jobs(
+        db=orchestrator_repo.db,
+        tz=settings.app_timezone,
+        window_start_hour=settings.reactivation_sms_window_start,
+        window_end_hour=settings.reactivation_sms_window_end,
+        daily_limit=settings.reactivation_sms_daily_limit,
+    )
+    return {"seeded": count, "daily_limit": settings.reactivation_sms_daily_limit}
 
 
 # ---------------------------------------------------------------------------
