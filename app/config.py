@@ -82,6 +82,12 @@ class Settings:
     embedding_model: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
     copilot_top_k: int = int(os.getenv("COPILOT_TOP_K", "5"))
 
+    # Control center auth
+    # Generate hash: python scripts/gen_admin_hash.py
+    admin_password_hash: str = os.getenv("ADMIN_PASSWORD_HASH", "")
+    secret_key: str = os.getenv("SECRET_KEY", "change-me-in-production")
+    session_ttl_hours: int = int(os.getenv("SESSION_TTL_HOURS", "24"))
+
 
 settings = Settings()
 settings.data_file.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RE Control Center</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f172a;
+  --sidebar: #111827;
+  --panel: #1e293b;
+  --panel2: #263548;
+  --border: #334155;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --hot: #ef4444;
+  --warm: #f97316;
+  --early: #eab308;
+  --cold: #3b82f6;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --sidebar-w: 220px;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  display: flex;
+  min-height: 100vh;
+}
+/* Sidebar */
+#sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+}
+.sidebar-logo {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .icon { font-size: 22px; }
+.sidebar-logo h1 { font-size: 14px; font-weight: 700; margin-top: 4px; }
+.sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 18px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  border-left: 3px solid transparent;
+}
+nav a:hover { background: rgba(99,102,241,0.08); color: var(--text); }
+nav a.active { background: rgba(99,102,241,0.12); color: var(--accent); border-left-color: var(--accent); }
+nav a .nav-icon { width: 18px; text-align: center; font-size: 16px; }
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+}
+.btn-logout {
+  width: 100%; padding: 8px; background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3); color: #ef4444;
+  border-radius: 6px; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.1s;
+}
+.btn-logout:hover { background: rgba(239,68,68,0.2); }
+
+/* Main */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.topbar {
+  background: var(--sidebar);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topbar h2 { font-size: 15px; font-weight: 600; }
+.topbar-meta { font-size: 12px; color: var(--muted); }
+.content { padding: 24px; flex: 1; }
+
+/* Section */
+.section { display: none; }
+.section.active { display: block; }
+
+/* Cards */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+.stat-card .label { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-card .value { font-size: 28px; font-weight: 700; margin-top: 4px; }
+.stat-card .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.stat-hot .value { color: var(--hot); }
+.stat-warm .value { color: var(--warm); }
+.stat-early .value { color: var(--early); }
+.stat-cold .value { color: var(--cold); }
+
+/* Panel */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.panel-title { font-size: 13px; font-weight: 600; }
+.panel-body { padding: 18px; }
+
+/* Table */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left; padding: 10px 14px;
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.15);
+}
+td { padding: 10px 14px; border-bottom: 1px solid rgba(51,65,85,0.4); font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(99,102,241,0.04); }
+tr { cursor: pointer; }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-hot { background: rgba(239,68,68,0.15); color: #ef4444; }
+.badge-warm { background: rgba(249,115,22,0.15); color: #f97316; }
+.badge-early { background: rgba(234,179,8,0.15); color: #ca8a04; }
+.badge-cold { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.badge-unscored { background: rgba(148,163,184,0.15); color: #94a3b8; }
+.badge-queued { background: rgba(99,102,241,0.15); color: #818cf8; }
+.badge-done { background: rgba(34,197,94,0.15); color: #22c55e; }
+.badge-failed { background: rgba(239,68,68,0.15); color: #ef4444; }
+.badge-running { background: rgba(234,179,8,0.15); color: #ca8a04; }
+.badge-ok { background: rgba(34,197,94,0.15); color: #22c55e; }
+.badge-err { background: rgba(239,68,68,0.15); color: #ef4444; }
+.badge-low { background: rgba(34,197,94,0.15); color: #22c55e; }
+.badge-medium { background: rgba(234,179,8,0.15); color: #ca8a04; }
+.badge-high { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.12s, opacity 0.12s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: rgba(99,102,241,0.1); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Filter pills */
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.pill {
+  padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  border: 1px solid var(--border); color: var(--muted); background: transparent;
+  cursor: pointer; transition: all 0.1s;
+}
+.pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pill:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+/* Search input */
+.search-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  outline: none;
+  width: 220px;
+  transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--accent); }
+select.search-input { cursor: pointer; }
+
+/* Copilot */
+.copilot-form { display: flex; flex-direction: column; gap: 12px; }
+textarea.copilot-q {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+textarea.copilot-q:focus { border-color: var(--accent); }
+.copilot-answer {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-size: 13px;
+  min-height: 60px;
+}
+.source-item {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.source-item .src-title { font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.source-item .src-meta { color: var(--muted); }
+
+/* Modal */
+.modal-bg {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0;
+  background: var(--panel);
+  z-index: 10;
+}
+.modal-title { font-size: 15px; font-weight: 600; }
+.modal-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 20px; cursor: pointer; padding: 0 4px;
+}
+.modal-close:hover { color: var(--text); }
+.modal-body { padding: 20px 22px; }
+.detail-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-start; }
+.detail-label { color: var(--muted); font-size: 12px; min-width: 110px; padding-top: 1px; }
+.detail-val { font-size: 13px; flex: 1; }
+.section-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+pre.json-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 11px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #7dd3fc;
+}
+
+/* Settings grid */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.setting-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.setting-icon { font-size: 20px; }
+.setting-info .name { font-size: 13px; font-weight: 500; }
+.setting-info .status { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Inline form */
+.form-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 11px; color: var(--muted); font-weight: 500; }
+.form-group input, .form-group select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+
+/* Loading */
+.loading { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; }
+.empty { color: var(--muted); font-size: 13px; padding: 30px; text-align: center; }
+
+/* Notification */
+#notif {
+  position: fixed; top: 16px; right: 16px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 18px;
+  font-size: 13px; z-index: 999;
+  display: none;
+  max-width: 320px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+#notif.success { border-color: rgba(34,197,94,0.4); color: #22c55e; }
+#notif.error { border-color: rgba(239,68,68,0.4); color: #ef4444; }
+#notif.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div id="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon">🏠</div>
+    <h1>RE Control Center</h1>
+    <p>Brampton Advisory</p>
+  </div>
+  <nav id="nav">
+    <a href="#" data-tab="overview" class="active"><span class="nav-icon">📊</span> Overview</a>
+    <a href="#" data-tab="leads"><span class="nav-icon">👥</span> Leads</a>
+    <a href="#" data-tab="reactivation"><span class="nav-icon">🔄</span> Reactivation</a>
+    <a href="#" data-tab="copilot"><span class="nav-icon">🧠</span> Knowledge Copilot</a>
+    <a href="#" data-tab="mls"><span class="nav-icon">🏡</span> MLS / Listings</a>
+    <a href="#" data-tab="jobs"><span class="nav-icon">⚙️</span> Job Queue</a>
+    <a href="#" data-tab="audit"><span class="nav-icon">📋</span> Audit Log</a>
+    <a href="#" data-tab="settings"><span class="nav-icon">🔧</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<!-- Main -->
+<div id="main">
+  <div class="topbar">
+    <h2 id="pageTitle">Overview</h2>
+    <div class="topbar-meta" id="topbarMeta"></div>
+  </div>
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="sec-overview">
+      <div class="stat-grid" id="overviewStats">
+        <div class="loading">Loading stats...</div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Reactivation Drip</span></div>
+        <div class="panel-body" id="reactivationMini"><div class="loading">Loading...</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Recent Calls</span>
+          <a href="#" data-tab="jobs" class="btn btn-sm btn-secondary" onclick="navigate('jobs')">View Jobs</a>
+        </div>
+        <div class="panel-body" id="recentCallsWrap"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- LEADS -->
+    <div class="section" id="sec-leads">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="filter-row">
+            <input type="text" class="search-input" id="leadSearch" placeholder="Search name / phone..." oninput="filterLeads()">
+            <button class="pill active" data-tier="all" onclick="setTierFilter(this,'all')">All</button>
+            <button class="pill" data-tier="hot" onclick="setTierFilter(this,'hot')">🔥 Hot</button>
+            <button class="pill" data-tier="warm" onclick="setTierFilter(this,'warm')">🌤 Warm</button>
+            <button class="pill" data-tier="early" onclick="setTierFilter(this,'early')">🌱 Early</button>
+            <button class="pill" data-tier="cold" onclick="setTierFilter(this,'cold')">❄️ Cold</button>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="loadLeads(true)">Refresh</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Tier</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Area</th>
+                <th>Source</th>
+                <th>Tags</th>
+              </tr>
+            </thead>
+            <tbody id="leadsBody"><tr><td colspan="8" class="empty">Loading leads...</td></tr></tbody>
+          </table>
+        </div>
+        <div style="padding:12px 18px; display:flex; gap:10px; align-items:center;">
+          <button class="btn btn-sm btn-secondary" id="leadsPrev" onclick="leadsPage(-1)" disabled>Prev</button>
+          <span id="leadsPager" style="font-size:12px; color:var(--muted)"></span>
+          <button class="btn btn-sm btn-secondary" id="leadsNext" onclick="leadsPage(1)">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REACTIVATION -->
+    <div class="section" id="sec-reactivation">
+      <div class="stat-grid" id="reactStats"><div class="loading">Loading...</div></div>
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Area Breakdown (All-Time Sent)</span>
+          <button class="btn btn-primary btn-sm" id="seedBtn" onclick="seedReactivation()">Seed Now (Manual)</button>
+        </div>
+        <div class="panel-body" id="reactAreaBreakdown"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- COPILOT -->
+    <div class="section" id="sec-copilot">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Ontario Knowledge Copilot</span>
+          <span style="font-size:12px;color:var(--muted)">Ask anything about RECO, TRESA, OREA forms, or Brampton market</span>
+        </div>
+        <div class="panel-body">
+          <div class="copilot-form">
+            <div class="form-row">
+              <div class="form-group" style="flex:1">
+                <label>Your Question</label>
+                <textarea class="copilot-q" id="copilotQ" placeholder="e.g. What are the disclosure obligations for a buyer agent under TRESA?"></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Jurisdiction</label>
+                <select id="copilotJuris" class="search-input">
+                  <option value="ontario">Ontario</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="queryCopilot()" id="copilotBtn">Ask Copilot</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="copilotResult" style="display:none">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Answer</span>
+            <div id="copilotRiskBadge"></div>
+          </div>
+          <div class="panel-body">
+            <div id="copilotReviewWarning" style="display:none; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:12px; color:#ef4444;">
+              ⚠️ This answer requires professional review before sharing with clients.
+            </div>
+            <div class="copilot-answer" id="copilotAnswer"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Sources</span></div>
+          <div class="panel-body" id="copilotSources"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MLS -->
+    <div class="section" id="sec-mls">
+      <div class="panel" id="mlsStatusPanel">
+        <div class="panel-header"><span class="panel-title">PropTx RESO API Status</span></div>
+        <div class="panel-body" id="mlsStatusBody"><div class="loading">Checking...</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Search Listings (PropTx Live)</span></div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" id="mlsCity" value="Brampton" class="search-input" style="width:140px">
+            </div>
+            <div class="form-group">
+              <label>Price Min</label>
+              <input type="number" id="mlsPriceMin" placeholder="500000" class="search-input" style="width:120px">
+            </div>
+            <div class="form-group">
+              <label>Price Max</label>
+              <input type="number" id="mlsPriceMax" placeholder="2000000" class="search-input" style="width:120px">
+            </div>
+            <div class="form-group">
+              <label>Min Beds</label>
+              <input type="number" id="mlsBeds" placeholder="3" class="search-input" style="width:80px">
+            </div>
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" onclick="searchMLS()">Search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="mlsResultsPanel" style="display:none">
+        <div class="panel-header">
+          <span class="panel-title" id="mlsResultCount">Results</span>
+          <button class="btn btn-sm btn-secondary" onclick="syncMLS()">Sync to DB</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>MLS #</th><th>Address</th><th>Price</th><th>Beds</th><th>Baths</th><th>Type</th><th>Status</th></tr>
+            </thead>
+            <tbody id="mlsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOB QUEUE -->
+    <div class="section" id="sec-jobs">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="filter-row">
+            <button class="pill active" data-jstatus="all" onclick="setJobFilter(this,'')">All</button>
+            <button class="pill" data-jstatus="queued" onclick="setJobFilter(this,'queued')">Queued</button>
+            <button class="pill" data-jstatus="running" onclick="setJobFilter(this,'running')">Running</button>
+            <button class="pill" data-jstatus="failed" onclick="setJobFilter(this,'failed')">Failed</button>
+            <button class="pill" data-jstatus="done" onclick="setJobFilter(this,'done')">Done</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label style="font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center;cursor:pointer">
+              <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh()"> Auto-refresh
+            </label>
+            <button class="btn btn-sm btn-primary" onclick="loadJobs(true)">Refresh</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Type</th><th>Status</th><th>Run At</th><th>Attempts</th><th>Error</th></tr>
+            </thead>
+            <tbody id="jobsBody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+          </table>
+        </div>
+        <div style="padding:12px 18px; display:flex; gap:10px; align-items:center;">
+          <button class="btn btn-sm btn-secondary" id="jobsPrev" onclick="jobsPage(-1)" disabled>Prev</button>
+          <span id="jobsPager" style="font-size:12px;color:var(--muted)"></span>
+          <button class="btn btn-sm btn-secondary" id="jobsNext" onclick="jobsPage(1)">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIT LOG -->
+    <div class="section" id="sec-audit">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="form-row" style="margin:0">
+            <select class="search-input" id="auditType" onchange="loadAudit(true)" style="width:200px">
+              <option value="">All entity types</option>
+              <option value="lead">Lead</option>
+              <option value="listing">Listing</option>
+              <option value="copilot_query">Copilot Query</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="loadAudit(true)">Refresh</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Entity Type</th><th>Entity ID</th><th>Action</th><th>User</th></tr>
+            </thead>
+            <tbody id="auditBody"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="section" id="sec-settings">
+      <div class="settings-grid" id="settingsGrid"><div class="loading">Loading...</div></div>
+      <div class="panel" style="margin-top:20px">
+        <div class="panel-header"><span class="panel-title">Generate Admin Password Hash</span></div>
+        <div class="panel-body" style="font-size:13px; color:var(--muted); line-height:1.7">
+          To set your admin password, run locally:<br>
+          <pre style="background:var(--bg);padding:10px;border-radius:6px;margin-top:8px;color:#7dd3fc;font-size:12px">python scripts/gen_admin_hash.py</pre>
+          Copy the output and set it as <b style="color:var(--text)">ADMIN_PASSWORD_HASH</b> in Render environment variables.<br>
+          Also set <b style="color:var(--text)">SECRET_KEY</b> to a random 32-byte hex string.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lead Detail Modal -->
+<div class="modal-bg" id="leadModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalName">Lead Detail</span>
+      <button class="modal-close" onclick="closeModal('leadModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="loading">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Notification -->
+<div id="notif"></div>
+
+<script>
+// ============================================================
+// State
+// ============================================================
+let leadsData = [];
+let leadsOffset = 0;
+const LEADS_PAGE = 50;
+let activeTier = 'all';
+
+let jobsOffset = 0;
+const JOBS_PAGE = 50;
+let activeJobStatus = '';
+let autoRefreshTimer = null;
+
+let currentTab = 'overview';
+const tabTitles = {
+  overview: 'Overview',
+  leads: 'Leads',
+  reactivation: 'Reactivation Drip',
+  copilot: 'Knowledge Copilot',
+  mls: 'MLS / Listings',
+  jobs: 'Job Queue',
+  audit: 'Audit Log',
+  settings: 'Settings',
+};
+const tabLoaded = new Set();
+
+// ============================================================
+// Auth
+// ============================================================
+async function checkAuth() {
+  const r = await fetch('/admin/check');
+  if (r.status === 401 || r.status === 503) window.location.href = '/login';
+}
+
+async function logout() {
+  await fetch('/admin/logout', { method: 'POST' });
+  window.location.href = '/login';
+}
+
+// ============================================================
+// Navigation
+// ============================================================
+function navigate(tabName) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.remove('active'));
+  const sec = document.getElementById('sec-' + tabName);
+  if (sec) sec.classList.add('active');
+  const navLink = document.querySelector(`[data-tab="${tabName}"]`);
+  if (navLink) navLink.classList.add('active');
+  document.getElementById('pageTitle').textContent = tabTitles[tabName] || tabName;
+  currentTab = tabName;
+  if (!tabLoaded.has(tabName)) {
+    tabLoaded.add(tabName);
+    loadTabData(tabName);
+  }
+}
+
+function loadTabData(name) {
+  if (name === 'overview') loadOverview();
+  else if (name === 'leads') loadLeads();
+  else if (name === 'reactivation') loadReactivation();
+  else if (name === 'mls') loadMLSStatus();
+  else if (name === 'jobs') loadJobs();
+  else if (name === 'audit') loadAudit();
+  else if (name === 'settings') loadSettings();
+}
+
+document.querySelectorAll('#nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    navigate(a.dataset.tab);
+  });
+});
+
+// ============================================================
+// Notification
+// ============================================================
+function notify(msg, type = 'success') {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  setTimeout(() => el.className = '', 3000);
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+function fmt(val, fallback = '—') { return val != null && val !== '' ? val : fallback; }
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleString('en-CA', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function fmtPrice(n) { return n ? '$' + Number(n).toLocaleString() : '—'; }
+function tierBadge(tier) {
+  if (!tier) return '<span class="badge badge-unscored">Unscored</span>';
+  return `<span class="badge badge-${tier}">${tier.charAt(0).toUpperCase()+tier.slice(1)}</span>`;
+}
+function statusBadge(s) {
+  const cls = s === 'done' ? 'done' : s === 'failed' ? 'failed' : s === 'running' ? 'running' : 'queued';
+  return `<span class="badge badge-${cls}">${s}</span>`;
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ============================================================
+// OVERVIEW
+// ============================================================
+async function loadOverview() {
+  try {
+    const [ov, calls] = await Promise.all([
+      fetch('/admin/overview').then(r => r.json()),
+      fetch('/admin/calls?limit=5').then(r => r.json()),
+    ]);
+    renderOverviewStats(ov);
+    renderRecentCalls(calls.calls || []);
+    document.getElementById('topbarMeta').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+  } catch(e) {
+    document.getElementById('overviewStats').innerHTML = '<div class="empty">Error loading stats.</div>';
+  }
+}
+
+function renderOverviewStats(ov) {
+  const t = ov.tiers || {};
+  document.getElementById('overviewStats').innerHTML = `
+    <div class="stat-card"><div class="label">Total Leads</div><div class="value">${ov.total_leads||0}</div></div>
+    <div class="stat-card stat-hot"><div class="label">Hot</div><div class="value">${t.hot||0}</div><div class="sub">Ready to buy</div></div>
+    <div class="stat-card stat-warm"><div class="label">Warm</div><div class="value">${t.warm||0}</div><div class="sub">Interested</div></div>
+    <div class="stat-card stat-early"><div class="label">Early</div><div class="value">${t.early||0}</div><div class="sub">Nurturing</div></div>
+    <div class="stat-card stat-cold"><div class="label">Cold</div><div class="value">${t.cold||0}</div><div class="sub">Long-term</div></div>
+    <div class="stat-card"><div class="label">Unscored</div><div class="value">${t.unscored||0}</div><div class="sub">No call yet</div></div>
+    <div class="stat-card"><div class="label">Calls Today</div><div class="value">${ov.calls_today||0}</div></div>
+    <div class="stat-card"><div class="label">SMS Today</div><div class="value">${ov.sms_today||0}</div></div>
+    <div class="stat-card"><div class="label">Jobs Queued</div><div class="value">${ov.jobs_queued||0}</div>${ov.jobs_failed_24h>0?`<div class="sub" style="color:var(--danger)">${ov.jobs_failed_24h} failed (24h)</div>`:''}</div>
+    <div class="stat-card"><div class="label">Reactivation</div><div class="value">${ov.reactivation_sent||0}</div><div class="sub">of ${ov.reactivation_total||0} total</div></div>
+  `;
+  // Mini reactivation
+  document.getElementById('reactivationMini').innerHTML = `
+    <p style="color:var(--muted);font-size:13px">
+      <b style="color:var(--text)">${ov.reactivation_sent||0}</b> reactivation SMS sent all-time &nbsp;·&nbsp;
+      <b style="color:var(--text)">${ov.reactivation_total||0}</b> total legacy leads
+      &nbsp;·&nbsp; <a href="#" onclick="navigate('reactivation')" style="color:var(--accent)">View drip stats →</a>
+    </p>
+  `;
+}
+
+function renderRecentCalls(calls) {
+  if (!calls.length) { document.getElementById('recentCallsWrap').innerHTML='<div class="empty">No calls yet.</div>'; return; }
+  let html = '<div class="tbl-wrap"><table><thead><tr><th>Lead</th><th>Outcome</th><th>Duration</th><th>Time</th></tr></thead><tbody>';
+  calls.forEach(c => {
+    html += `<tr>
+      <td>${fmt(c.lead_name)}</td>
+      <td>${fmt(c.outcome)}</td>
+      <td>${c.duration_sec ? c.duration_sec + 's' : '—'}</td>
+      <td>${fmtDate(c.created_at)}</td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('recentCallsWrap').innerHTML = html;
+}
+
+// ============================================================
+// LEADS
+// ============================================================
+async function loadLeads(force = false) {
+  if (!force && tabLoaded.has('leads-data')) return;
+  tabLoaded.add('leads-data');
+  document.getElementById('leadsBody').innerHTML = '<tr><td colspan="8" class="empty">Loading...</td></tr>';
+  try {
+    const tier = activeTier === 'all' ? '' : activeTier;
+    const params = new URLSearchParams({ limit: LEADS_PAGE, offset: leadsOffset });
+    if (tier) params.set('tier', tier);
+    const data = await fetch('/leads-scored?' + params).then(r => r.json());
+    leadsData = Array.isArray(data) ? data : [];
+    renderLeads();
+  } catch(e) {
+    document.getElementById('leadsBody').innerHTML = '<tr><td colspan="8" class="empty">Error loading leads.</td></tr>';
+  }
+}
+
+function renderLeads() {
+  const search = document.getElementById('leadSearch').value.toLowerCase();
+  const rows = leadsData.filter(l => {
+    if (!search) return true;
+    return (l.name||'').toLowerCase().includes(search) || (l.phone_e164||'').includes(search);
+  });
+  if (!rows.length) {
+    document.getElementById('leadsBody').innerHTML = '<tr><td colspan="8" class="empty">No leads found.</td></tr>';
+    document.getElementById('leadsPager').textContent = '0 results';
+    return;
+  }
+  let html = '';
+  rows.forEach(l => {
+    const tags = Array.isArray(l.tags) ? l.tags.slice(0,3).map(t=>`<span style="font-size:10px;background:rgba(99,102,241,0.15);color:#818cf8;padding:1px 6px;border-radius:10px;">${t}</span>`).join(' ') : '';
+    html += `<tr onclick="openLead('${l.id}')">
+      <td><b>${fmt(l.name)}</b></td>
+      <td>${fmt(l.phone_e164)}</td>
+      <td>${tierBadge(l.readiness_tier)}</td>
+      <td>${l.readiness_score != null ? l.readiness_score : '—'}</td>
+      <td><span style="font-size:12px;color:var(--muted)">${fmt(l.status)}</span></td>
+      <td><span style="font-size:12px;color:var(--muted)">${fmt(l.area)}</span></td>
+      <td><span style="font-size:12px;color:var(--muted)">${fmt(l.source)}</span></td>
+      <td>${tags}</td>
+    </tr>`;
+  });
+  document.getElementById('leadsBody').innerHTML = html;
+  document.getElementById('leadsPager').textContent = `Showing ${rows.length} leads`;
+}
+
+function filterLeads() { renderLeads(); }
+
+function setTierFilter(btn, tier) {
+  document.querySelectorAll('[data-tier]').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  activeTier = tier;
+  leadsOffset = 0;
+  tabLoaded.delete('leads-data');
+  loadLeads();
+}
+
+function leadsPage(dir) {
+  leadsOffset = Math.max(0, leadsOffset + dir * LEADS_PAGE);
+  tabLoaded.delete('leads-data');
+  loadLeads();
+}
+
+async function openLead(id) {
+  document.getElementById('modalName').textContent = 'Loading...';
+  document.getElementById('modalBody').innerHTML = '<div class="loading">Loading...</div>';
+  document.getElementById('leadModal').classList.add('open');
+  try {
+    const p = await fetch(`/leads/${id}/profile`).then(r => r.json());
+    document.getElementById('modalName').textContent = fmt(p.name, 'Lead Detail');
+    const bp = p.buyer_profile || {};
+    const scores = p.scores || {};
+    let html = `
+      <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-val">${fmt(p.phone_e164)}</span></div>
+      <div class="detail-row"><span class="detail-label">Email</span><span class="detail-val">${fmt(p.email)}</span></div>
+      <div class="detail-row"><span class="detail-label">Source</span><span class="detail-val">${fmt(p.source)}</span></div>
+      <div class="detail-row"><span class="detail-label">Area</span><span class="detail-val">${fmt(p.area)}</span></div>
+      <div class="detail-row"><span class="detail-label">Status</span><span class="detail-val">${fmt(p.status)}</span></div>
+      <div class="detail-row"><span class="detail-label">Language</span><span class="detail-val">${fmt(p.language)}</span></div>
+      <div class="detail-row"><span class="detail-label">Created</span><span class="detail-val">${fmtDate(p.created_at)}</span></div>
+      <hr class="section-divider">
+      <div class="detail-row"><span class="detail-label">Readiness Score</span><span class="detail-val"><b style="font-size:18px">${p.readiness_score != null ? p.readiness_score : '—'}</b> / 100</span></div>
+      <div class="detail-row"><span class="detail-label">Tier</span><span class="detail-val">${tierBadge(p.readiness_tier)}</span></div>
+      <div class="detail-row"><span class="detail-label">Tags</span><span class="detail-val">${Array.isArray(p.tags) ? p.tags.join(', ') || '—' : '—'}</span></div>
+    `;
+    if (Object.keys(scores).length) {
+      html += `<hr class="section-divider"><div class="panel-title" style="margin-bottom:10px">Score Components</div>`;
+      Object.entries(scores).forEach(([k,v]) => {
+        html += `<div class="detail-row"><span class="detail-label">${k}</span><span class="detail-val">${v}</span></div>`;
+      });
+    }
+    if (Object.keys(bp).length) {
+      html += `<hr class="section-divider"><div class="panel-title" style="margin-bottom:10px">Buyer Profile</div>`;
+      ['budget_min','budget_max','timeline','preferred_areas','financing_status','family_size','investment_vs_livein','basement_interest'].forEach(k => {
+        if (bp[k] != null && bp[k] !== '') {
+          const v = Array.isArray(bp[k]) ? bp[k].join(', ') : String(bp[k]);
+          html += `<div class="detail-row"><span class="detail-label">${k.replace(/_/g,' ')}</span><span class="detail-val">${v}</span></div>`;
+        }
+      });
+      html += `<details style="margin-top:10px"><summary style="cursor:pointer;color:var(--muted);font-size:12px">Full JSON</summary><pre class="json-block">${JSON.stringify(bp,null,2)}</pre></details>`;
+    }
+    document.getElementById('modalBody').innerHTML = html;
+  } catch(e) {
+    document.getElementById('modalBody').innerHTML = '<div class="empty">Error loading lead profile.</div>';
+  }
+}
+
+// ============================================================
+// REACTIVATION
+// ============================================================
+async function loadReactivation() {
+  try {
+    const data = await fetch('/reactivation/report').then(r => r.json());
+    renderReactivation(data);
+  } catch(e) {
+    document.getElementById('reactStats').innerHTML = '<div class="empty">Error loading reactivation stats.</div>';
+  }
+}
+
+function renderReactivation(d) {
+  document.getElementById('reactStats').innerHTML = `
+    <div class="stat-card"><div class="label">Sent Today</div><div class="value">${d.sent_today||0}</div></div>
+    <div class="stat-card"><div class="label">Queued Today</div><div class="value">${d.queued_today||0}</div></div>
+    <div class="stat-card"><div class="label">Replies Today</div><div class="value">${d.replies_today||0}</div></div>
+    <div class="stat-card"><div class="label">Total Sent</div><div class="value">${d.total_sent_all_time||0}</div></div>
+    <div class="stat-card"><div class="label">Remaining Eligible</div><div class="value">${d.remaining_eligible||0}</div></div>
+    <div class="stat-card"><div class="label">Days Remaining</div><div class="value">${d.days_remaining_at_current_pace||0}</div><div class="sub">at 20/day pace</div></div>
+  `;
+  const area = d.sent_by_area || {};
+  if (Object.keys(area).length) {
+    let html = '<table><thead><tr><th>Area</th><th>SMS Sent</th></tr></thead><tbody>';
+    Object.entries(area).sort((a,b)=>b[1]-a[1]).forEach(([k,v]) => {
+      html += `<tr><td>${k}</td><td>${v}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById('reactAreaBreakdown').innerHTML = html;
+  } else {
+    document.getElementById('reactAreaBreakdown').innerHTML = '<div class="empty">No data yet.</div>';
+  }
+}
+
+async function seedReactivation() {
+  const btn = document.getElementById('seedBtn');
+  btn.disabled = true;
+  btn.textContent = 'Seeding...';
+  try {
+    const r = await fetch('/reactivation/seed', { method: 'POST' });
+    const data = await r.json();
+    notify(`Seeded ${data.seeded} reactivation jobs (limit: ${data.daily_limit})`);
+    tabLoaded.delete('reactivation');
+    loadReactivation();
+  } catch(e) {
+    notify('Error seeding reactivation jobs', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Seed Now (Manual)';
+  }
+}
+
+// ============================================================
+// COPILOT
+// ============================================================
+async function queryCopilot() {
+  const q = document.getElementById('copilotQ').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('copilotBtn');
+  btn.disabled = true;
+  btn.textContent = 'Thinking...';
+  document.getElementById('copilotResult').style.display = 'none';
+  try {
+    const r = await fetch('/copilot/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q, jurisdiction: document.getElementById('copilotJuris').value }),
+    });
+    const data = await r.json();
+    if (!r.ok) { notify(data.detail || 'Error querying copilot', 'error'); return; }
+    document.getElementById('copilotAnswer').textContent = data.answer;
+    const riskCls = data.risk_level === 'high' ? 'high' : data.risk_level === 'medium' ? 'medium' : 'low';
+    document.getElementById('copilotRiskBadge').innerHTML = `<span class="badge badge-${riskCls}">${data.risk_level || 'low'} risk</span>`;
+    const warn = document.getElementById('copilotReviewWarning');
+    warn.style.display = data.requires_review ? 'block' : 'none';
+    let srcHtml = '';
+    (data.sources || []).forEach(s => {
+      srcHtml += `<div class="source-item">
+        <div class="src-title">${s.doc_id} ${s.heading ? '— ' + s.heading : ''}</div>
+        <div class="src-meta">Chunk ${s.chunk_index} &nbsp;·&nbsp; Similarity: ${(s.similarity*100).toFixed(1)}% &nbsp;·&nbsp; Risk: ${s.risk_level}</div>
+      </div>`;
+    });
+    document.getElementById('copilotSources').innerHTML = srcHtml || '<div class="empty">No sources.</div>';
+    document.getElementById('copilotResult').style.display = 'block';
+  } catch(e) {
+    notify('Network error', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ask Copilot';
+  }
+}
+
+// ============================================================
+// MLS
+// ============================================================
+async function loadMLSStatus() {
+  try {
+    const d = await fetch('/mls/status').then(r => r.json());
+    document.getElementById('mlsStatusBody').innerHTML = d.configured
+      ? `<span class="badge badge-ok">Configured</span> &nbsp; Base URL: <code style="font-size:12px">${d.base_url}</code> &nbsp; Auth: ${d.auth_method}`
+      : `<span class="badge badge-err">Not Configured</span> &nbsp; ${d.message || 'Set PROPTX_BASE_URL + PROPTX_API_KEY in Render env vars.'}`;
+  } catch(e) {
+    document.getElementById('mlsStatusBody').innerHTML = '<span class="badge badge-err">Error</span>';
+  }
+}
+
+async function searchMLS() {
+  const body = {
+    city: document.getElementById('mlsCity').value || 'Brampton',
+    price_min: parseInt(document.getElementById('mlsPriceMin').value)||null,
+    price_max: parseInt(document.getElementById('mlsPriceMax').value)||null,
+    bedrooms_min: parseInt(document.getElementById('mlsBeds').value)||null,
+    limit: 20,
+  };
+  try {
+    const r = await fetch('/mls/search', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const data = await r.json();
+    if (!r.ok) { notify(data.detail||'MLS not configured', 'error'); return; }
+    renderMLSResults(data);
+  } catch(e) { notify('Error searching MLS', 'error'); }
+}
+
+function renderMLSResults(data) {
+  document.getElementById('mlsResultsPanel').style.display = 'block';
+  document.getElementById('mlsResultCount').textContent = `${data.count||0} listings`;
+  let html = '';
+  (data.listings||[]).forEach(l => {
+    html += `<tr>
+      <td>${fmt(l.mls_number)}</td>
+      <td>${fmt(l.address)}</td>
+      <td>${fmtPrice(l.list_price)}</td>
+      <td>${fmt(l.bedrooms)}</td>
+      <td>${fmt(l.bathrooms)}</td>
+      <td>${fmt(l.property_type)}</td>
+      <td>${fmt(l.status)}</td>
+    </tr>`;
+  });
+  document.getElementById('mlsBody').innerHTML = html || '<tr><td colspan="7" class="empty">No results.</td></tr>';
+}
+
+async function syncMLS() {
+  const body = { city: document.getElementById('mlsCity').value||'Brampton', price_min: 500000, price_max: 2000000 };
+  try {
+    const r = await fetch('/mls/sync', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const data = await r.json();
+    if (!r.ok) { notify(data.detail||'Sync error', 'error'); return; }
+    notify(`Sync complete: ${data.inserted||0} inserted, ${data.updated||0} updated`);
+  } catch(e) { notify('Error syncing MLS', 'error'); }
+}
+
+// ============================================================
+// JOB QUEUE
+// ============================================================
+async function loadJobs(force = false) {
+  const params = new URLSearchParams({ limit: JOBS_PAGE, offset: jobsOffset });
+  if (activeJobStatus) params.set('status', activeJobStatus);
+  try {
+    const data = await fetch('/admin/jobs?' + params).then(r => r.json());
+    renderJobs(data);
+  } catch(e) {
+    document.getElementById('jobsBody').innerHTML = '<tr><td colspan="6" class="empty">Error loading jobs.</td></tr>';
+  }
+}
+
+function renderJobs(data) {
+  const jobs = data.jobs || [];
+  if (!jobs.length) {
+    document.getElementById('jobsBody').innerHTML = '<tr><td colspan="6" class="empty">No jobs found.</td></tr>';
+    document.getElementById('jobsPager').textContent = '0 jobs';
+    return;
+  }
+  let html = '';
+  jobs.forEach(j => {
+    const payloadStr = j.payload ? JSON.stringify(j.payload).substring(0,60) + '...' : '—';
+    html += `<tr>
+      <td style="font-size:11px;color:var(--muted)">${j.id}</td>
+      <td><b>${j.type}</b></td>
+      <td>${statusBadge(j.status)}</td>
+      <td style="font-size:12px">${fmtDate(j.run_at)}</td>
+      <td>${j.attempts}/${j.max_attempts}</td>
+      <td style="font-size:11px;color:var(--danger);max-width:200px;overflow:hidden;text-overflow:ellipsis">${fmt(j.last_error)}</td>
+    </tr>`;
+  });
+  document.getElementById('jobsBody').innerHTML = html;
+  const from = jobsOffset + 1, to = jobsOffset + jobs.length;
+  document.getElementById('jobsPager').textContent = `${from}–${to} of ${data.total}`;
+  document.getElementById('jobsPrev').disabled = jobsOffset === 0;
+  document.getElementById('jobsNext').disabled = to >= data.total;
+}
+
+function setJobFilter(btn, status) {
+  document.querySelectorAll('[data-jstatus]').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  activeJobStatus = status;
+  jobsOffset = 0;
+  loadJobs(true);
+}
+
+function jobsPage(dir) {
+  jobsOffset = Math.max(0, jobsOffset + dir * JOBS_PAGE);
+  loadJobs(true);
+}
+
+function toggleAutoRefresh() {
+  if (document.getElementById('autoRefresh').checked) {
+    autoRefreshTimer = setInterval(() => { if (currentTab === 'jobs') loadJobs(true); }, 10000);
+  } else {
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+}
+
+// ============================================================
+// AUDIT LOG
+// ============================================================
+async function loadAudit(force = false) {
+  const et = document.getElementById('auditType').value;
+  const params = new URLSearchParams({ limit: 50 });
+  if (et) params.set('entity_type', et);
+  try {
+    const data = await fetch('/audit-log?' + params).then(r => r.json());
+    renderAudit(data.entries || []);
+  } catch(e) {
+    document.getElementById('auditBody').innerHTML = '<tr><td colspan="5" class="empty">Error loading audit log.</td></tr>';
+  }
+}
+
+function renderAudit(entries) {
+  if (!entries.length) {
+    document.getElementById('auditBody').innerHTML = '<tr><td colspan="5" class="empty">No audit log entries.</td></tr>';
+    return;
+  }
+  let html = '';
+  entries.forEach(e => {
+    html += `<tr>
+      <td style="font-size:12px">${fmtDate(e.created_at)}</td>
+      <td>${fmt(e.entity_type)}</td>
+      <td style="font-size:11px;color:var(--muted)">${fmt(e.entity_id)}</td>
+      <td>${fmt(e.action)}</td>
+      <td style="font-size:12px;color:var(--muted)">${fmt(e.user_id)}</td>
+    </tr>`;
+  });
+  document.getElementById('auditBody').innerHTML = html;
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+async function loadSettings() {
+  try {
+    const d = await fetch('/config-status').then(r => r.json());
+    const items = [
+      { icon: '📱', name: 'SMS (Twilio)', key: 'sms_configured' },
+      { icon: '📣', name: 'Meta Webhooks', key: 'meta_webhooks_configured' },
+      { icon: '🤖', name: 'OpenAI', key: 'openai_configured', sub: d.openai_model },
+      { icon: '🗄️', name: 'Database', key: 'database_configured' },
+      { icon: '📞', name: 'Retell AI', key: 'retell_configured' },
+      { icon: '📧', name: 'Email (SMTP)', key: 'email_configured' },
+      { icon: '📅', name: 'Booking Link', key: 'booking_link_configured' },
+      { icon: '🔔', name: 'Owner Alert', key: 'owner_alert_configured' },
+    ];
+    let html = '';
+    items.forEach(item => {
+      const ok = d[item.key];
+      html += `<div class="setting-card">
+        <div class="setting-icon">${item.icon}</div>
+        <div class="setting-info">
+          <div class="name">${item.name}</div>
+          <div class="status"><span class="badge badge-${ok?'ok':'err'}">${ok?'Configured':'Not set'}</span>${item.sub?' &nbsp;<span style="font-size:11px;color:var(--muted)">'+item.sub+'</span>':''}</div>
+        </div>
+      </div>`;
+    });
+    document.getElementById('settingsGrid').innerHTML = html;
+  } catch(e) {
+    document.getElementById('settingsGrid').innerHTML = '<div class="empty">Error loading settings.</div>';
+  }
+}
+
+// ============================================================
+// Init
+// ============================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
+  navigate('overview');
+});
+</script>
+</body>
+</html>

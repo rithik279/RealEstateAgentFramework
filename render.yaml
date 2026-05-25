@@ -32,6 +32,11 @@ services:
       # CALENDLY_BOOKING_URL
       # COMPANY_NAME
       # ADVISOR_NAME
+      # --- Control Center Auth ---
+      # Run: python scripts/gen_admin_hash.py  → paste output here
+      # ADMIN_PASSWORD_HASH
+      # SECRET_KEY  (python -c "import secrets; print(secrets.token_hex(32))")
+      # SESSION_TTL_HOURS = 24
       # --- PropTx RESO API (MLS data — contact support@proptx.ca) ---
       # PROPTX_BASE_URL = https://query.ampre.ca/odata
       # PROPTX_API_KEY  (preferred — PropTx provides after agreement approval)

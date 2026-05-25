@@ -41,6 +41,7 @@ from app.orchestrator.repository import OrchestratorRepo
 from app.orchestrator.schedule import CallWindow
 from app.orchestrator.worker import start_worker_in_thread
 from app.storage import JsonStorage
+from app.api.admin import router as admin_router
 
 
 storage = JsonStorage(settings.data_file)
@@ -130,6 +131,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.include_router(admin_router)
+
 
 @app.get("/")
 def root() -> dict[str, Any]:
@@ -149,6 +152,22 @@ def mvp_ui() -> FileResponse:
 def dashboard_ui() -> FileResponse:
     """Lead scoring dashboard — view all leads with readiness scores and tags."""
     return FileResponse(settings.ui_file.parent / "dashboard.html")
+
+
+@app.get("/login", response_class=FileResponse)
+def login_page() -> FileResponse:
+    return FileResponse(settings.ui_file.parent / "login.html")
+
+
+@app.get("/control")
+def control_center(request: Request) -> Any:
+    """Agent control center — requires authentication."""
+    from app.auth import SESSION_COOKIE, verify_session_token
+    token = request.cookies.get(SESSION_COOKIE)
+    if not token or not verify_session_token(token):
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/login", status_code=302)
+    return FileResponse(settings.ui_file.parent / "control.html")
 
 
 @app.get("/health")
