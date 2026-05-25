@@ -98,6 +98,10 @@ alter table leads add column if not exists readiness_tier text;
 alter table leads add column if not exists buyer_profile jsonb;
 alter table leads add column if not exists scores jsonb;
 
+-- v4: area label (deterministic from area code, never AI-inferred)
+alter table leads add column if not exists area text;
+create index if not exists leads_area_idx on leads(area);
+
 -- v2: knowledge copilot
 create table if not exists knowledge_chunks (
   id bigserial primary key,
