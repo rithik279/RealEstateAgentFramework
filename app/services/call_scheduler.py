@@ -76,7 +76,7 @@ class CallScheduler:
             from apscheduler.triggers.date import DateTrigger
             trigger_obj = DateTrigger(run_date=run_at)
         elif trigger == "cron" and cron_hour is not None:
-            trigger_obj = CronTrigger(hour=cron_hour, minute=cron_minute, tz=self.tz)
+            trigger_obj = CronTrigger(hour=cron_hour, minute=cron_minute, timezone=str(self.tz))
         else:
             logger.error("Invalid trigger configuration: trigger=%s", trigger)
             return None
