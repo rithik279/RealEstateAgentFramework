@@ -313,14 +313,39 @@ class JobWorker:
         self.repo.set_status(lead_id, "sms_sent")
 
     def _send_reactivation_sms(self, payload: dict[str, Any]) -> None:
+        from app.orchestrator.reactivation import (
+            _random_send_time,
+            build_touch2_body,
+            build_touch3_body,
+        )
+
         lead_id = payload["lead_id"]
-        body = payload.get("body", "")
+        touch = int(payload.get("touch", 1))
         lead = self.repo.get_lead_contact(lead_id)
         if not lead or lead.get("do_not_contact"):
             return
         phone = lead.get("phone_e164")
-        if not phone or not body:
+        if not phone:
             return
+
+        area = lead.get("area")
+        name = lead.get("name")
+
+        # Compute body — Touch 1 has pre-built body; Touch 2/3 built dynamically
+        if touch == 1:
+            body = payload.get("body", "")
+        elif touch == 2:
+            extracted = self.repo.get_latest_extracted_json(lead_id)
+            body = build_touch2_body(name=name, area=area, extracted=extracted)
+        elif touch == 3:
+            extracted = self.repo.get_latest_extracted_json(lead_id)
+            body = build_touch3_body(name=name, area=area, extracted=extracted)
+        else:
+            body = payload.get("body", "")
+
+        if not body:
+            return
+
         self.sender.send_sms_to_number(to_number=phone, body=body)
         self.repo.create_message(
             lead_id=lead_id, direction="out", channel="sms", body=body,
@@ -328,8 +353,43 @@ class JobWorker:
         self.repo.add_event(
             lead_id=lead_id,
             event_type="reactivation_sms_sent",
-            payload={"body": body},
+            payload={"body": body, "touch": touch},
         )
+
+        # After Touch 1, schedule Touch 2 (Day 4) and Touch 3 (Day 10)
+        if touch == 1:
+            tz = self.settings.app_timezone
+            ws = self.settings.reactivation_sms_window_start
+            we = self.settings.reactivation_sms_window_end
+
+            from datetime import date, timedelta
+            from zoneinfo import ZoneInfo
+            local_tz = ZoneInfo(tz)
+            today = datetime.now(local_tz).date()
+
+            # Touch 2: Day 4 from today
+            day4 = today + timedelta(days=4)
+            send2 = _random_send_time(tz=tz, window_start_hour=ws, window_end_hour=we,
+                                      base_date=datetime(day4.year, day4.month, day4.day, ws, 0, tzinfo=local_tz))
+            self.repo.enqueue_job(
+                job_type="reactivation_sms",
+                dedupe_key=f"reactivation_sms:{lead_id}:t2",
+                payload={"lead_id": lead_id, "touch": 2},
+                run_at=send2,
+                max_attempts=2,
+            )
+
+            # Touch 3: Day 10 from today
+            day10 = today + timedelta(days=10)
+            send3 = _random_send_time(tz=tz, window_start_hour=ws, window_end_hour=we,
+                                      base_date=datetime(day10.year, day10.month, day10.day, ws, 0, tzinfo=local_tz))
+            self.repo.enqueue_job(
+                job_type="reactivation_sms",
+                dedupe_key=f"reactivation_sms:{lead_id}:t3",
+                payload={"lead_id": lead_id, "touch": 3},
+                run_at=send3,
+                max_attempts=2,
+            )
 
     def _seed_reactivation_sms(self) -> None:
         count = seed_reactivation_sms_jobs(

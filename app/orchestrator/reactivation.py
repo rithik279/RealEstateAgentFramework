@@ -70,6 +70,96 @@ def build_sms_body(name: str | None, area: str | None) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Touch 2 (Day 4) — personalized value hook based on call extracted data
+# ---------------------------------------------------------------------------
+
+def build_touch2_body(
+    name: str | None,
+    area: str | None,
+    extracted: dict | None,
+) -> str:
+    """
+    Personalized Touch 2 SMS. Uses call transcript data if available.
+    Falls back to generic area value hook.
+    """
+    first_name = (name or "").split()[0] if name else "there"
+    ex = extracted or {}
+
+    # area_confirmed from call overrides area-code guess
+    confirmed_area = ex.get("area_confirmed") or ""
+    display_area = confirmed_area if confirmed_area else messaging_area(area or "unknown")
+
+    priority = ex.get("priority_signal") or ""
+    renting = ex.get("currently_renting")
+    basement = ex.get("basement_income_interest")
+    lot_interest = ex.get("lot_size_interest")
+    kitchen = ex.get("kitchen_priority")
+    investor = ex.get("investor_minded")
+
+    # --- Decision tree ---
+    if renting:
+        return (
+            f"Hey {first_name}, Alex here again. Quick thought since we chatted: "
+            f"a lot of people renting in {display_area} right now are actually closer to owning than they think. "
+            f"The rent vs. buy math has shifted. Happy to run the numbers for you, no strings attached. Interested?"
+        )
+
+    if priority == "income_potential" or basement:
+        return (
+            f"Hey {first_name}, Alex here. Wanted to share something relevant to what you mentioned: "
+            f"homes in {display_area} with legal basement suites are still generating solid rental income. "
+            f"Some buyers are covering 30-40% of their mortgage that way. Worth a 10 min chat if you're curious."
+        )
+
+    # Garden suite angle: lot interest in sw_ontario (KW/London/Woodstock area has ADU momentum)
+    if lot_interest and area in ("sw_ontario", "gta_suburbs", "gta_core"):
+        return (
+            f"Hey {first_name}, Alex here. Based on what you were looking for in {display_area}, "
+            f"garden suites are picking up steam. Some lots qualify for a second unit in the backyard, "
+            f"which adds serious value. Wanted to flag it. Want me to pull a few options that would work?"
+        )
+
+    if priority == "kitchen" or kitchen:
+        return (
+            f"Hey {first_name}, Alex here. I pulled together a short list of the top homes in {display_area} "
+            f"right now with standout kitchens and good bones. Buyer's market means you have options. "
+            f"Want me to send them over?"
+        )
+
+    if investor:
+        return (
+            f"Hey {first_name}, Alex here. Circling back since we spoke. "
+            f"Cash flow on the right property in {display_area} is still very achievable in this market. "
+            f"Happy to walk you through a quick ROI breakdown on a real listing. Interested?"
+        )
+
+    # Generic: top homes value hook
+    return (
+        f"Hey {first_name}, Alex here. Just wanted to follow up from our chat. "
+        f"I put together a short list of the top homes in {display_area} right now, "
+        f"buyer's market so timing is actually good. Want me to send it over?"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Touch 3 (Day 10) — soft close + referral ask
+# ---------------------------------------------------------------------------
+
+def build_touch3_body(name: str | None, area: str | None, extracted: dict | None) -> str:
+    first_name = (name or "").split()[0] if name else "there"
+    ex = extracted or {}
+    confirmed_area = ex.get("area_confirmed") or ""
+    display_area = confirmed_area if confirmed_area else messaging_area(area or "unknown")
+
+    return (
+        f"Hey {first_name}, Alex one last time. No pressure at all. "
+        f"If the timing isn't right for you right now in {display_area}, totally understood. "
+        f"And if you know anyone who's thinking about buying or selling, I'd love an intro. "
+        f"I take good care of people. Either way, good luck and feel free to reach out anytime."
+    )
+
+
+# ---------------------------------------------------------------------------
 # Random send time within window
 # ---------------------------------------------------------------------------
 
