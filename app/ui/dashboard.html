@@ -131,7 +131,7 @@
   </header>
 
   <div class="stats" id="stats">
-    <div class="stat-card total"><div class="label">Total Leads</div><div class="value" id="total-count">—</div></div>
+    <div class="stat-card total"><div class="label">Total Leads</div><div class="value" id="total-count">—</div><div style="font-size:11px;color:var(--muted);margin-top:4px" id="total-sub"></div></div>
     <div class="stat-card hot"><div class="label">🔴 Hot</div><div class="value" id="hot-count">—</div></div>
     <div class="stat-card warm"><div class="label">🟡 Warm</div><div class="value" id="warm-count">—</div></div>
     <div class="stat-card early"><div class="label">🟢 Early</div><div class="value" id="early-count">—</div></div>
@@ -208,8 +208,8 @@
 
       try {
         const url = currentFilter
-          ? `${API}/leads-scored?tier=${currentFilter}&limit=100`
-          : `${API}/leads-scored?limit=100`;
+          ? `${API}/leads-scored?tier=${currentFilter}&limit=2000`
+          : `${API}/leads-scored?limit=2000`;
 
         const res = await fetch(url);
         if (!res.ok) {
@@ -271,6 +271,11 @@
       document.getElementById('hot-count').textContent = leads.filter(l => l.readiness_tier === 'hot').length;
       document.getElementById('warm-count').textContent = leads.filter(l => l.readiness_tier === 'warm').length;
       document.getElementById('early-count').textContent = leads.filter(l => l.readiness_tier === 'early').length;
+      // Show scored vs total breakdown
+      const scored = leads.filter(l => l.readiness_score !== null && l.readiness_score !== undefined).length;
+      const unscored = leads.length - scored;
+      const sub = document.getElementById('total-sub');
+      if (sub) sub.textContent = scored ? `${scored} scored · ${unscored} pending` : `${unscored} awaiting first call`;
     }
 
     function setFilter(tier, btn) {
