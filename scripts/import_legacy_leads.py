@@ -12,7 +12,6 @@ from __future__ import annotations
 import csv
 import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -21,7 +20,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from app.db import create_database, migrate
 from app.orchestrator.phone import normalize_na_phone_to_e164
 from app.orchestrator.repository import OrchestratorRepo
-from app.orchestrator.schedule import CallWindow
 
 
 def main() -> None:
@@ -33,20 +31,12 @@ def main() -> None:
     migrate(db)
     repo = OrchestratorRepo(db=db)
 
-    call_window = CallWindow(
-        tz="America/Toronto",
-        start_hour=9,
-        end_hour=20,
-    )
-    now_utc = datetime.now(timezone.utc)
-
     files = [
         Path(__file__).parent.parent / "Old RE Leads for Reactivation.csv",
     ]
 
     total_inserted = 0
     total_skipped = 0
-    total_jobs = 0
 
     for filepath in files:
         if not filepath.exists():
@@ -104,29 +94,21 @@ def main() -> None:
                         if row_result:
                             lead_id = str(row_result[0])
 
-                # Schedule call at next call window
-                run_at = call_window.next_allowed(now_utc)
-                repo.enqueue_job(
-                    job_type="call_lead",
-                    dedupe_key=f"lead:{lead_id}:call",
-                    payload={"lead_id": lead_id},
-                    run_at=run_at,
-                    max_attempts=3,
-                )
+                # legacy_reactivation leads: no auto-call.
+                # Daily cron (seed_reactivation_sms) picks them up for SMS drip.
                 repo.add_event(
                     lead_id=lead_id,
                     event_type="legacy_lead_imported",
                     payload={"source_file": filepath.name, "name": name, "phone": phone_e164},
                 )
 
-                print(f"  + {name.encode('ascii','replace').decode()} | {phone_e164} -> call @ {run_at.isoformat()}")
+                print(f"  + {name.encode('ascii','replace').decode()} | {phone_e164}")
                 total_inserted += 1
-                total_jobs += 1
 
     print(f"\nDone.")
     print(f"  Inserted: {total_inserted}")
     print(f"  Skipped: {total_skipped}")
-    print(f"  Jobs enqueued: {total_jobs}")
+    print(f"  Daily SMS drip cron will seed 20 reactivation SMS jobs/day automatically.")
 
 
 if __name__ == "__main__":
