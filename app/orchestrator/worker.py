@@ -356,13 +356,13 @@ class JobWorker:
             payload={"body": body, "touch": touch},
         )
 
-        # After Touch 1, schedule Touch 2 (Day 4) and Touch 3 (Day 10)
+        # After Touch 1: schedule Touch 2 (Day 4), Touch 3 (Day 10), and ALEX call (30-90 min later)
         if touch == 1:
             tz = self.settings.app_timezone
             ws = self.settings.reactivation_sms_window_start
             we = self.settings.reactivation_sms_window_end
 
-            from datetime import date, timedelta
+            from datetime import timedelta
             from zoneinfo import ZoneInfo
             local_tz = ZoneInfo(tz)
             today = datetime.now(local_tz).date()
@@ -390,6 +390,22 @@ class JobWorker:
                 run_at=send3,
                 max_attempts=2,
             )
+
+            # ALEX call: 30–90 min after SMS, clamped to call window (9am-8pm)
+            # Increases response rate — warm call right after the text
+            if self.settings.retell_api_key and (
+                self.settings.retell_agent_id_reactivation or self.settings.retell_agent_id_en
+            ):
+                call_delay = random.randint(30, 90)
+                raw_call_time = utc_now() + timedelta(minutes=call_delay)
+                clamped_call_time = self.call_window.clamp_delay(raw_call_time)
+                self.repo.enqueue_job(
+                    job_type="call_lead",
+                    dedupe_key=f"reactivation_sms:{lead_id}:call_t1",
+                    payload={"lead_id": lead_id},
+                    run_at=clamped_call_time,
+                    max_attempts=2,
+                )
 
     def _seed_reactivation_sms(self) -> None:
         count = seed_reactivation_sms_jobs(
