@@ -941,6 +941,131 @@ def reactivation_seed_now() -> dict[str, Any]:
     return {"seeded": count, "daily_limit": settings.reactivation_sms_daily_limit}
 
 
+@app.get("/reactivation")
+def reactivation_ui() -> Any:
+    """Reactivation drip dashboard — SMS stats, reply inbox, queue."""
+    return FileResponse(settings.ui_file.parent / "reactivation.html")
+
+
+@app.get("/reactivation/replies")
+def reactivation_replies(limit: int = 200) -> list[dict[str, Any]]:
+    """
+    All legacy_reactivation leads that have sent at least one inbound SMS.
+    Returns lead info + last inbound message for inbox view.
+    """
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                select
+                    l.id          as lead_id,
+                    l.name,
+                    l.phone_e164  as phone,
+                    l.area,
+                    l.status,
+                    l.do_not_contact as opted_out,
+                    m.body        as last_inbound_body,
+                    m.created_at  as last_inbound_at,
+                    (
+                        select max((j.payload->>'touch')::int)
+                        from jobs j
+                        where j.type = 'reactivation_sms'
+                          and j.status = 'done'
+                          and j.payload->>'lead_id' = l.id
+                    ) as touch_sent
+                from leads l
+                join messages m on m.lead_id = l.id
+                where l.source = 'legacy_reactivation'
+                  and m.direction = 'in'
+                  and m.channel = 'sms'
+                  and m.created_at = (
+                      select max(m2.created_at) from messages m2
+                      where m2.lead_id = l.id and m2.direction = 'in' and m2.channel = 'sms'
+                  )
+                order by m.created_at desc
+                limit %s
+                """,
+                (limit,),
+            )
+            cols = [d.name for d in cur.description]
+            rows = cur.fetchall()
+    result = []
+    for row in rows:
+        d = dict(zip(cols, row))
+        for k, v in d.items():
+            if hasattr(v, "isoformat"):
+                d[k] = v.isoformat()
+        result.append(d)
+    return result
+
+
+@app.get("/reactivation/thread/{lead_id}")
+def reactivation_thread(lead_id: str) -> list[dict[str, Any]]:
+    """Full SMS thread (in + out) for a reactivation lead."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                select direction, body, created_at, status
+                from messages
+                where lead_id = %s and channel = 'sms'
+                order by created_at asc
+                limit 200
+                """,
+                (lead_id,),
+            )
+            cols = [d.name for d in cur.description]
+            rows = cur.fetchall()
+    result = []
+    for row in rows:
+        d = dict(zip(cols, row))
+        for k, v in d.items():
+            if hasattr(v, "isoformat"):
+                d[k] = v.isoformat()
+        result.append(d)
+    return result
+
+
+@app.get("/reactivation/queue")
+def reactivation_queue(limit: int = 100) -> list[dict[str, Any]]:
+    """Upcoming queued reactivation SMS jobs with lead info."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                select
+                    j.id, j.run_at, j.status,
+                    j.payload->>'lead_id' as lead_id,
+                    (j.payload->>'touch')::int as touch,
+                    j.payload->>'body' as body,
+                    l.name, l.phone_e164 as phone, l.area
+                from jobs j
+                left join leads l on l.id = (j.payload->>'lead_id')
+                where j.type = 'reactivation_sms'
+                  and j.status = 'queued'
+                order by j.run_at asc
+                limit %s
+                """,
+                (limit,),
+            )
+            cols = [d.name for d in cur.description]
+            rows = cur.fetchall()
+    result = []
+    for row in rows:
+        d = dict(zip(cols, row))
+        for k, v in d.items():
+            if hasattr(v, "isoformat"):
+                d[k] = v.isoformat()
+        result.append(d)
+    return result
+
+
 # ---------------------------------------------------------------------------
 # Audit log (compliance — RECO best practice)
 # ---------------------------------------------------------------------------

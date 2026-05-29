@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reactivation Drip — Anu Kabli</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --card: #263348;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --hot: #ef4444;
+      --warm: #f59e0b;
+      --early: #22c55e;
+      --cold: #64748b;
+      --accent: #0ea5e9;
+      --reply: #a78bfa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+    /* NAV */
+    header { background: var(--panel); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    header .brand { display: flex; align-items: center; gap: 12px; }
+    header h1 { font-size: 17px; font-weight: 600; }
+    header .subtitle { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid transparent; transition: all 0.15s; }
+    .nav-links a:hover { color: var(--text); border-color: var(--border); }
+    .nav-links a.active { color: var(--accent); border-color: var(--accent); }
+    .refresh-btn { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+    .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* TABS */
+    .tabs { padding: 16px 24px 0; display: flex; gap: 4px; border-bottom: 1px solid var(--border); }
+    .tab { padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab .badge { display: inline-flex; align-items: center; justify-content: center; background: var(--reply); color: #fff; border-radius: 10px; font-size: 10px; font-weight: 700; padding: 1px 6px; margin-left: 6px; }
+
+    /* CONTENT PANELS */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* STAT CARDS */
+    .stats-grid { padding: 20px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+    .stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 32px; font-weight: 700; margin-top: 4px; line-height: 1; }
+    .stat-card .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .stat-card.sent .value { color: var(--accent); }
+    .stat-card.replies .value { color: var(--reply); }
+    .stat-card.queued .value { color: var(--warm); }
+    .stat-card.remaining .value { color: var(--early); }
+    .stat-card.pace .value { color: var(--muted); font-size: 22px; }
+
+    /* PROGRESS BAR */
+    .progress-section { padding: 0 24px 20px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.8s ease; }
+
+    /* BY AREA */
+    .section { padding: 0 24px 24px; }
+    .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 12px; }
+    .area-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+    .area-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+    .area-name { font-size: 13px; color: var(--text); }
+    .area-count { font-size: 16px; font-weight: 700; color: var(--accent); }
+
+    /* SEED BUTTON */
+    .seed-section { padding: 0 24px 24px; }
+    .seed-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-size: 14px; font-weight: 600; transition: opacity 0.15s; }
+    .seed-btn:hover { opacity: 0.85; }
+    .seed-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .seed-msg { margin-top: 8px; font-size: 13px; color: var(--muted); }
+
+    /* REPLY INBOX */
+    .inbox-list { padding: 0 24px 40px; display: flex; flex-direction: column; gap: 0; }
+    .reply-row { background: var(--panel); border: 1px solid var(--border); border-radius: 0; border-top: none; padding: 14px 18px; cursor: pointer; transition: background 0.1s; display: flex; gap: 14px; align-items: flex-start; }
+    .reply-row:first-child { border-radius: 8px 8px 0 0; border-top: 1px solid var(--border); }
+    .reply-row:last-child { border-radius: 0 0 8px 8px; }
+    .reply-row:only-child { border-radius: 8px; }
+    .reply-row:hover { background: var(--card); }
+    .reply-row.unread { border-left: 3px solid var(--reply); }
+    .reply-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--reply); flex-shrink: 0; border: 1px solid var(--border); }
+    .reply-info { flex: 1; min-width: 0; }
+    .reply-name { font-size: 14px; font-weight: 600; }
+    .reply-preview { font-size: 13px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .reply-meta { font-size: 11px; color: var(--muted); display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+    .reply-meta .touch-badge { background: rgba(167,139,250,0.12); color: var(--reply); border: 1px solid rgba(167,139,250,0.2); border-radius: 4px; padding: 1px 6px; font-size: 10px; }
+    .reply-meta .area-badge { background: rgba(14,165,233,0.1); color: var(--accent); border: 1px solid rgba(14,165,233,0.2); border-radius: 4px; padding: 1px 6px; font-size: 10px; }
+    .reply-meta .opted-out { background: rgba(239,68,68,0.1); color: var(--hot); border: 1px solid rgba(239,68,68,0.2); border-radius: 4px; padding: 1px 6px; font-size: 10px; }
+    .reply-time { font-size: 11px; color: var(--muted); flex-shrink: 0; text-align: right; }
+    .empty-inbox { text-align: center; color: var(--muted); padding: 60px 24px; }
+    .empty-inbox h2 { font-size: 15px; margin-bottom: 8px; }
+
+    /* THREAD MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; width: 520px; max-width: 95vw; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h2 { font-size: 15px; font-weight: 600; }
+    .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; padding: 0 4px; line-height: 1; }
+    .modal-meta { padding: 10px 20px; background: var(--bg); font-size: 12px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+    .modal-meta span b { color: var(--text); }
+    .thread { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+    .msg.out { align-self: flex-end; background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.2); color: var(--text); border-radius: 12px 12px 2px 12px; }
+    .msg.in { align-self: flex-start; background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 12px 12px 12px 2px; }
+    .msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .msg-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+    /* LOADING */
+    .loading { text-align: center; padding: 60px; color: var(--muted); font-size: 14px; }
+    .dot-pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1)} }
+
+    /* RESPONSIVE */
+    @media(max-width:600px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div>
+      <h1>Reactivation Drip</h1>
+      <div class="subtitle">SMS campaign — Anu Kabli</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="nav-links">
+      <a href="/dashboard">Leads</a>
+      <a href="/reactivation" class="active">Reactivation</a>
+      <a href="/control">Control</a>
+    </div>
+    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" data-tab="overview" onclick="switchTab('overview')">Overview</div>
+  <div class="tab" data-tab="inbox" onclick="switchTab('inbox')">
+    Reply Inbox <span class="badge" id="reply-badge" style="display:none">0</span>
+  </div>
+  <div class="tab" data-tab="queue" onclick="switchTab('queue')">Upcoming Queue</div>
+</div>
+
+<!-- ===== OVERVIEW TAB ===== -->
+<div id="tab-overview" class="panel active">
+  <div id="stats-container">
+    <div class="loading"><span class="dot-pulse"></span> Loading stats...</div>
+  </div>
+</div>
+
+<!-- ===== INBOX TAB ===== -->
+<div id="tab-inbox" class="panel">
+  <div id="inbox-container">
+    <div class="loading"><span class="dot-pulse"></span> Loading replies...</div>
+  </div>
+</div>
+
+<!-- ===== QUEUE TAB ===== -->
+<div id="tab-queue" class="panel">
+  <div id="queue-container">
+    <div class="loading"><span class="dot-pulse"></span> Loading queue...</div>
+  </div>
+</div>
+
+<!-- THREAD MODAL -->
+<div class="modal-overlay" id="thread-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-name">Thread</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-meta" id="modal-meta"></div>
+    <div class="thread" id="thread-messages"></div>
+  </div>
+</div>
+
+<script>
+const BASE = '';
+
+// ---- Tab switching ----
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'inbox') loadInbox();
+  if (name === 'queue') loadQueue();
+}
+
+// ---- Helpers ----
+function ago(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const secs = Math.floor((Date.now() - d) / 1000);
+  if (secs < 60) return secs + 's ago';
+  if (secs < 3600) return Math.floor(secs/60) + 'm ago';
+  if (secs < 86400) return Math.floor(secs/3600) + 'h ago';
+  return Math.floor(secs/86400) + 'd ago';
+}
+function fmt(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleString('en-CA', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function initials(name) {
+  if (!name) return '?';
+  return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+}
+
+// ---- OVERVIEW ----
+async function loadOverview() {
+  const el = document.getElementById('stats-container');
+  try {
+    const r = await fetch(BASE + '/reactivation/report');
+    const d = await r.json();
+
+    const totalSent = d.total_sent_all_time || 0;
+    const totalLeads = totalSent + (d.remaining_eligible || 0);
+    const pct = totalLeads ? Math.round((totalSent / totalLeads) * 100) : 0;
+
+    let areaHtml = '';
+    const areas = d.sent_by_area || {};
+    const areaKeys = Object.keys(areas);
+    if (areaKeys.length) {
+      const cards = areaKeys.map(k => `
+        <div class="area-card">
+          <span class="area-name">${k.replace(/_/g,' ')}</span>
+          <span class="area-count">${areas[k]}</span>
+        </div>`).join('');
+      areaHtml = `
+        <div class="section">
+          <div class="section-title">Sent by area (all time)</div>
+          <div class="area-grid">${cards}</div>
+        </div>`;
+    }
+
+    el.innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card sent">
+          <div class="label">Sent Today</div>
+          <div class="value">${d.sent_today ?? 0}</div>
+          <div class="sub">of ${d.queued_today ?? 0} queued</div>
+        </div>
+        <div class="stat-card replies">
+          <div class="label">Replies Today</div>
+          <div class="value">${d.replies_today ?? 0}</div>
+          <div class="sub">inbound SMS</div>
+        </div>
+        <div class="stat-card queued">
+          <div class="label">Queued Today</div>
+          <div class="value">${d.queued_today ?? 0}</div>
+          <div class="sub">firing 4–8 PM</div>
+        </div>
+        <div class="stat-card remaining">
+          <div class="label">Remaining</div>
+          <div class="value">${d.remaining_eligible ?? 0}</div>
+          <div class="sub">leads eligible</div>
+        </div>
+        <div class="stat-card pace">
+          <div class="label">Days Left</div>
+          <div class="value">${d.days_remaining_at_current_pace ?? 0}</div>
+          <div class="sub">at 20/day pace</div>
+        </div>
+        <div class="stat-card total">
+          <div class="label">All-Time Sent</div>
+          <div class="value" style="font-size:22px">${totalSent.toLocaleString()}</div>
+          <div class="sub">${pct}% of ${totalLeads} leads</div>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-label">
+          <span>Campaign progress</span>
+          <span>${pct}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+
+      ${areaHtml}
+
+      <div class="seed-section">
+        <div class="section-title" style="margin-bottom:10px">Manual Controls</div>
+        <button class="seed-btn" id="seed-btn" onclick="triggerSeed()">Seed Today's 20 SMS Now</button>
+        <div class="seed-msg" id="seed-msg">Daily cron fires automatically at 4:00 PM Toronto. Use this to trigger early.</div>
+      </div>
+    `;
+
+    // Update reply badge
+    if (d.replies_today > 0) {
+      const badge = document.getElementById('reply-badge');
+      badge.textContent = d.replies_today;
+      badge.style.display = 'inline-flex';
+    }
+
+  } catch(e) {
+    el.innerHTML = `<div class="loading">Failed to load: ${e.message}</div>`;
+  }
+}
+
+async function triggerSeed() {
+  const btn = document.getElementById('seed-btn');
+  const msg = document.getElementById('seed-msg');
+  btn.disabled = true;
+  btn.textContent = 'Seeding...';
+  try {
+    const r = await fetch(BASE + '/reactivation/seed', {method:'POST'});
+    const d = await r.json();
+    msg.textContent = `✓ Seeded ${d.seeded} jobs (limit: ${d.daily_limit}/day)`;
+    msg.style.color = '#22c55e';
+    btn.textContent = '✓ Done';
+    setTimeout(() => loadOverview(), 1500);
+  } catch(e) {
+    msg.textContent = 'Error: ' + e.message;
+    msg.style.color = '#ef4444';
+    btn.disabled = false;
+    btn.textContent = 'Seed Today\'s 20 SMS Now';
+  }
+}
+
+// ---- INBOX ----
+let inboxData = [];
+
+async function loadInbox() {
+  const el = document.getElementById('inbox-container');
+  try {
+    // Get reactivation leads that have inbound messages
+    const r = await fetch(BASE + '/reactivation/replies');
+    const rows = await r.json();
+    inboxData = rows;
+
+    if (!rows.length) {
+      el.innerHTML = `
+        <div class="empty-inbox">
+          <h2>No replies yet</h2>
+          <p>When leads text back, they'll appear here.</p>
+        </div>`;
+      return;
+    }
+
+    // Update badge
+    const badge = document.getElementById('reply-badge');
+    badge.textContent = rows.length;
+    badge.style.display = 'inline-flex';
+
+    el.innerHTML = '<div class="inbox-list">' + rows.map(row => `
+      <div class="reply-row ${row.opted_out ? '' : 'unread'}" onclick="openThread('${row.lead_id}')">
+        <div class="reply-avatar">${initials(row.name)}</div>
+        <div class="reply-info">
+          <div class="reply-name">${row.name || row.phone || 'Unknown'}</div>
+          <div class="reply-preview">${escHtml(row.last_inbound_body || '')}</div>
+          <div class="reply-meta">
+            <span>${row.phone || ''}</span>
+            ${row.area ? `<span class="area-badge">${row.area.replace(/_/g,' ')}</span>` : ''}
+            ${row.touch_sent ? `<span class="touch-badge">Touch ${row.touch_sent}</span>` : ''}
+            ${row.opted_out ? `<span class="opted-out">OPTED OUT</span>` : ''}
+          </div>
+        </div>
+        <div class="reply-time">${ago(row.last_inbound_at)}</div>
+      </div>
+    `).join('') + '</div>';
+
+  } catch(e) {
+    el.innerHTML = `<div class="loading">Error: ${e.message}</div>`;
+  }
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ---- THREAD MODAL ----
+async function openThread(leadId) {
+  const lead = inboxData.find(r => r.lead_id === leadId);
+  document.getElementById('modal-name').textContent = lead?.name || lead?.phone || 'Thread';
+  document.getElementById('modal-meta').innerHTML = `
+    <span><b>Phone:</b> ${lead?.phone || 'n/a'}</span>
+    <span><b>Area:</b> ${(lead?.area||'unknown').replace(/_/g,' ')}</span>
+    <span><b>Status:</b> ${lead?.status || 'n/a'}</span>
+    ${lead?.opted_out ? '<span style="color:var(--hot)">⚠ Opted out</span>' : ''}
+  `;
+
+  const threadEl = document.getElementById('thread-messages');
+  threadEl.innerHTML = '<div style="color:var(--muted);font-size:13px;">Loading...</div>';
+  document.getElementById('thread-modal').classList.add('open');
+
+  try {
+    const r = await fetch(BASE + '/reactivation/thread/' + leadId);
+    const msgs = await r.json();
+    if (!msgs.length) {
+      threadEl.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px;">No messages yet.</div>';
+      return;
+    }
+    threadEl.innerHTML = msgs.map(m => `
+      <div>
+        <div class="msg-label">${m.direction === 'out' ? 'You (Alex/Anu)' : (lead?.name || 'Lead')}</div>
+        <div class="msg ${m.direction}">${escHtml(m.body)}</div>
+        <div class="msg-time">${fmt(m.created_at)} ${m.direction==='out'?'· '+m.status:''}</div>
+      </div>
+    `).join('');
+    threadEl.scrollTop = threadEl.scrollHeight;
+  } catch(e) {
+    threadEl.innerHTML = `<div style="color:var(--hot);font-size:13px;">Error: ${e.message}</div>`;
+  }
+}
+
+function closeModal() {
+  document.getElementById('thread-modal').classList.remove('open');
+}
+document.getElementById('thread-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ---- QUEUE ----
+async function loadQueue() {
+  const el = document.getElementById('queue-container');
+  try {
+    const r = await fetch(BASE + '/reactivation/queue');
+    const rows = await r.json();
+
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty-inbox"><h2>No jobs queued</h2><p>Seed today\'s batch from the Overview tab.</p></div>';
+      return;
+    }
+
+    el.innerHTML = `
+      <div style="padding:16px 24px 0;font-size:12px;color:var(--muted);">${rows.length} jobs scheduled</div>
+      <div class="inbox-list">` +
+      rows.map(j => `
+        <div class="reply-row" style="cursor:default;">
+          <div class="reply-avatar" style="background:rgba(14,165,233,0.1);color:var(--accent);">T${j.touch||1}</div>
+          <div class="reply-info">
+            <div class="reply-name">${j.name || j.lead_id?.substring(0,8)+'...'}</div>
+            <div class="reply-preview">${escHtml((j.body||'').substring(0,80))}${(j.body||'').length>80?'…':''}</div>
+            <div class="reply-meta">
+              <span>${j.phone || ''}</span>
+              ${j.area ? `<span class="area-badge">${j.area.replace(/_/g,' ')}</span>` : ''}
+              <span class="touch-badge">Touch ${j.touch||1}</span>
+            </div>
+          </div>
+          <div class="reply-time" style="text-align:right;">
+            <div style="color:var(--warm);font-size:12px;">${fmt(j.run_at)}</div>
+            <div style="margin-top:3px;">${j.status||'queued'}</div>
+          </div>
+        </div>
+      `).join('') +
+      '</div>';
+  } catch(e) {
+    el.innerHTML = `<div class="loading">Error: ${e.message}</div>`;
+  }
+}
+
+// ---- INIT ----
+function loadAll() {
+  loadOverview();
+  // Preload badge count
+  fetch(BASE + '/reactivation/replies').then(r=>r.json()).then(rows => {
+    if (rows.length) {
+      const badge = document.getElementById('reply-badge');
+      badge.textContent = rows.length;
+      badge.style.display = 'inline-flex';
+    }
+  }).catch(()=>{});
+}
+
+loadAll();
+</script>
+</body>
+</html>
