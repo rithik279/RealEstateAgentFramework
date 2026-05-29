@@ -396,7 +396,7 @@ class JobWorker:
             if self.settings.retell_api_key and (
                 self.settings.retell_agent_id_reactivation or self.settings.retell_agent_id_en
             ):
-                call_delay = random.randint(30, 90)
+                call_delay = 14
                 raw_call_time = utc_now() + timedelta(minutes=call_delay)
                 clamped_call_time = self.call_window.clamp_delay(raw_call_time)
                 self.repo.enqueue_job(
