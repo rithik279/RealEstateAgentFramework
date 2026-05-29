@@ -391,14 +391,19 @@ class JobWorker:
                 max_attempts=2,
             )
 
-            # ALEX call: 30–90 min after SMS, clamped to call window (9am-8pm)
+            # ALEX call: 14 min after SMS, clamped to reactivation window (4-8pm)
             # Increases response rate — warm call right after the text
             if self.settings.retell_api_key and (
                 self.settings.retell_agent_id_reactivation or self.settings.retell_agent_id_en
             ):
                 call_delay = 14
                 raw_call_time = utc_now() + timedelta(minutes=call_delay)
-                clamped_call_time = self.call_window.clamp_delay(raw_call_time)
+                reactivation_window = CallWindow(
+                    tz=tz,
+                    start_hour=ws,  # 16 (4pm)
+                    end_hour=we,    # 20 (8pm)
+                )
+                clamped_call_time = reactivation_window.clamp_delay(raw_call_time)
                 self.repo.enqueue_job(
                     job_type="call_lead",
                     dedupe_key=f"reactivation_sms:{lead_id}:call_t1",
