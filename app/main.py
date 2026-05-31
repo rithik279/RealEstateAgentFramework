@@ -1066,6 +1066,40 @@ def reactivation_queue(limit: int = 100) -> list[dict[str, Any]]:
     return result
 
 
+@app.get("/reactivation/calls")
+def reactivation_calls(limit: int = 200) -> list[dict[str, Any]]:
+    """Recent calls for legacy_reactivation leads with transcript."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                select
+                    c.id, c.retell_call_id, c.started_at, c.ended_at,
+                    c.duration_sec, c.outcome, c.disconnection_reason,
+                    c.transcript_text,
+                    l.id as lead_id, l.name, l.phone_e164 as phone, l.area
+                from calls c
+                join leads l on l.id = c.lead_id
+                where l.source = 'legacy_reactivation'
+                order by c.started_at desc nulls last
+                limit %s
+                """,
+                (limit,),
+            )
+            cols = [d.name for d in cur.description]
+            rows = cur.fetchall()
+    result = []
+    for row in rows:
+        d = dict(zip(cols, row))
+        for k, v in d.items():
+            if hasattr(v, "isoformat"):
+                d[k] = v.isoformat()
+        result.append(d)
+    return result
+
+
 # ---------------------------------------------------------------------------
 # Audit log (compliance — RECO best practice)
 # ---------------------------------------------------------------------------
