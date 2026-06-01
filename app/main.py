@@ -879,37 +879,79 @@ def mls_sync(payload: MLSSyncRequest) -> dict[str, Any]:
     return {"city": payload.city, **result}
 
 
-@app.post("/mls/search")
-def mls_search(payload: ListingSearchRequest) -> dict[str, Any]:
-    """Search active MLS listings via PropTx RESO API."""
-    from app.services.mls_client import create_reso_client, MLSNotConfiguredError
-    try:
-        client = create_reso_client()
-    except MLSNotConfiguredError as e:
-        raise HTTPException(status_code=503, detail=str(e))
-    listings = client.search_listings(
-        city=payload.city,
-        price_min=payload.price_min,
-        price_max=payload.price_max,
-        bedrooms_min=payload.bedrooms_min,
-        property_type=payload.property_type,
-        limit=payload.limit,
+def _proptx_client():
+    from app.services.proptx import PropTXClient
+    if not settings.proptx_token:
+        raise HTTPException(status_code=503, detail="PROPTX_TOKEN not configured")
+    return PropTXClient(token=settings.proptx_token, base_url=settings.proptx_base_url)
+
+
+@app.get("/listings/search")
+def listings_search(
+    city: str | None = None,
+    min_price: float | None = None,
+    max_price: float | None = None,
+    min_bedrooms: int | None = None,
+    transaction_type: str | None = None,
+    limit: int = 20,
+) -> dict[str, Any]:
+    """Search active MLS listings via PropTX (Amplify Syndication)."""
+    client = _proptx_client()
+    cities = [city] if city else None
+    listings = client.search(
+        cities=cities,
+        min_price=min_price,
+        max_price=max_price,
+        min_bedrooms=min_bedrooms,
+        transaction_type=transaction_type,
+        limit=min(limit, 50),
     )
-    return {"count": len(listings), "listings": listings}
+    return {"count": len(listings), "listings": [l.to_dict() for l in listings]}
 
 
-@app.get("/mls/listing/{mls_number}")
-def mls_get_listing(mls_number: str) -> dict[str, Any]:
-    """Fetch single listing by MLS number from PropTx."""
-    from app.services.mls_client import create_reso_client, MLSNotConfiguredError
-    try:
-        client = create_reso_client()
-    except MLSNotConfiguredError as e:
-        raise HTTPException(status_code=503, detail=str(e))
-    listing = client.get_listing(mls_number)
+@app.get("/listings/{listing_key}")
+def listing_get(listing_key: str) -> dict[str, Any]:
+    """Fetch single listing by ListingKey from PropTX."""
+    client = _proptx_client()
+    listing = client.get_listing(listing_key)
     if not listing:
-        raise HTTPException(status_code=404, detail=f"Listing {mls_number} not found")
-    return listing
+        raise HTTPException(status_code=404, detail=f"Listing {listing_key} not found")
+    return listing.to_dict()
+
+
+@app.get("/leads/{lead_id}/listings")
+def lead_matched_listings(lead_id: str, limit: int = 10) -> dict[str, Any]:
+    """Return active MLS listings matched to a lead's buyer profile."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    extracted = orchestrator_repo.get_latest_extracted_json(lead_id)
+    if not extracted:
+        raise HTTPException(status_code=404, detail="No buyer profile found for this lead. Lead must have completed a call first.")
+    client = _proptx_client()
+    listings = client.search_for_buyer(extracted, limit=min(limit, 20))
+    return {
+        "lead_id": lead_id,
+        "buyer_profile_summary": {
+            "budget_max": extracted.get("budget_max"),
+            "preferred_areas": extracted.get("preferred_areas"),
+            "min_bedrooms": extracted.get("min_bedrooms"),
+            "property_type": extracted.get("property_type"),
+        },
+        "count": len(listings),
+        "listings": [l.to_dict() for l in listings],
+    }
+
+
+# Keep old route for backward compat
+@app.post("/mls/search")
+def mls_search_legacy(
+    city: str | None = None,
+    min_price: float | None = None,
+    max_price: float | None = None,
+    limit: int = 20,
+) -> dict[str, Any]:
+    """Deprecated — use GET /listings/search instead."""
+    return listings_search(city=city, min_price=min_price, max_price=max_price, limit=limit)
 
 
 # ---------------------------------------------------------------------------

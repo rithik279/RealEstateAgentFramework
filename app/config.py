@@ -82,6 +82,10 @@ class Settings:
     embedding_model: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
     copilot_top_k: int = int(os.getenv("COPILOT_TOP_K", "5"))
 
+    # PropTX / Amplify MLS
+    proptx_token: str = os.getenv("PROPTX_TOKEN", "")
+    proptx_base_url: str = os.getenv("PROPTX_BASE_URL", "https://query.ampre.ca/odata")
+
     # Control center auth
     # Generate hash: python scripts/gen_admin_hash.py
     admin_password_hash: str = os.getenv("ADMIN_PASSWORD_HASH", "")
