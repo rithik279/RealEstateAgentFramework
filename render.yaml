@@ -1,5 +1,24 @@
 services:
   - type: web
+    name: anukabli-site
+    runtime: static
+    staticPublishPath: site
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+    routes:
+      - type: rewrite
+        source: /privacy
+        destination: /privacy.html
+      - type: rewrite
+        source: /terms
+        destination: /terms.html
+
+  - type: web
     name: real-estate-agent
     runtime: python
     buildCommand: pip install -r requirements.txt
