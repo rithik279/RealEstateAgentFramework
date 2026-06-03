@@ -42,6 +42,7 @@ from app.orchestrator.schedule import CallWindow
 from app.orchestrator.worker import start_worker_in_thread
 from app.storage import JsonStorage
 from app.api.admin import router as admin_router
+from app.api.curate_homes import router as curate_homes_router
 
 
 storage = JsonStorage(settings.data_file)
@@ -132,6 +133,7 @@ app = FastAPI(
 )
 
 app.include_router(admin_router)
+app.include_router(curate_homes_router)
 
 
 @app.get("/")

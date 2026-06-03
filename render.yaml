@@ -17,6 +17,21 @@ services:
       - type: rewrite
         source: /terms
         destination: /terms.html
+      - type: rewrite
+        source: /rosedale-village-brampton
+        destination: /rosedale-village-brampton.html
+      - type: rewrite
+        source: /northwood-park-brampton
+        destination: /northwood-park-brampton.html
+      - type: rewrite
+        source: /castlemore-brampton
+        destination: /castlemore-brampton.html
+      - type: rewrite
+        source: /brampton-east-homes-for-sale
+        destination: /brampton-east-homes-for-sale.html
+      - type: rewrite
+        source: /mount-pleasant-brampton
+        destination: /mount-pleasant-brampton.html
 
   - type: web
     name: real-estate-agent
