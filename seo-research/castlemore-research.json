@@ -1,0 +1,166 @@
+{
+  "neighbourhood": "Vales of Castlemore",
+  "common_name": "Castlemore",
+  "city": "Brampton",
+  "research_date": "2026-06-03",
+  "researcher": "Live browser research",
+
+  "location": {
+    "quadrant": "Northeast Brampton",
+    "adjacent": "Vales of Castlemore North immediately north",
+    "natural_feature": "West Humber River flows through neighbourhood",
+    "character": "Large forested areas, ponds, trails, green spaces throughout",
+    "source": "hoodq.com/kirk-morris/explore/brampton-on/vales-of-castlemore"
+  },
+
+  "demographics": {
+    "population": 14823,
+    "households": 3350,
+    "household_size": {
+      "1_person_pct": 3,
+      "2_persons_pct": 10,
+      "3_persons_pct": 14,
+      "4_persons_pct": 27,
+      "5_plus_pct": 43
+    },
+    "families_with_kids_pct": 64,
+    "multi_family_households_pct": 22,
+    "top_ethnic_origins": [
+      {"origin": "East Indian", "pct": 57},
+      {"origin": "Punjabi", "pct": 8},
+      {"origin": "Jamaican", "pct": 6},
+      {"origin": "Canadian", "pct": 5},
+      {"origin": "Italian", "pct": 3}
+    ],
+    "total_ethnic_origins": 84,
+    "first_gen_immigrants_pct": 58,
+    "second_gen_immigrants_pct": 37,
+    "homeownership_pct": 92,
+    "renter_pct": 7,
+    "bachelors_or_higher_pct": 38,
+    "any_postsecondary_pct": 63,
+    "household_income_distribution": {
+      "under_100k_pct": 29,
+      "100k_to_149k_pct": 27,
+      "150k_to_199k_pct": 15,
+      "over_200k_pct": 12
+    },
+    "top_industries": ["Transportation & warehousing (16%)", "Manufacturing (15%)", "Retail trade (10%)"],
+    "transit_commuters_pct": 9,
+    "vehicle_commuters_pct": 87,
+    "commute_to_another_city_pct": 64,
+    "source": "Statistics Canada via HoodQ hoodq.com/kirk-morris/explore/brampton-on/vales-of-castlemore"
+  },
+
+  "home_types": {
+    "single_detached_pct": 80,
+    "semi_detached_pct": 10,
+    "duplex_pct": 7,
+    "row_house_pct": 0,
+    "bedrooms_4_plus_pct": 83,
+    "construction_period": {
+      "1991_to_2000_pct": 10,
+      "2001_to_2005_pct": 53,
+      "2006_to_2010_pct": 22,
+      "2011_to_2016_pct": 12
+    },
+    "notes": "97% of homes built post-1991, 53% in 2001-2005 peak development era. Large 2-storey detached on large lots; some mansion-scale properties. 83% have 4+ bedrooms.",
+    "source": "Statistics Canada via HoodQ"
+  },
+
+  "market_data": {
+    "period": "April-May 2026",
+    "avg_all_types_zolo": 1311864,
+    "avg_honestdoor_may2026": 1316753,
+    "median_april_2026_realosophy": 1370000,
+    "median_price_range_realosophy": "$1M-$1.5M (majority of sales)",
+    "notes": "Castlemore is Brampton's premium price tier. Avg $1.3M+ vs Brampton-wide avg ~$895K. Large executive detached homes dominate; some mansions exceed $2M.",
+    "sources": [
+      "zolo.ca Vales of Castlemore trends May 2026 — avg $1,311,864",
+      "honestdoor.com Vales of Castlemore May 2026 — avg $1,316,753",
+      "realosophy.com April 2026 — median $1,370,000 based on 7 sales"
+    ]
+  },
+
+  "transit": {
+    "brampton_transit_stops": 92,
+    "walk_score": 28,
+    "transit_score_note": "No nearby GO station — vehicle-dependent area",
+    "walk_score_label": "Car-Dependent",
+    "vehicle_commuters_pct": 87,
+    "car_to_407_min": 10,
+    "car_to_hwy50_min": 5,
+    "walk_score_source": "walkscore.com Castlemore Rd & Goreway Dr intersection"
+  },
+
+  "schools": {
+    "total_public": 11,
+    "total_catholic": 7,
+    "secondary": [
+      {
+        "name": "Cardinal Ambrozic Catholic High School",
+        "board": "Dufferin-Peel Catholic District School Board",
+        "type": "catholic",
+        "fraser_rating": "6.9/10",
+        "fraser_note": "Above Ontario provincial average of 6.0 — top 4 Catholic high schools in Brampton per 2025 rankings",
+        "programs": ["French Immersion", "International Baccalaureate"],
+        "source": "@mikecarpinorealestate Instagram (May 2026); Fraser Institute 2025"
+      },
+      {
+        "name": "Chinguacousy Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "7.2/10",
+        "fraser_note": "Above Ontario provincial average of 6.0 — STEM-focused curriculum",
+        "address": "1370 Williams Pkwy E, Brampton",
+        "source": "teamarora.com March 2025 (citing Fraser Institute)"
+      },
+      {
+        "name": "Sandalwood Heights Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "6.2/10",
+        "fraser_rank": "#349 of 747 Ontario schools",
+        "fraser_year": "2025",
+        "source": "compareschoolrankings.org (Fraser Institute 2025 PDF)"
+      }
+    ],
+    "notable_elementary": [
+      "Red Willow Public School — noted for strong gifted programs in area",
+      "Father Clair Tipping School (Catholic)",
+      "Holy Spirit Catholic Elementary School",
+      "Grenoble Public School",
+      "Fairlawn Public School",
+      "Treeline Public School"
+    ],
+    "special_programs": ["International Baccalaureate", "French Immersion"],
+    "source": "HoodQ; compareschoolrankings.org; teamarora.com; Fraser Institute 2025"
+  },
+
+  "parks_and_recreation": {
+    "total_parks": 8,
+    "total_facilities": 19,
+    "natural_assets": [
+      "West Humber River corridor — flows through neighbourhood",
+      "Large forested areas throughout",
+      "Multiple ponds",
+      "Trail network connecting to river corridor"
+    ],
+    "facility_breakdown": {
+      "playgrounds": 8,
+      "basketball_courts": 4,
+      "sports_fields": 3,
+      "sports_courts": 3,
+      "trails": 1
+    },
+    "source": "HoodQ hoodq.com/kirk-morris/explore/brampton-on/vales-of-castlemore"
+  },
+
+  "character_notes": {
+    "luxury_profile": "Castlemore is Brampton's recognized luxury estate neighbourhood — large 2-storey detached on large lots, some mansion-scale homes. Average price $1.3M+ vs Brampton-wide $895K.",
+    "family_concentration": "64% families with kids, 43% households have 5+ people, 22% multi-family. Very high family density — extended families under one roof common.",
+    "south_asian_dominant": "57% East Indian — the highest of any Brampton neighbourhood in this study. Strong Punjabi-speaking community (8%).",
+    "new_construction": "97% of homes built post-1991. The neighbourhood largely did not exist before the late 1990s/2000s development wave.",
+    "high_ownership": "92% ownership rate — matching Credit Valley. Renters are rare."
+  }
+}

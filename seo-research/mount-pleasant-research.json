@@ -1,0 +1,149 @@
+{
+  "neighbourhood": "Mount Pleasant",
+  "city": "Brampton",
+  "research_date": "2026-06-03",
+  "researcher": "Live browser research",
+
+  "location": {
+    "quadrant": "Northwest Brampton",
+    "character": "Brampton's first 'New Urbanism' neighbourhood — designed for walkability and inclusive amenities around GO transit",
+    "go_station": "Mount Pleasant GO Station (Kitchener GO Line) — within neighbourhood; opens in 2005 triggered development",
+    "highway": "Highway 410 just east — 40 min drive to downtown Toronto",
+    "source": "wahi.com/ca/en/neighbourhoods/ontario/gta/brampton/mount-pleasant"
+  },
+
+  "history": {
+    "original_settler": "James Hunter, Irish immigrant; Hunter family were prosperous farmers; descendants operated farms until early 1900s",
+    "development_trigger": "Mount Pleasant GO Station opened 2005 — this was the catalyst for Mount Pleasant Village development",
+    "design_concept": "Brampton's first New Urbanism neighbourhood — designed around walkability, community square, all-inclusive amenities",
+    "source": "wahi.com"
+  },
+
+  "market_data": {
+    "period": "Early 2026",
+    "detached_range": "$950,000 – $1,200,000",
+    "townhome_range": "$650,000 – $850,000",
+    "northwest_brampton_median_april2026": 866000,
+    "northwest_brampton_median_sales": 37,
+    "northwest_brampton_price_range": "$750K-$1M (majority of sales)",
+    "notes": "HoodQ does not have a specific Mount Pleasant page. Northwest Brampton April 2026 median $866K is the closest verified benchmark (Realosophy, 37 sales).",
+    "sources": [
+      "githavijo.ca March 2026 — detached $950K-$1.2M, townhomes $650K-$850K",
+      "realosophy.com Northwest Brampton April 2026 — median $866K, 37 sales"
+    ]
+  },
+
+  "transit": {
+    "go_station": {
+      "name": "Mount Pleasant GO Station",
+      "line": "Kitchener GO Line",
+      "union_station_travel_min": 50,
+      "all_day_service": "60-minute two-way, 7 days/week — launched October 2025",
+      "peak_frequency_min": "15-30 minutes peak hours",
+      "visual": "Picturesque clock tower — distinctive landmark",
+      "note": "The GO station is the reason the neighbourhood exists — Mount Pleasant Village was explicitly designed around GO transit access",
+      "sources": ["wahi.com", "news.ontario.ca October 2025 GO Transit announcement"]
+    },
+    "local_transit": "Brampton Züm rapid transit service with local routes",
+    "car": "Highway 410 just east — 40 min to downtown Toronto by car"
+  },
+
+  "architecture": {
+    "style": "Heritage-style New Urbanism — Tudor, Georgian, Arts and Craft architectural details",
+    "garage_design": "Garages located at rear of homes in hidden laneways — improves streetscape",
+    "home_types": ["Detached homes", "Townhomes", "Low-rise condominium buildings"],
+    "new_development": "The Neighbourhoods of Mount Pleasant — 237 units (townhomes and single-family); under development",
+    "street_character": "Heritage-style street signs; community square with public art and skating rink; CP Railway station revitalized in civic square",
+    "source": "wahi.com"
+  },
+
+  "schools": {
+    "secondary": [
+      {
+        "name": "Jean Augustine Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "5.4/10",
+        "fraser_rank": "#497 of 747 Ontario secondary schools",
+        "fraser_year": "2025 (2023-2024 EQAO data)",
+        "source": "Fraser Institute 2025; confirmed serving Mount Pleasant in Peel DSB boundary documents"
+      },
+      {
+        "name": "David Suzuki Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "4.7/10",
+        "fraser_rank": "#582 of 747 Ontario secondary schools",
+        "fraser_year": "2025 (2023-2024 EQAO data)",
+        "note": "Situated 3 km east of Mount Pleasant GO Station. Eco-focused school.",
+        "source": "Fraser Institute 2025; Mapcarta; Peel DSB boundary documents"
+      },
+      {
+        "name": "St. Roch Catholic Secondary School",
+        "board": "Dufferin-Peel Catholic DSB",
+        "type": "catholic",
+        "fraser_rating": "5.5/10",
+        "fraser_year": "2025"
+      }
+    ],
+    "elementary": {
+      "notable": "Mount Pleasant Village Public School (elementary): 5.9/10 Fraser Institute 2025 (ranked #1640 of Ontario elementary schools)",
+      "source": "ontarioschoolrankings.ca citing Fraser Institute 2025"
+    },
+    "note": "Both secondary schools rated below Ontario's 6.0 provincial average. Elementary school (5.9/10) is very close to provincial average."
+  },
+
+  "parks_and_recreation": {
+    "creditview_sandalwood_park": {
+      "size": "40 hectares",
+      "location": "North end of neighbourhood, Credit River banks",
+      "features": [
+        "Creditview Activity Hub (2018) — first all-inclusive playground of its kind in Ontario, accessible for children with disabilities",
+        "Soccer, football, and lacrosse fields",
+        "Picnic shelter (up to 50 people)",
+        "Parking for 1,000 vehicles"
+      ],
+      "natural": "Nestled next to Credit River"
+    },
+    "angus_morrison_park": {
+      "trail": "4km Mount Pleasant Recreational Trail — central park location",
+      "features": ["small playground", "trail focal point for families"]
+    },
+    "fletchers_parkette": {
+      "features": ["playground", "sports field"]
+    },
+    "trudelle_park": {
+      "location": "North end of neighbourhood",
+      "features": ["attractive gazebo", "small playground"]
+    },
+    "community_square": {
+      "features": [
+        "Public art installations",
+        "Children's playscape",
+        "Reflecting pool transforming to skating rink in winter",
+        "Revitalized CP Railway station as civic landmark",
+        "Trestle Bridge sculpture by Ron Baird (2011)"
+      ]
+    },
+    "community_centre": "Mount Pleasant Community Centre — gymnasium, playground; adjacent to outdoor skating rink"
+  },
+
+  "amenities": {
+    "shopping": [
+      "In-village commercial: gourmet shops, salons, spas, barbers, restaurants, fashion boutiques around town square",
+      "Fortinos on Worthington Avenue (quality food — short drive)",
+      "FreshCo at Sandalwood Parkway & Chinguacousy Road",
+      "No Frills — south on Chinguacousy",
+      "Apple Factory Farm Market (just west, 40+ year landmark) — old-school dressings, sauces, local produce"
+    ],
+    "restaurants": [
+      "Biryani Culture — halal Pakistani homestyle food, in heritage-style village building",
+      "Hakkalicious (Brisdale Drive) — Hakka Chinese cuisine",
+      "Pane Fresco (inside Fortinos) — 19 pizza varieties, 13 soups, sushi, vegan options",
+      "Popeyes",
+      "Tim Hortons (northern end)"
+    ],
+    "library": "Mount Pleasant branch library — within neighbourhood",
+    "source": "wahi.com"
+  }
+}

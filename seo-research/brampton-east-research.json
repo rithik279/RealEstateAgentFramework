@@ -1,0 +1,167 @@
+{
+  "neighbourhood": "Brampton East",
+  "city": "Brampton",
+  "research_date": "2026-06-03",
+  "researcher": "Live browser research",
+
+  "location": {
+    "position": "East of Downtown Brampton — bordered by Brampton North, East, South, and West neighbourhoods",
+    "subdivisions": ["Eldomar Heights (late 1950s development)", "Peel Village (1960s development)"],
+    "western_boundary": "Etobicoke Creek, parklands, and trail",
+    "character": "Mix of residential, industrial, and commercial areas. Mature, well-established.",
+    "source": "hoodq.com/explore/brampton-on/brampton-east"
+  },
+
+  "demographics": {
+    "population": 10884,
+    "households": 3965,
+    "household_size": {
+      "1_person_pct": 21,
+      "2_persons_pct": 31,
+      "3_persons_pct": 18,
+      "4_persons_pct": 17,
+      "5_plus_pct": 10
+    },
+    "families_with_kids_pct": 47,
+    "seniors_65_plus_pct": 17,
+    "single_person_households_pct": 21,
+    "top_ethnic_origins": [
+      {"origin": "Canadian", "pct": 21},
+      {"origin": "English", "pct": 19},
+      {"origin": "Scottish", "pct": 14},
+      {"origin": "Irish", "pct": 14},
+      {"origin": "Portuguese", "pct": 10}
+    ],
+    "total_ethnic_origins": 106,
+    "first_gen_immigrants_pct": 35,
+    "second_gen_immigrants_pct": 28,
+    "homeownership_pct": 73,
+    "renter_pct": 26,
+    "bachelors_or_higher_pct": 23,
+    "any_postsecondary_pct": 57,
+    "household_income_distribution": {
+      "under_100k_pct": 50,
+      "100k_to_149k_pct": 23,
+      "150k_to_199k_pct": 10,
+      "over_200k_pct": 6
+    },
+    "top_industries": ["Manufacturing (14%)", "Retail trade (11%)", "Educational services (8%)"],
+    "transit_commuters_pct": 14,
+    "vehicle_commuters_pct": 82,
+    "walk_bike_pct": 2,
+    "commute_within_city_pct": 44,
+    "commute_to_another_city_pct": 55,
+    "note": "Most European-origin neighbourhood in this study — Canadian 21%, English 19%, Scottish 14%, Irish 14%. 17% seniors. 21% single-person households. Very different character from other Brampton neighbourhoods.",
+    "source": "Statistics Canada via HoodQ hoodq.com/explore/brampton-on/brampton-east"
+  },
+
+  "home_types": {
+    "single_detached_pct": 64,
+    "semi_detached_pct": 4,
+    "duplex_pct": 3,
+    "row_house_pct": 6,
+    "low_rise_apt_pct": 6,
+    "high_rise_apt_pct": 14,
+    "bedrooms_3_pct": 45,
+    "bedrooms_4_plus_pct": 32,
+    "construction_period": {
+      "pre_1960_pct": 27,
+      "1961_to_1980_pct": 66,
+      "1981_to_1990_pct": 4,
+      "post_1990_pct": 1
+    },
+    "notes": "Oldest housing stock of all neighbourhoods in this study — 93% of homes built before 1980. Peel Village and Eldomar Heights are classic 1950s-60s subdivisions with bungalows, splits, and 2-storeys. 14% high-rise apartments is notable — more housing diversity than typical Brampton suburb.",
+    "source": "Statistics Canada via HoodQ"
+  },
+
+  "market_data": {
+    "period": "May 2026",
+    "avg_zolo_brampton_east": 808708,
+    "zolo_note": "Zolo has two zones: 'Brampton East' (historic area near downtown, $808K) and 'Bram East' (northeast, $1,087,934) — very different areas. This is the historic Brampton East.",
+    "honestdoor_avg": 460927,
+    "honestdoor_note": "HonestDoor avg $460K likely reflects condo/apartment units pulling down the average. Detached homes considerably higher.",
+    "brampton_wide_avg": 884360,
+    "note": "At $808K avg (Zolo), Brampton East is ~9% below the Brampton-wide average of $884K — reflecting older stock but still strong demand for established neighbourhood.",
+    "sources": [
+      "zolo.ca Brampton East trends May 2026 — $808,708 avg",
+      "honestdoor.com Brampton East May 2026 — $460,927 avg",
+      "Brampton-wide: zolo.ca May 2026 — $884,360 avg"
+    ]
+  },
+
+  "transit": {
+    "go_station": "Brampton GO Station nearby on Kitchener Line",
+    "brampton_transit_stops": 126,
+    "walk_score_note": "126 transit stops — most accessible of the Brampton neighbourhoods in this study for local transit",
+    "vehicle_commuters_pct": 82,
+    "transit_commuters_pct": 14,
+    "walk_bike_pct": 2
+  },
+
+  "schools": {
+    "total_public": 8,
+    "total_catholic": 5,
+    "total_private": 1,
+    "total_alternative": 1,
+    "secondary": [
+      {
+        "name": "Central Peel Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "4.6/10",
+        "fraser_note": "Below Ontario provincial average of 6.0",
+        "source": "zolo.ca listing data (multiple Brampton East listings, Fraser Institute ratings shown)"
+      },
+      {
+        "name": "Cardinal Leger Secondary School",
+        "board": "Dufferin-Peel Catholic District School Board",
+        "type": "catholic",
+        "fraser_rating": "6.2/10",
+        "fraser_note": "Slightly above Ontario provincial average of 6.0 — highest-rated secondary in Brampton East",
+        "source": "zolo.ca listing data (multiple Brampton East listings, Fraser Institute ratings shown)"
+      }
+    ],
+    "elementary": [
+      "Parkway Public School",
+      "Helen Wilson Public School",
+      "Sir Winston Churchill Public School",
+      "Sir Wilfrid Laurier Public School",
+      "William G. Davis Senior Public School",
+      "St. Francis Xavier Catholic Elementary School",
+      "St. Mary Catholic Elementary School"
+    ],
+    "other": [
+      "Canada Christian Academy (private)",
+      "Peel Alternative North (alternative/special)"
+    ],
+    "special_programs": ["International Baccalaureate", "French Immersion", "Vocational", "Christian"],
+    "source": "HoodQ; Zolo listing data (Fraser Institute)"
+  },
+
+  "parks_and_recreation": {
+    "total_parks": 6,
+    "total_facilities": 15,
+    "western_boundary_feature": "Etobicoke Creek corridor — parklands and trail form western boundary of neighbourhood",
+    "facility_breakdown": {
+      "playgrounds": 4,
+      "tennis_courts": 2,
+      "ball_diamond": 1,
+      "sports_fields": 2,
+      "community_centre": 1,
+      "splash_pad": 1,
+      "trails": 3,
+      "gym": 1
+    },
+    "note": "3 trails plus Etobicoke Creek corridor = notable trail connectivity for a mature urban neighbourhood",
+    "source": "HoodQ hoodq.com/explore/brampton-on/brampton-east"
+  },
+
+  "character_notes": {
+    "oldest_area": "93% of homes built before 1980 — oldest housing stock in this study. Bungalows, side-splits, and 2-storeys from the Peel Village / Eldomar Heights era.",
+    "european_origin": "Most European-origin neighbourhood in Brampton's suburban areas — Canadian, English, Scottish, Irish, Portuguese. Very different feel from newer South Asian-dominant areas.",
+    "aging_population": "17% of residents are 65+ — notably higher than Brampton average. 21% single-person households. This neighbourhood has long-term residents who have aged in place.",
+    "most_affordable": "At ~$808K avg, this is the most affordable established neighbourhood in this study (vs. $901K Northwood Park, $1.31M Castlemore).",
+    "apartment_presence": "14% high-rise apartment = more housing type diversity. Entry-level units available for first-time buyers or investors.",
+    "industrial_mix": "Neighbourhood includes industrial and commercial areas — not purely residential. Relevant for buyers expecting a suburb-only feel."
+  }
+}

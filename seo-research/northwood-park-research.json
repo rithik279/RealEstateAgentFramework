@@ -1,0 +1,228 @@
+{
+  "neighbourhood": "Northwood Park",
+  "city": "Brampton",
+  "research_date": "2026-06-03",
+  "researcher": "Live browser research",
+
+  "boundaries": {
+    "description": "Just northwest of Downtown Brampton, small industrial/commercial area in northeast corner",
+    "proximity": "Walking distance to Brampton GO Station",
+    "source": "wahi.com + hoodq.com"
+  },
+
+  "demographics": {
+    "population": 10819,
+    "households": 3285,
+    "household_size": {
+      "1_person_pct": 12,
+      "2_persons_pct": 25,
+      "3_persons_pct": 20,
+      "4_persons_pct": 20,
+      "5_plus_pct": 20
+    },
+    "families_with_kids_pct": 54,
+    "top_ethnic_origins": [
+      {"origin": "East Indian", "pct": 20},
+      {"origin": "Canadian", "pct": 14},
+      {"origin": "Jamaican", "pct": 11},
+      {"origin": "Portuguese", "pct": 11},
+      {"origin": "English", "pct": 11}
+    ],
+    "total_ethnic_origins": 105,
+    "first_gen_immigrants_pct": 46,
+    "second_gen_immigrants_pct": 32,
+    "homeownership_pct": 80,
+    "renter_pct": 20,
+    "bachelors_or_higher_pct": 24,
+    "any_postsecondary_pct": 52,
+    "avg_household_income": 120600,
+    "avg_individual_income": 43200,
+    "household_income_distribution": {
+      "under_100k_pct": 45,
+      "100k_to_149k_pct": 24,
+      "150k_to_199k_pct": 10,
+      "over_200k_pct": 5
+    },
+    "top_industries": ["Manufacturing (14%)", "Transportation & warehousing (10%)", "Retail trade (10%)"],
+    "transit_commuters_pct": 14,
+    "vehicle_commuters_pct": 84,
+    "commute_to_another_city_pct": 59,
+    "source": "Statistics Canada via HoodQ hoodq.com/explore/brampton-on/northwood-park"
+  },
+
+  "home_types": {
+    "single_detached_pct": 67,
+    "semi_detached_pct": 5,
+    "duplex_pct": 11,
+    "row_house_pct": 8,
+    "low_rise_condo_pct": 4,
+    "high_rise_condo_pct": 2,
+    "construction_period": {
+      "pre_1960_pct": 14,
+      "1961_to_1980_pct": 24,
+      "1981_to_1990_pct": 33,
+      "1991_to_2000_pct": 16,
+      "2001_to_2005_pct": 5,
+      "2006_to_2010_pct": 4
+    },
+    "notes": "Established neighbourhood — 71% of homes built before 1990. Mix of bungalows and 2-storey brick homes on large lots. 11% duplex = basement apartments common.",
+    "source": "Statistics Canada via HoodQ"
+  },
+
+  "market_data": {
+    "period": "April-May 2026",
+    "avg_all_types_zolo": 901038,
+    "median_april_2026_realosophy": 807500,
+    "median_price_range_realosophy": "$750K-$1M (majority of sales)",
+    "wahi_estimates": {
+      "single_detached": 930000,
+      "semi_detached": 735000,
+      "townhouse": 820000,
+      "note": "Wahi shows these as 24-25% below GTA median"
+    },
+    "brampton_wide_benchmarks": {
+      "semi_detached_avg": 804242,
+      "townhouse_avg": 767488,
+      "detached_avg": 1018564
+    },
+    "sources": [
+      "zolo.ca Northwood Park trends May 2026 — avg $901,038",
+      "realosophy.com April 2026 — median $807,500 based on 7 sales",
+      "wahi.com neighbourhood guide",
+      "royalcanadianrealty.com April 2026 Brampton market update"
+    ]
+  },
+
+  "transit": {
+    "go_station": {
+      "name": "Brampton GO Station",
+      "alternate_name": "Brampton Innovation District GO",
+      "line": "Kitchener GO Line",
+      "union_station_travel_min": "35-45 direct",
+      "notes": "Walking distance from Northwood Park — one of closest Brampton neighbourhoods to GO rail",
+      "source": "rome2rio.com + google AI overview"
+    },
+    "brampton_transit": {
+      "stops_in_neighbourhood": 77
+    },
+    "walk_score": 48,
+    "transit_score": 48,
+    "bike_score": 51,
+    "walk_score_label": "Car-Dependent",
+    "transit_score_label": "Some Transit",
+    "walk_score_source": "realty.ca listing data for Northwood Park addresses (122 Flowertown Ave area average)"
+  },
+
+  "schools": {
+    "total_public": 7,
+    "total_catholic": 7,
+    "secondary": [
+      {
+        "name": "David Suzuki Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "4.7/10",
+        "fraser_rank": "#582 of 747 Ontario schools",
+        "fraser_year": "2025 (2023-2024 EQAO data)",
+        "note": "Eco-focused school, environmental stewardship programs"
+      },
+      {
+        "name": "St. Roch Catholic Secondary School",
+        "board": "Dufferin-Peel Catholic DSB",
+        "type": "catholic",
+        "fraser_rating": "5.5/10",
+        "fraser_rank": "#478 of 747",
+        "fraser_year": "2025"
+      },
+      {
+        "name": "St. Augustine Secondary School",
+        "board": "Dufferin-Peel Catholic DSB",
+        "type": "catholic"
+      }
+    ],
+    "elementary": [
+      "Northwood Public School (JK-6)",
+      "Beatty-Fleming Senior Public School (6-8)",
+      "Homestead Public School",
+      "Royal Orchard Middle School",
+      "St. Ursula Elementary School (Catholic)",
+      "St. Joseph Public School (Catholic, JK-8)",
+      "Our Lady of Peace Catholic School (JK-8)"
+    ],
+    "special_programs": ["French Immersion", "International Baccalaureate", "Fine Arts"],
+    "source": "hoodq.com/explore/brampton-on/northwood-park + wahi.com"
+  },
+
+  "parks_and_recreation": {
+    "total_parks": 5,
+    "total_facilities": 16,
+    "named_parks": [
+      {
+        "name": "Major William Sharpe Park",
+        "location": "Centre of neighbourhood, adjacent to Our Lady of Peace School",
+        "features": ["baseball diamond", "playground", "gazebo", "sports fields", "large trees"]
+      },
+      {
+        "name": "Beatty Fleming Park",
+        "location": "North side, adjacent to Beatty-Fleming Public School",
+        "features": ["baseball diamond", "playground", "large open field"]
+      },
+      {
+        "name": "Fletchers Creek Property",
+        "location": "Near Beatty Fleming Park, northern edge",
+        "features": ["long winding trail", "creek", "forest", "hiking/running/dog walking"],
+        "note": "Natural area — creek runs through forested ravine, distinct from manicured parks"
+      }
+    ],
+    "facility_breakdown": {
+      "playgrounds": 5,
+      "tennis_courts": 2,
+      "basketball": 1,
+      "ball_diamonds": 3,
+      "sports_fields": 2,
+      "sports_courts": 2,
+      "trails": 1
+    },
+    "recreation_centre": {
+      "name": "Chris Gibson Recreation Centre",
+      "distance": "Nearby",
+      "features": ["ice rink", "leisure pool", "racquetball courts", "sauna", "hot tub", "auditorium", "outdoor ball diamonds", "spray pad", "leash-free dog park", "soccer fields"]
+    },
+    "source": "wahi.com + hoodq.com"
+  },
+
+  "amenities": {
+    "shopping": [
+      {
+        "name": "Chinguacousy Rd & Queen St W plaza",
+        "includes": ["No Frills", "Sobeys", "Shoppers Drug Mart", "TD Canada Trust", "Scotiabank"]
+      },
+      {
+        "name": "WestBram Plaza (Queen St W & McLaughlin Rd N)",
+        "includes": ["FreshCo", "Rexall", "dollar store"]
+      },
+      {
+        "name": "Brampton Mall",
+        "distance": "8-minute drive east"
+      }
+    ],
+    "restaurants": [
+      "The Pizza Edge",
+      "Fresh Burrito",
+      "Lazeez Shawarma",
+      "Quik Chik (chicken)",
+      "Tony & Jim's Place (Italian — pasta, pizza, meatballs)",
+      "Munchers (Indian — dumplings, paneer pataka, tandoori)"
+    ],
+    "source": "wahi.com"
+  },
+
+  "history": {
+    "early_settlement": "Settlers arrived early 1800s. Much of Brampton's land was swampy before tilled for farming.",
+    "buffys_corners": "One of first businesses was William Buffy's tavern — surrounding area known as Buffy's Corners",
+    "incorporation": "Brampton incorporated as village 1853, grew with new railway station",
+    "20th_century": "1900s: shoe factory and major banks operated in town",
+    "1948_flood": "1948 — worst flood of Etobicoke Creek in years, led to civil engineering project to straighten and reroute creek with concrete diversion",
+    "source": "wahi.com"
+  }
+}

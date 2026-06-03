@@ -1,0 +1,103 @@
+{
+  "neighbourhood": "Rosedale Village",
+  "city": "Brampton",
+  "research_date": "2026-06-03",
+  "researcher": "Live browser research",
+
+  "defining_characteristic": "GTA's premier adult lifestyle gated community (55+) centered around an executive 9-hole golf course. Age-restricted. No children under 18 as permanent residents.",
+
+  "location": {
+    "intersection": "Sandalwood Parkway & Highway 410, northwest Brampton",
+    "municipality": "Sandringham-Wellington area of Brampton",
+    "builder": "Marycroft Homes",
+    "source": "therealtybulls.com; rosedalevillage.ca"
+  },
+
+  "home_types_and_prices": {
+    "new_construction_range": {
+      "low": 919900,
+      "high": 1255900,
+      "note": "11 quick move-in homes available as of March 2026. Sizes vary.",
+      "source": "livabl.com March 28, 2026"
+    },
+    "resale_range": {
+      "condo_low": 299900,
+      "condo_high_typical": 749000,
+      "detached_high": 1799900,
+      "note": "Condos from $299,900 (bachelor/studio) to $589,900 (2 bed/2 bath, ~1000 sq ft). Detached/bungalow resale up to $1,799,900.",
+      "source": "realtor.ca; zolo.ca May 2026 listings for Via Rosedale Way addresses"
+    },
+    "unit_types": ["Bungalow", "Bungalow with loft", "Condo / Stacked townhome", "Detached", "Semi-detached"],
+    "entry_point": "Studio/1-bed condos from ~$299,900 — one of the lowest entry points to a gated community in the GTA"
+  },
+
+  "clubhouse_indoor_amenities": [
+    "Indoor heated swimming pool + aquafit classes",
+    "Exercise room (yoga, tai chi, zumba)",
+    "Saunas",
+    "Meeting and hobby rooms (arts, crafts)",
+    "Auditoriums",
+    "Kitchen and banquet facilities",
+    "Billiards, darts, cards room",
+    "Fireplace lounge and library",
+    "Showcases, dances, theme nights, parties"
+  ],
+
+  "clubhouse_outdoor_amenities": [
+    "Tennis courts",
+    "Lawn bowling",
+    "Shuffleboard",
+    "Bocce courts",
+    "Chess and checker garden"
+  ],
+
+  "golf": {
+    "type": "Executive par-3 nine-hole course",
+    "description": "Catered to both seasoned veterans and novice golfers",
+    "features": [
+      "Putting green",
+      "Striped fairways",
+      "Multiple tee decks",
+      "Pin and hole locations changed regularly",
+      "High standard of maintenance and care"
+    ]
+  },
+
+  "green_spaces": {
+    "parkettes": 2,
+    "description": "2 large parkettes with trees, gardens, walkways, and benches; all interconnected with pedestrian-friendly promenades",
+    "gardening": "Community gardens — residents welcome to participate in planting and landscape enhancement; professional full-time maintenance team"
+  },
+
+  "security": {
+    "type": "Fully gated and secured",
+    "automation": "24-hour automated gated security",
+    "concierge": "Gatehouse concierge on duty during peak hours for guest entry"
+  },
+
+  "social_programming": {
+    "events": ["Dinners", "Dances", "Theme nights", "Parties", "Showcases"],
+    "clubs": ["Hobby clubs", "Arts and crafts", "Golf group"],
+    "sports": ["Aquafit", "Yoga", "Tai chi", "Zumba", "Tennis", "Lawn bowling", "Shuffleboard", "Bocce", "Golf"]
+  },
+
+  "who_buys_here": [
+    "Retirees selling family homes in Brampton/Mississauga/Toronto and downsizing into low-maintenance community",
+    "Semi-retirees (55+) wanting active lifestyle with golf, pool, and social programming",
+    "Empty nesters wanting security and community without leaving Brampton",
+    "Buyers who want to eliminate exterior maintenance — lawn, snow, landscaping all covered",
+    "South Asian retirees whose adult children live in Brampton neighbourhoods like Castlemore — proximity to family"
+  ],
+
+  "maintenance_free_notes": "Professional landscaping maintained by management. Exterior upkeep included in community fees. Residents describe it as 'maintenance-free' living.",
+
+  "schools": "N/A — age-restricted 55+ community. No school catchment information relevant.",
+
+  "sources": [
+    "rosedalevillage.ca/rosedale-amenities — full amenity list",
+    "livabl.com March 28 2026 — new home price range $919,900-$1,255,900",
+    "realtor.ca — resale range $299,900-$1,799,900",
+    "zolo.ca May 2026 — individual listings: 25 Via Rosedale ($299,900 studio), 35 Via Rosedale ($569,000 2bed), 316-60 Via Rosedale ($485,000 2bed)",
+    "therealtybulls.com — location confirmation (Sandalwood & Hwy 410)"
+  ]
+}
