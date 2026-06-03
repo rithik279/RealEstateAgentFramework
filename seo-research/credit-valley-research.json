@@ -1,0 +1,210 @@
+{
+  "neighbourhood": "Credit Valley",
+  "city": "Brampton",
+  "research_date": "2026-06-03",
+  "researcher": "Live browser research",
+
+  "boundaries": {
+    "south": "Credit River",
+    "west": "Mississauga Road",
+    "north": "Bovaird Drive",
+    "east": "Chinguacousy Road (approximate)",
+    "source": "wahi.com/neighbourhoods/ontario/gta/brampton/credit-valley"
+  },
+
+  "demographics": {
+    "population": 32590,
+    "households": 7770,
+    "avg_household_size": "4-5 persons (35% have 5+ persons)",
+    "families_with_kids_pct": 68,
+    "top_ethnic_origins": [
+      {"origin": "East Indian", "pct": 45},
+      {"origin": "Pakistani", "pct": 6},
+      {"origin": "Punjabi", "pct": 6},
+      {"origin": "Canadian", "pct": 5},
+      {"origin": "Jamaican", "pct": 5}
+    ],
+    "first_gen_immigrants_pct": 62,
+    "second_gen_immigrants_pct": 33,
+    "homeownership_pct": 92,
+    "bachelors_or_higher_pct": 45,
+    "household_income_distribution": {
+      "under_100k_pct": 37,
+      "100k_to_149k_pct": 29,
+      "150k_to_199k_pct": 15,
+      "over_200k_pct": 10
+    },
+    "transit_commuters_pct": 12,
+    "vehicle_commuters_pct": 85,
+    "commute_to_another_city_pct": 68,
+    "source": "Statistics Canada via HoodQ hoodq.com/explore/brampton-on/credit-valley"
+  },
+
+  "home_types": {
+    "single_detached_pct": 68,
+    "semi_detached_pct": 22,
+    "row_house_pct": 6,
+    "condo_pct": 1,
+    "construction_period": {
+      "2001_to_2005_pct": 1,
+      "2006_to_2010_pct": 29,
+      "2011_to_2016_pct": 66
+    },
+    "source": "Statistics Canada via HoodQ"
+  },
+
+  "market_data": {
+    "period": "April-May 2026",
+    "all_types_avg": 1111183,
+    "semi_detached_median": 904000,
+    "semi_detached_avg_brampton_wide": 804242,
+    "townhouse_avg_brampton_wide": 767488,
+    "detached_avg_brampton_wide": 1018564,
+    "notes": "Wahi shows Credit Valley detached at $1.7M — likely reflects premium large-lot executive homes. Brampton-wide detached avg $1,018,564. Use $950K–$1.4M for standard Credit Valley detached.",
+    "sources": [
+      "zolo.ca/brampton-real-estate/credit-valley/trends (May 2026)",
+      "housesigma.com semi-detached median April 2026",
+      "royalcanadianrealty.com April 2026 market update"
+    ]
+  },
+
+  "transit": {
+    "go_station": {
+      "name": "Mount Pleasant GO Station",
+      "line": "Kitchener GO Line",
+      "opened": "March 2006",
+      "distance_from_neighbourhood": "Just north of Bovaird Drive",
+      "union_station_travel_min": "45-50 direct",
+      "first_departure": "5:44 AM",
+      "last_departure": "9:46 PM",
+      "peak_frequency_min": "15-30 minutes (5:40 AM - 8:40 AM eastbound; 4:30 PM - 6:30 PM westbound)",
+      "all_day_service": "60-minute two-way, 7 days/week — launched October 2025",
+      "sources": [
+        "gotransit.com/routes-departures/mount-pleasant",
+        "news.ontario.ca October 2025 announcement"
+      ]
+    },
+    "brampton_transit": {
+      "routes_in_neighbourhood": 10,
+      "stops_in_neighbourhood": 268
+    },
+    "walk_score": 39,
+    "transit_score": 42,
+    "bike_score": 46,
+    "car_to_union_min": 40,
+    "car_to_407_min": 10,
+    "walk_score_source": "realty.ca listing data for Credit Valley addresses"
+  },
+
+  "schools": {
+    "total_public": 14,
+    "total_catholic": 8,
+    "total_private": 1,
+    "secondary": [
+      {
+        "name": "Jean Augustine Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "5.4/10",
+        "fraser_rank": "#497 of 747 Ontario schools",
+        "fraser_year": "2025 (2023-2024 EQAO data)"
+      },
+      {
+        "name": "David Suzuki Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "fraser_rating": "4.7/10",
+        "fraser_rank": "#582 of 747 Ontario schools",
+        "fraser_year": "2025 (2023-2024 EQAO data)",
+        "note": "Eco-focused school, strong environmental stewardship programs"
+      },
+      {
+        "name": "St. Roch Catholic Secondary School",
+        "board": "Dufferin-Peel Catholic DSB",
+        "type": "catholic",
+        "fraser_rating": "5.5/10",
+        "fraser_rank": "#478 of 747",
+        "fraser_year": "2025"
+      },
+      {
+        "name": "St. Augustine Secondary School",
+        "board": "Dufferin-Peel Catholic DSB",
+        "type": "catholic"
+      }
+    ],
+    "elementary": [
+      "James Potter Public School (JK-5)",
+      "Springbrook Public School",
+      "Churchville Public School",
+      "McClure Public School",
+      "Lorenville Public School",
+      "Ingleborough Public School",
+      "St. Jacinta Marto Catholic Elementary (JK-8)",
+      "St. Jean Marie Vianney Catholic Elementary (JK-8)"
+    ],
+    "special_programs": ["French Immersion", "International Baccalaureate", "Advanced Placement", "Fine Arts"],
+    "source": "hoodq.com/explore/brampton-on/credit-valley + wahi.com + ontarioschoolrankings.ca"
+  },
+
+  "parks_and_recreation": {
+    "total_parks": 17,
+    "total_facilities": 32,
+    "named_parks": [
+      {
+        "name": "Eldorado Park",
+        "location": "Southern border of Credit Valley",
+        "features": ["free outdoor pool", "BBQ areas", "picnic areas", "open green space"],
+        "admission": "free"
+      },
+      {
+        "name": "Teramoto Park",
+        "note": "Named after one of Brampton's first Japanese settlers",
+        "features": ["2 baseball diamonds", "basketball court", "outdoor track", "cricket pitch"]
+      },
+      {
+        "name": "Creditview Park (Activity Hub)",
+        "location": "Just north in Mount Pleasant",
+        "features": ["8 mini soccer fields", "2 cricket/soccer fields", "3km walking trails", "outdoor fitness equipment", "public washrooms"]
+      },
+      {"name": "James and Edna Davis Park"},
+      {"name": "Chudleigh Park"},
+      {"name": "Damatta Park"}
+    ],
+    "facility_breakdown": {
+      "playgrounds": 18,
+      "pool": 1,
+      "basketball": 1,
+      "ball_diamonds": 2,
+      "sports_fields": 5,
+      "track": 1,
+      "splash_pad": 1,
+      "sports_courts": 2,
+      "trails": 1
+    },
+    "source": "hoodq.com + wahi.com"
+  },
+
+  "amenities": {
+    "shopping": [
+      {
+        "name": "Queen Street West + Chinguacousy Road plaza",
+        "includes": ["grocery store", "bank", "pharmacy", "Lazeez Shawarma"]
+      },
+      {
+        "name": "Mississauga Road + Williams Parkway retail hub",
+        "includes": ["Walmart", "Home Depot", "Dollarama", "LCBO", "banks"]
+      }
+    ],
+    "restaurants": ["Lazeez Shawarma", "Pita Pit", "Taco Bell", "Subway", "McDonald's", "Sunset Grill"],
+    "library": "Mount Pleasant Branch, Brampton Library — just north of Bovaird Drive",
+    "source": "wahi.com"
+  },
+
+  "history": {
+    "first_nations": "Credit River central to First Nations movement and trade for thousands of years",
+    "fur_trade": "1600s fur trade between First Nations and Europeans — furs exchanged for notes of credit → Credit River name",
+    "springbrook": "Agricultural hamlet Springbrook established 1800s, never grew to village, transformed into Credit Valley by developers",
+    "development_era": "Residential development began 2000s, most homes built 2006-2016, ongoing development continues",
+    "source": "wahi.com neighbourhood guide"
+  }
+}
