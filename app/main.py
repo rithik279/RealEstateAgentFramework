@@ -96,6 +96,23 @@ async def lifespan(app: FastAPI):  # noqa: ARG001
         )
         print("INFO:     Reactivation SMS drip scheduled (daily 4 PM Toronto).")
 
+        from app.orchestrator.reactivation import seed_reactivation_call_jobs as _seed_call_fn
+        call_scheduler.schedule_job(
+            lambda: _seed_call_fn(
+                db=db,
+                tz=settings.app_timezone,
+                window_start_hour=settings.call_window_start_hour,
+                window_end_hour=settings.call_window_end_hour,
+                daily_limit=20,
+                interval_minutes=5,  # HARD RULE: min 5 min between calls, never reduce
+            ),
+            trigger="cron",
+            cron_hour=settings.call_window_start_hour,
+            cron_minute=0,
+            id="daily_reactivation_call_seed",
+        )
+        print("INFO:     Reactivation call drip scheduled (daily 9 AM Toronto, 1 call/5 min).")
+
         if settings.openai_api_key:
             from app.orchestrator.openai_extract import OpenAIClient
             _oai = OpenAIClient(

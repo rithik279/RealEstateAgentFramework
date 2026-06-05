@@ -198,6 +198,94 @@ def _random_send_time(
 # Seed daily drip jobs
 # ---------------------------------------------------------------------------
 
+def seed_reactivation_call_jobs(
+    *,
+    db: Database,
+    tz: str = "America/Toronto",
+    window_start_hour: int = 9,
+    window_end_hour: int = 20,
+    daily_limit: int = 20,
+    interval_minutes: int = 5,
+) -> int:
+    """
+    Seed outbound ALEX call jobs for legacy_reactivation leads.
+
+    HARD RULE: Calls fire ONE AT A TIME, minimum 5 minutes apart.
+    Never batch-fire calls. interval_minutes must never be set below 5.
+    Exceeding daily_limit=20 requires explicit approval — do not raise limit
+    without discussing cost and Retell rate-limit implications.
+
+    Picks next `daily_limit` leads that:
+    - Have no existing call_lead job (queued, running, or succeeded)
+    - Are not do_not_contact
+    - Have a phone number
+    - Source is legacy_reactivation
+
+    Spaces calls evenly across the call window (9am–8pm Toronto).
+    Returns number of jobs seeded.
+    """
+    if interval_minutes < 5:
+        raise ValueError("interval_minutes must be >= 5. Hard rule: calls fire one at a time, min 5 min apart.")
+
+    repo = OrchestratorRepo(db=db)
+    local_tz = ZoneInfo(tz)
+    now_local = datetime.now(local_tz)
+    today = now_local.date()
+
+    # Build call window for today
+    window_start = datetime(today.year, today.month, today.day, window_start_hour, 0, tzinfo=local_tz)
+    window_end = datetime(today.year, today.month, today.day, window_end_hour, 0, tzinfo=local_tz)
+
+    # If window already past, schedule for tomorrow
+    if now_local >= window_end:
+        tomorrow = today + timedelta(days=1)
+        window_start = datetime(tomorrow.year, tomorrow.month, tomorrow.day, window_start_hour, 0, tzinfo=local_tz)
+        window_end = datetime(tomorrow.year, tomorrow.month, tomorrow.day, window_end_hour, 0, tzinfo=local_tz)
+
+    # Start from now if inside window
+    if window_start < now_local < window_end:
+        window_start = now_local + timedelta(minutes=1)
+
+    with db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                select l.id, l.name, l.area
+                from leads l
+                where l.source = 'legacy_reactivation'
+                  and l.do_not_contact = false
+                  and l.phone_e164 is not null
+                  and not exists (
+                    select 1 from jobs j
+                    where j.type = 'call_lead'
+                      and j.payload->>'lead_id' = l.id
+                      and j.status in ('queued', 'running', 'succeeded')
+                  )
+                order by l.created_at asc
+                limit %s
+                """,
+                (daily_limit,),
+            )
+            rows = cur.fetchall()
+
+    seeded = 0
+    for i, (lead_id, name, area) in enumerate(rows):
+        call_at = window_start + timedelta(minutes=i * interval_minutes)
+        # Don't schedule past window end
+        if call_at >= window_end:
+            break
+        repo.enqueue_job(
+            job_type="call_lead",
+            dedupe_key=f"call_lead:{lead_id}:reactivation",
+            payload={"lead_id": lead_id},
+            run_at=call_at.astimezone(timezone.utc),
+            max_attempts=2,
+        )
+        seeded += 1
+
+    return seeded
+
+
 def seed_reactivation_sms_jobs(
     *,
     db: Database,
