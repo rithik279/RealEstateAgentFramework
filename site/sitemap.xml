@@ -21,6 +21,13 @@
     <priority>0.3</priority>
   </url>
 
+  <!-- Brampton City Pillar -->
+  <url>
+    <loc>https://anukabli.com/brampton-homes-for-sale</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
   <!-- Brampton Neighbourhood Pages -->
   <url>
     <loc>https://anukabli.com/rosedale-village-brampton</loc>
