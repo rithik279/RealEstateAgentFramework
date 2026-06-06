@@ -289,16 +289,16 @@ class JobWorker:
         if tier == "hot":
             body = (
                 f"Hi {name or 'there'}! I just reviewed your inquiry{details}. "
-                f"I have exactly what you're looking for — let's connect today: {booking} "
+                f"I have exactly what you're looking for. Let's connect today: {booking} "
                 f"Reply STOP to opt out."
             )
         elif tier == "warm":
             body = (
-                f"{greeting}{details} — I'd love to set up a quick buyer consultation. "
+                f"{greeting}{details}. I'd love to set up a quick buyer consultation. "
                 f"Pick a time that works: {booking} Reply STOP to opt out."
             )
         else:
-            body = f"{greeting}{details} — if you want, you can book a quick call here: {booking} Reply STOP to opt out."
+            body = f"{greeting}{details}. If you want, you can book a quick call here: {booking} Reply STOP to opt out."
 
         send_result = self.sender.send_sms_to_number(to_number=phone, body=body)
         self.repo.create_message(

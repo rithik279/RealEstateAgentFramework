@@ -78,8 +78,12 @@ def compute_tags(extracted: dict[str, Any]) -> list[str]:
         tags.append("pre_approved")
     elif any(k in pre_approval_status for k in ("approved",)):
         tags.append("pre_approved")
+    elif any(k in financing for k in ("cash",)):
+        pass  # Cash buyer — no mortgage needed
     elif any(k in financing for k in ("working", "in process", "talking to")):
         tags.append("needs_mortgage_review")
+    elif not financing and not pre_approval_status:
+        pass  # No financing info — don't assume
     else:
         tags.append("needs_mortgage_review")
 
