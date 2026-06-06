@@ -1,0 +1,153 @@
+{
+  "neighbourhood": "Bolton",
+  "city": "Caledon",
+  "municipality": "Town of Caledon, Regional Municipality of Peel",
+  "research_date": "2026-06-05",
+  "researcher": "Live browser research — Zolo, Google Search, Wikipedia, comeexplorecanada.com, Statistics Canada",
+
+  "seo": {
+    "target_keyword": "bolton homes for sale",
+    "volume": 590,
+    "kd": 14,
+    "target_url": "/bolton-homes-for-sale",
+    "city_pillar": "/caledon-real-estate"
+  },
+
+  "location": {
+    "description": "Bolton is an unincorporated town and the most populous community in the Town of Caledon, Ontario. Located beside the Humber River, approximately 50 km northwest of Toronto. The downtown historic core sits in a river valley. Bolton serves as Caledon's commercial and service hub. It is bordered by Hwy 50 to the east and connected via Hwy 50 to Hwy 400 and 427 south toward Toronto.",
+    "highway_access": ["Highway 50 (main arterial)", "Highway 400 (via Hwy 50 south)", "Highway 427 (via 27/50 connection)"],
+    "commute_to_toronto_drive": "40–50 min to downtown Toronto via Hwy 50 / 400 / 427",
+    "commute_notes": "No GO Train station in Bolton. Brampton Transit Route 501 connects to Brampton Züm and GO Bus network. Most residents commute by car to Brampton or Toronto employment centres — approximately 60% of workforce commutes out of Caledon.",
+    "source": "https://www.comeexplorecanada.com/ontario/bolton + Wikipedia Bolton Ontario + Google Maps"
+  },
+
+  "demographics": {
+    "population": 26795,
+    "population_year": "2021 Census",
+    "total_dwellings": 9158,
+    "median_age": 40.8,
+    "caledon_median_hh_income": 133000,
+    "families_with_kids_pct": "strong family presence — 51.5% of homes have 4+ bedrooms",
+    "top_ethnic_origins": [
+      {"origin": "Italian", "pct": 43},
+      {"origin": "English", "pct": 13},
+      {"origin": "Canadian", "pct": 12},
+      {"origin": "Scottish", "pct": 9},
+      {"origin": "Irish", "pct": 8}
+    ],
+    "first_gen_immigrants_pct": 25,
+    "visible_minorities_pct": 15,
+    "language_english_pct": 85,
+    "language_italian_pct": 10,
+    "language_punjabi_pct": 2,
+    "religion_catholic_pct": 40,
+    "homeownership_pct": 89,
+    "single_detached_pct": 80.7,
+    "source": "Statistics Canada 2021 Census; Wikipedia Bolton Ontario; city-facts.com Bolton demographics"
+  },
+
+  "home_types": {
+    "detached_dominant": true,
+    "single_detached_share_pct": 80.7,
+    "attached_townhouse_share_pct": 18.2,
+    "apartment_share_pct": 1.1,
+    "pct_homes_4plus_bedrooms": 51.5,
+    "sub_areas": ["Bolton East", "Bolton West", "Bolton North", "Downtown Bolton"],
+    "construction_notes": "Mix of 1960s–1990s established family homes downtown, 1990s–2010s suburban builds in Bolton East and West, and newer construction in Bolton North. Heritage Victorian/Edwardian commercial core along King Street.",
+    "source": "Zolo Caledon/Bolton market data; Statistics Canada 2021"
+  },
+
+  "market_data": {
+    "period": "2025–2026",
+    "caledon_avg_price": 1088108,
+    "bolton_east_avg_sold": 1023342,
+    "bolton_west_avg_sold": 831375,
+    "bolton_north_avg_sold": 980625,
+    "bolton_median_house_price": 850000,
+    "bolton_median_yoy_change_pct": 4.2,
+    "bolton_east_sell_above_asking_pct": 12.5,
+    "bolton_east_days_on_market": 27,
+    "bolton_west_days_on_market": 42,
+    "bolton_north_days_on_market": 39,
+    "bolton_north_avg_listing_townhouse": 875000,
+    "bolton_west_avg_listing": 1060000,
+    "sources": [
+      "https://www.zolo.ca/caledon-real-estate/bolton-east/trends",
+      "https://www.zolo.ca/caledon-real-estate/bolton-west/trends",
+      "https://www.zolo.ca/caledon-real-estate/bolton-north/trends",
+      "https://www.canadianrealestatemagazine.ca/top-neighbourhoods/bolton-on-8899.aspx"
+    ]
+  },
+
+  "transit": {
+    "go_train": "None in Bolton. Nearest GO Train: Brampton GO (~20 min south) or Malton GO (~25 min)",
+    "brampton_transit": "Brampton Transit Route 501 (Bolton-Brampton) — connects to BramptonZüm network and Brampton GO",
+    "drive_to_toronto": "40–50 min via Hwy 50 / 400 / 427",
+    "drive_to_brampton": "25–30 min via Hwy 50",
+    "commute_notes": "Bolton is primarily a car-commuter community. Approximately 60% of workforce commutes to Brampton or Toronto. The lack of local GO Train is the primary transit limitation.",
+    "source": "Google Maps + Regional Municipality of Peel transit data"
+  },
+
+  "schools": {
+    "secondary_public": [
+      {
+        "name": "Mayfield Secondary School",
+        "board": "Peel District School Board (PDSB)",
+        "type": "public",
+        "note": "Regional Arts School — one of only two in Peel DSB. Located at 5000 Mayfield Road, Caledon. Enrollment ~1,920 students.",
+        "fraser_rating": "verify at fraserinstitute.org — not confirmed in research",
+        "fraser_year": "2025"
+      }
+    ],
+    "secondary_catholic": [
+      {
+        "name": "Robert F. Hall Catholic Secondary School",
+        "board": "Dufferin-Peel Catholic District School Board (DPCDSB)",
+        "type": "catholic",
+        "note": "Located in Caledon East. Serves Bolton, Caledon, Orangeville, and Shelburne areas.",
+        "fraser_rating": "verify at fraserinstitute.org — not confirmed in research",
+        "fraser_year": "2025"
+      }
+    ],
+    "elementary": [
+      {"name": "Bolton District Public School", "board": "PDSB", "type": "public"},
+      {"name": "Humberview Secondary School", "board": "PDSB", "type": "public", "note": "Serves Bolton area"},
+      {"name": "Father Cassidy Catholic Elementary School", "board": "DPCDSB", "type": "catholic"},
+      {"name": "St. John the Baptist Catholic Elementary School", "board": "DPCDSB", "type": "catholic"}
+    ],
+    "source": "dpcdsb.org Robert F. Hall + PDSB school data + findschool.ca"
+  },
+
+  "parks_and_recreation": {
+    "humber_river": {
+      "description": "The Humber River runs directly through Bolton's downtown valley. Designated Canadian Heritage River in 1999.",
+      "features": ["Humber Valley Heritage Trail", "Fishing", "Canoeing", "Wildlife habitat (918 plant species, 143 bird species, 61 fish species, 30 mammals)"]
+    },
+    "conservation": [
+      {"name": "Albion Hills Conservation Area", "features": ["Cross-country skiing", "Camping", "Hiking", "Fishing ponds"]},
+      {"name": "Palgrave Conservation Area", "features": ["Horse trails", "Picnicking", "Nature walks"]},
+      {"name": "Humber Valley Heritage Trail", "features": ["30 km trail system along Humber River", "Historic sites"]}
+    ],
+    "community": "Bolton has extensive recreational facilities — ice rinks, soccer fields, baseball diamonds, and community centre. Rural Caledon provides equestrian facilities and large-lot recreation not available in urban GTA.",
+    "source": "comeexplorecanada.com Bolton + humbertrail.org"
+  },
+
+  "amenities": {
+    "downtown": "King Street — Bolton's heritage commercial core. Restaurants, cafes, boutique shops, professional services. Victorian/Edwardian commercial architecture.",
+    "big_box": "Hwy 50 corridor: Canadian Tire, No Frills, Tim Hortons, Dollarama, Home Hardware",
+    "hospital": "Etobicoke General (Humber River Health) — approximately 30 min south. Brampton Civic Hospital 25 min. Bolton has medical clinics within town.",
+    "source": "Google Maps + downtownbolton.ca"
+  },
+
+  "history": {
+    "indigenous": "Humber River watershed inhabited for 12,000 years. Mississauga First Nations called the river 'Kabechenong' (gathering place to tie up).",
+    "early_settlement": "James Chewett surveyed Albion Township in 1819. James Bolton (from Suffolk, England) arrived 1819 and received 100-acre land grant.",
+    "founding": "1821: George Bolton purchased 200 acres along Humber River. 1824: George's water-powered flour mill operating — first mill in Caledon. George Bolton also established first school (1830), first general store (1831), first post office in Caledon (1832).",
+    "road_building": "George Bolton built forced roads into river valley for farmers: King Street (east), Glasgow Road (west), Centennial Drive (north) — the original street grid that still defines downtown Bolton today.",
+    "growth": "By 1840: 14 houses, 2 stores, blacksmiths, shoemaker, tailor, hotel. By 1850: sawmill, woollen factory, tannery. 1871: Toronto, Grey and Bruce Railway construction spurs growth. 1872: Bolton incorporated as a village (population 795).",
+    "reform_politics": "The Boltons were supporters of William Lyon Mackenzie. Bolton was part of Mackenzie's riding — a 'hotbed of reform politics.' James Bolton followed Mackenzie into US exile after the Rebellion of 1837.",
+    "hurricane_hazel": "1954: Hurricane Hazel caused severe flooding in Bolton — some of the worst ever to hit the town, sweeping through the river valley without warning.",
+    "heritage_designation": "Humber River designated Canadian Heritage River in 1999 — included in Canada's national river conservation program.",
+    "source": "boltonhistory.com + https://www.ontarioplaques.com/Plaques/Plaque_Peel04.html + Wikipedia Bolton Ontario + humbertrail.org"
+  }
+}

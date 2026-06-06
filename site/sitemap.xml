@@ -96,4 +96,19 @@
     <priority>0.9</priority>
   </url>
 
+  <!-- Caledon City Pillar -->
+  <url>
+    <loc>https://anukabli.com/caledon-real-estate</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <!-- Caledon Neighbourhood Pages -->
+  <url>
+    <loc>https://anukabli.com/bolton-homes-for-sale</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>
