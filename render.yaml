@@ -35,6 +35,12 @@ services:
       - type: rewrite
         source: /credit-valley-brampton
         destination: /credit-valley-brampton.html
+      - type: rewrite
+        source: /hamilton-homes-for-sale
+        destination: /hamilton-homes-for-sale.html
+      - type: rewrite
+        source: /ancaster-homes-for-sale
+        destination: /ancaster-homes-for-sale.html
 
   - type: web
     name: real-estate-agent

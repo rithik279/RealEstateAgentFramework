@@ -1,0 +1,163 @@
+{
+  "neighbourhood": "Ancaster",
+  "city": "Hamilton",
+  "municipality": "City of Hamilton",
+  "research_date": "2026-06-05",
+  "researcher": "Live browser research — HoodQ, Zolo, SEMrush, Google Search",
+
+  "seo": {
+    "target_keyword": "ancaster homes for sale",
+    "volume": 1900,
+    "kd": 14,
+    "target_url": "/ancaster-homes-for-sale",
+    "city_pillar": "/hamilton-homes-for-sale"
+  },
+
+  "location": {
+    "description": "Ancaster is a historic community in the west end of Hamilton, Ontario. Located along Highway 403, it offers quick access to both downtown Hamilton (20 min) and Mississauga/Toronto via the 403 to the 401/QEW. One of Hamilton's oldest and most prestigious residential areas — originally settled in the 1790s.",
+    "highway_access": ["Highway 403 (direct access)", "Lincoln Alexander Pkwy", "Highway 6"],
+    "commute_to_hamilton_downtown": "15-20 min by car",
+    "commute_to_toronto": "55-70 min by car via 403/QEW",
+    "source": "https://hoodq.com/explore/hamilton-on/ancaster"
+  },
+
+  "demographics": {
+    "population": 43484,
+    "households": 14845,
+    "avg_household_size": 3,
+    "median_age": 46,
+    "avg_individual_income": 166610,
+    "families_with_kids_pct": 50,
+    "couples_no_kids_pct": 31,
+    "single_person_pct": 16,
+    "first_gen_immigrants_pct": 20,
+    "second_gen_immigrants_pct": 28,
+    "bachelor_degree_or_higher_pct": 48,
+    "postsecondary_any_pct": 79,
+    "homeownership_pct": 93,
+    "renter_pct": 6,
+    "crime_rate_vs_national": "77% lower than national average",
+    "source": "https://hoodq.com/explore/hamilton-on/ancaster"
+  },
+
+  "home_types": {
+    "single_detached_pct": 80,
+    "row_house_pct": 13,
+    "low_rise_apt_pct": 3,
+    "duplex_pct": 1,
+    "condominiums_pct": 11,
+    "bedrooms_4plus_pct": 47,
+    "bedrooms_3_pct": 38,
+    "construction_period": {
+      "pre_1960": "20%",
+      "1961_to_1980": "12%",
+      "1981_to_1990": "27%",
+      "1991_to_2000": "14%",
+      "2001_to_2005": "11%",
+      "2006_to_2010": "9%",
+      "2011_to_2016": "3%"
+    },
+    "source": "https://hoodq.com/explore/hamilton-on/ancaster"
+  },
+
+  "market_data": {
+    "period": "April–June 2026",
+    "avg_sold_price_all_types": 1097779,
+    "median_sold_detached": 1150000,
+    "median_sold_townhouse": 668750,
+    "median_sold_condo": 772500,
+    "avg_list_price_detached": 1927000,
+    "avg_list_price_townhouse": 778000,
+    "avg_list_price_condo": 572000,
+    "sell_to_list_ratio_pct": 94.7,
+    "avg_days_on_market": 31,
+    "active_listings": 237,
+    "active_detached": 154,
+    "active_townhouse": 29,
+    "active_condo": 54,
+    "price_trend_yearly": "+5.5%",
+    "sources": [
+      "https://www.zolo.ca/hamilton-real-estate/ancaster/trends",
+      "https://www.canadianrealestatemagazine.ca/top-neighbourhoods/ancaster-ontario/"
+    ]
+  },
+
+  "transit": {
+    "go_station": "No direct GO Train. Nearest: Hamilton GO Centre (~20 min drive)",
+    "hsr_bus": "Hamilton Street Railway (HSR) serves area. 127 transit stops in neighbourhood.",
+    "walk_score_note": "Predominantly car-dependent. Ancaster village core is walkable for errands.",
+    "commute_pattern": "Mostly vehicle commuters, mostly medium commutes within city/region",
+    "highway_403": "Direct access — 55-70 min to downtown Toronto",
+    "source": "https://hoodq.com/explore/hamilton-on/ancaster"
+  },
+
+  "schools": {
+    "secondary": [
+      {
+        "name": "Ancaster High School",
+        "board": "Hamilton-Wentworth District School Board (HWDSB)",
+        "type": "public",
+        "fraser_rating": "7.1/10",
+        "fraser_rank": "not confirmed in live research — see compareschoolrankings.org",
+        "fraser_year": "2025",
+        "grades": "9-12",
+        "programs": ["Advanced Placement", "Co-op"],
+        "source": "https://www.compareschoolrankings.org"
+      },
+      {
+        "name": "Bishop Tonnos Catholic Secondary School",
+        "board": "Hamilton-Wentworth Catholic District School Board (HWCDSB)",
+        "type": "catholic",
+        "fraser_rating": "7.6/10",
+        "fraser_rank": "#130 of 747 Ontario secondary schools",
+        "fraser_year": "2025",
+        "grades": "9-12",
+        "note": "Highest-rated Hamilton Catholic high school per Fraser 2025",
+        "source": "http://ontario.compareschoolrankings.org/secondary/Bishop_Tonnos_Catholic_Secondary_School/Ancaster/Report_Card.aspx"
+      }
+    ],
+    "elementary": [
+      {"name": "Rousseau Public School", "board": "HWDSB", "type": "public"},
+      {"name": "Spring Valley Elementary School", "board": "HWDSB", "type": "public"},
+      {"name": "Frank Panabaker Elementary School", "board": "HWDSB", "type": "public"},
+      {"name": "Holy Name of Mary Catholic Elementary School", "board": "HWCDSB", "type": "catholic"},
+      {"name": "St. Ann (Ancaster) Catholic Elementary School", "board": "HWCDSB", "type": "catholic"},
+      {"name": "St. Joachim Catholic Elementary School", "board": "HWCDSB", "type": "catholic"}
+    ],
+    "special_programs": ["International Baccalaureate", "French Immersion", "Advanced Placement", "Montessori (private)"],
+    "private": [
+      {"name": "Oak Hill Academy"},
+      {"name": "Foundations Montessori School"}
+    ],
+    "source": "https://hoodq.com/explore/hamilton-on/ancaster"
+  },
+
+  "parks_and_recreation": {
+    "total_parks": 21,
+    "total_rec_facilities": 45,
+    "facility_breakdown": {
+      "playgrounds": 14,
+      "pools": 2,
+      "arena": 1,
+      "rink": 1,
+      "tennis_courts": 7,
+      "basketball_courts": 2,
+      "ball_diamonds": "confirmed — count not captured"
+    },
+    "notable": ["Optimist Youth Park", "Community Park", "Ancaster Community Centre", "Griffin House (historic landmark)"],
+    "source": "https://hoodq.com/explore/hamilton-on/ancaster"
+  },
+
+  "amenities": {
+    "shopping": ["Ancaster Village shops", "Meadowlands Power Centre (big box, ~5 min)"],
+    "dining": ["Ancaster Old Mill Restaurant (historic landmark)", "village restaurants along Wilson St"],
+    "healthcare": ["McMaster University Medical Centre (~20 min)", "St. Joseph's Healthcare Hamilton (~20 min)"],
+    "university_proximity": "McMaster University (~15 min drive) — largest employer in Hamilton region",
+    "source": "Google Search + HoodQ"
+  },
+
+  "history": {
+    "summary": "Ancaster is one of the oldest European settlements in Upper Canada, established circa 1789 by United Empire Loyalists. The Ancaster Bloody Assizes of 1814 — war treason trials following the War of 1812 — took place here. The Fieldcote Memorial Park and Museum preserves the area's agricultural history. The Old Mill Bistro operates in a building dating to 1832, making it one of the oldest continuously operating mill sites in Canada.",
+    "source": "https://hoodq.com/explore/hamilton-on/ancaster + local historical records"
+  }
+}

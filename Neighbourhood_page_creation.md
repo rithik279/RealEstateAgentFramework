@@ -325,36 +325,128 @@ Render auto-deploys from main branch. Verify live at `www.anukabli.com/[slug]` a
 
 ---
 
-## Neighbourhood Build Queue (Research Not Yet Done)
+## City Pillar Pages Required
 
-Priority order based on search volume and keyword difficulty:
+Each neighbourhood cluster needs a city pillar page (like `/brampton-homes-for-sale`).
+Pillar links DOWN to neighbourhood pages. Neighbourhood breadcrumbs link UP to pillar.
 
-**Brampton:**
+| City Pillar URL | Target Keyword | Serves Neighbourhoods | Status |
+|---|---|---|---|
+| `/brampton-homes-for-sale` | homes for sale brampton (1,900/mo KD 32) | Northwood Park, Castlemore, Brampton East, Mount Pleasant, Rosedale Village, Credit Valley | ✅ Built |
+| `/hamilton-homes-for-sale` | hamilton homes for sale | Ancaster, Stoney Creek, Dundas | ❌ Build with Ancaster |
+| `/caledon-real-estate` | caledon homes for sale | Bolton, Palgrave, Caledon East | ❌ Build with Bolton |
+| `/vaughan-real-estate` | vaughan homes for sale | Kleinburg, Woodbridge, Maple | ❌ Build with Kleinburg |
+| `/halton-hills-real-estate` | halton hills homes for sale (720/mo KD 19) | Georgetown, Acton | ❌ Build with Georgetown |
+| `/king-township-real-estate` | king township homes for sale | King City, Nobleton, Schomberg | ❌ Build with King City |
+| `/mississauga-real-estate` | mississauga homes for sale | Port Credit, Streetsville, Lorne Park, Erin Mills | ❌ Build with Port Credit |
+| `/oakville-real-estate` | oakville homes for sale | Glen Abbey, Bronte, River Oaks, Old Oakville | ❌ Build with Glen Abbey |
+
+**Rule:** Build pillar page same session as first neighbourhood for that city. Pillar goes in sitemap at priority 0.95. Neighbourhood pages at 0.9.
+
+---
+
+## Directory Profiles — Anu Must Create (Critical for Local SEO)
+
+**NAP must be identical on every profile:** Name / Phone / Address / Website.
+NAP inconsistency = local ranking penalty.
+
+| Platform | URL | Priority | Notes |
+|---|---|---|---|
+| Google Business Profile | https://business.google.com/create | 🔴 #1 | Most important. Controls Local Pack (map rankings). |
+| rankmyagent.com | https://www.rankmyagent.com/realtors/sign-up | 🔴 Today | Ranks #1-2 for "top realtor [city]" searches. Free. |
+| ratemyagent.ca | https://www.ratemyagent.ca/real-estate-agents/create-profile | 🔴 Today | Same pattern. Appears top 3 for "best realtor" searches. Free. |
+| realtor.ca agent profile | https://www.realtor.ca/agentprofile | 🔴 Verify | Already exists via TRREB. Make sure photo + bio + all service areas complete. |
+| zillow.com/professionals | https://www.zillow.com/agent-profile/ | 🟠 This week | Backlink + appears in US searches for GTA expats relocating. |
+| HomeStars | https://homestars.com/join | 🟠 This week | Trust signal + backlink to anukabli.com. |
+| YP.ca | https://www.yp.ca/add-update-business | 🟠 This week | NAP citation. Google uses YP.ca as a local data source. |
+
+**Target: all 7 profiles live within 1 week of this document date.**
+
+---
+
+## Neighbourhood Build Queue — Updated June 2026
+
+Priority order by volume × KD feasibility. All volumes from SEMrush CA db=ca.
+
+### 🔴 PHASE 1 — Build Now (KD 10–14, rank in 2–8 weeks)
+
+| # | Neighbourhood | City Pillar Needed? | Keyword | Vol | KD | URL |
+|---|---|---|---|---|---|---|
+| 1 | Ancaster | ✅ Build `/hamilton-homes-for-sale` | ancaster homes for sale | 1,900 | 14 | /ancaster-homes-for-sale |
+| 2 | Kleinburg | ✅ Build `/vaughan-real-estate` | kleinburg homes for sale | 1,300 | 16 | /kleinburg-homes-for-sale |
+| 3 | Georgetown | ✅ Build `/halton-hills-real-estate` | georgetown homes for sale | 1,300 | 16 | /georgetown-homes-for-sale |
+| 4 | Nobleton | ✅ Build `/king-township-real-estate` | nobleton homes for sale | 480 | 11 | /nobleton-homes-for-sale |
+| 5 | King City | (shares `/king-township-real-estate`) | king city homes for sale | 720 | 15 | /king-city-homes-for-sale |
+| 6 | Schomberg | (shares `/king-township-real-estate`) | schomberg homes for sale | 260 | 10 | /schomberg-homes-for-sale |
+| 7 | Bolton | ✅ Build `/caledon-real-estate` | bolton homes for sale | 590 | 14 | /bolton-homes-for-sale |
+| 8 | Stoney Creek | (shares `/hamilton-homes-for-sale`) | stoney creek homes for sale | 590 | 14 | /stoney-creek-homes-for-sale |
+| 9 | Port Credit | ✅ Build `/mississauga-real-estate` | port credit homes for sale | 390 | 13 | /port-credit-homes-for-sale |
+| 10 | Mimico | (standalone or Etobicoke pillar later) | mimico homes for sale | 210 | 14 | /mimico-homes-for-sale |
+| 11 | Palgrave | (shares `/caledon-real-estate`) | palgrave homes for sale | 170 | 10 | /palgrave-homes-for-sale |
+| 12 | Streetsville | (shares `/mississauga-real-estate`) | streetsville homes for sale | 140 | 14 | /streetsville-homes-for-sale |
+
+### 🟠 PHASE 2 — Build After Phase 1
+
+| Neighbourhood | Keyword | Vol | KD | URL |
+|---|---|---|---|---|
+| Woodbridge | woodbridge homes for sale | 480 | 15 | /woodbridge-homes-for-sale |
+| Thornhill | thornhill homes for sale | 390 | 15 | /thornhill-homes-for-sale |
+| Lorne Park | lorne park homes for sale | 260 | 15 | /lorne-park-homes-for-sale |
+| Dundas | dundas ontario homes for sale | 210 | 14 | /dundas-ontario-homes-for-sale |
+| Stouffville | stouffville homes for sale | 880 | 16 | /stouffville-homes-for-sale |
+| Newmarket | newmarket homes for sale | 720 | 16 | /newmarket-homes-for-sale |
+| Maple (Vaughan) | maple homes for sale | 590 | 16 | /maple-homes-for-sale |
+| Unionville | unionville homes for sale | 170 | 14 | /unionville-homes-for-sale |
+| Erin Mills | erin mills homes for sale | 170 | 16 | /erin-mills-homes-for-sale |
+| Aldershot | aldershot homes for sale | 140 | 15 | /aldershot-homes-for-sale |
+| Long Branch | long branch homes for sale | 140 | 14 | /long-branch-homes-for-sale |
+| Glen Abbey | glen abbey homes for sale | 90 | 13 | /glen-abbey-homes-for-sale |
+| Agincourt | agincourt homes for sale | 90 | 14 | /agincourt-homes-for-sale |
+| Acton | acton ontario homes for sale | 90 | 14 | /acton-homes-for-sale |
+| Bronte Oakville | bronte oakville homes for sale | 70 | 14 | /bronte-oakville-homes-for-sale |
+| River Oaks Oakville | river oaks oakville homes for sale | 70 | 13 | /river-oaks-oakville-homes-for-sale |
+
+### 🟡 PHASE 3 — Conversion + Authority Pages
+
+| Page | Keyword | Vol | KD |
+|---|---|---|---|
+| /condos-for-sale-brampton | condos for sale in brampton | 880 | 13 |
+| /scarborough-real-estate-agent | real estate agents scarborough | 390 | 11 |
+| /hindi-punjabi-speaking-real-estate-agent | hindi punjabi realtor GTA | est. 200+ | 0 |
+| /ontario-land-transfer-tax-calculator | land transfer tax ontario calculator | 2,000 | 25 |
+| /sell-my-home-brampton | sell my home brampton | est. 300+ | low |
+
+---
+
+## URL Patterns for Non-Brampton Cities
+
+HoodQ, Wahi, and Zolo patterns change per city:
+
+| City | HoodQ | Wahi | Zolo |
+|---|---|---|---|
+| Hamilton | `hoodq.com/explore/hamilton-on/[slug]` | `wahi.com/ca/en/neighbourhoods/ontario/hamilton/[slug]` | `zolo.ca/hamilton-real-estate/[slug]` |
+| Vaughan | `hoodq.com/explore/vaughan-on/[slug]` | `wahi.com/ca/en/neighbourhoods/ontario/gta/vaughan/[slug]` | `zolo.ca/vaughan-real-estate/[slug]` |
+| Oakville | `hoodq.com/explore/oakville-on/[slug]` | `wahi.com/ca/en/neighbourhoods/ontario/gta/oakville/[slug]` | `zolo.ca/oakville-real-estate/[slug]` |
+| Mississauga | `hoodq.com/explore/mississauga-on/[slug]` | `wahi.com/ca/en/neighbourhoods/ontario/gta/mississauga/[slug]` | `zolo.ca/mississauga-real-estate/[slug]` |
+| Milton | `hoodq.com/explore/milton-on/[slug]` | `wahi.com/ca/en/neighbourhoods/ontario/gta/milton/[slug]` | `zolo.ca/milton-real-estate/[slug]` |
+| Caledon | `hoodq.com/explore/caledon-on/[slug]` | `wahi.com/ca/en/neighbourhoods/ontario/gta/caledon/[slug]` | `zolo.ca/caledon-real-estate/[slug]` |
+| King Township | `hoodq.com/explore/king-on/[slug]` | search Google for wahi equivalent | `zolo.ca/king-real-estate/[slug]` |
+| Halton Hills | `hoodq.com/explore/halton-hills-on/[slug]` | search Google for wahi equivalent | `zolo.ca/halton-hills-real-estate/[slug]` |
+
+**School boards change by city:**
+- Hamilton: Hamilton-Wentworth DSB (public), Hamilton-Wentworth CDSB (catholic)
+- York Region (Vaughan, King, Newmarket): York Region DSB, York Catholic DSB
+- Halton (Georgetown, Oakville, Milton): Halton DSB, Halton CDSB
+- Mississauga: Peel DSB, Dufferin-Peel CDSB (same as Brampton)
+- Scarborough/Etobicoke: Toronto DSB, Toronto CDSB
+
+**Fraser Institute rankings:** still out of 747 total Ontario secondary schools regardless of city.
+
+---
+
+## Brampton:**
 - Downtown Brampton (KD 14, ~90 searches/mo)
 - Heart Lake Brampton (KD ~12, ~50/mo)
-
-**Mississauga:**
-- Port Credit (KD 12)
-- Lorne Park (KD 7)
-- Cooksville, Lakeview, Applewood, Clarkson, Erin Mills, Churchill Meadows
-
-**Oakville:**
-- Glen Abbey, Old Oakville, Bronte, Joshua Creek
-
-**Vaughan:**
-- Woodbridge, Maple, Kleinburg
-
-**Milton:**
-- Harrison, Hawthorne Village, condos
-
-**Caledon:**
-- Bolton, estate homes
-
-**Phase 2 — City Authority Pages:**
-- `/top-realtor-brampton`
-- `/mississauga-real-estate-agent`
-- `/hindi-punjabi-speaking-real-estate-agent` (KD 0)
-- `/brampton-condos-for-sale` (880/mo, KD 13)
 
 ---
 
