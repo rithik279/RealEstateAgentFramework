@@ -66,6 +66,21 @@
     <priority>0.9</priority>
   </url>
 
+  <!-- Vaughan City Pillar -->
+  <url>
+    <loc>https://anukabli.com/vaughan-real-estate</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <!-- Vaughan Neighbourhood Pages -->
+  <url>
+    <loc>https://anukabli.com/kleinburg-homes-for-sale</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- Hamilton City Pillar -->
   <url>
     <loc>https://anukabli.com/hamilton-homes-for-sale</loc>

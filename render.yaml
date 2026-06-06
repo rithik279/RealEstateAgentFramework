@@ -41,6 +41,12 @@ services:
       - type: rewrite
         source: /ancaster-homes-for-sale
         destination: /ancaster-homes-for-sale.html
+      - type: rewrite
+        source: /vaughan-real-estate
+        destination: /vaughan-real-estate.html
+      - type: rewrite
+        source: /kleinburg-homes-for-sale
+        destination: /kleinburg-homes-for-sale.html
 
   - type: web
     name: real-estate-agent

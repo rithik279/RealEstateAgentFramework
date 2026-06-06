@@ -1,0 +1,179 @@
+{
+  "neighbourhood": "Kleinburg",
+  "city": "Vaughan",
+  "municipality": "City of Vaughan, York Region",
+  "research_date": "2026-06-05",
+  "researcher": "Live browser research — HoodQ, Zolo, Google Search",
+
+  "seo": {
+    "target_keyword": "kleinburg homes for sale",
+    "volume": 1300,
+    "kd": 16,
+    "target_url": "/kleinburg-homes-for-sale",
+    "city_pillar": "/vaughan-real-estate"
+  },
+
+  "location": {
+    "description": "Kleinburg is a historic heritage village in the northwestern corner of the City of Vaughan, Ontario. Located approximately 30km northwest of downtown Toronto between branches of the Humber River. Heritage Conservation District under the Ontario Heritage Act. Bordered by Highway 400 to the east and Highway 27 to the west.",
+    "highway_access": ["Highway 400 (5 min east)", "Highway 427 (via Hwy 27 south)", "Highway 27"],
+    "commute_to_toronto_drive": "40-45 min to downtown Toronto (Hwy 400/427)",
+    "commute_notes": "GO Bus service on main street. Vaughan Metropolitan Centre subway ~40 min drive connecting to Toronto subway. Village itself is car-dependent for most residents.",
+    "source": "https://hoodq.com/explore/vaughan-on/kleinburg + Google Search"
+  },
+
+  "demographics": {
+    "population_neighbourhood": 9614,
+    "population_broader_area": 77317,
+    "households": 2805,
+    "avg_household_size": 3,
+    "avg_individual_income": 153331,
+    "median_household_income": 124187,
+    "families_with_kids_pct": 63,
+    "couples_no_kids_pct": 21,
+    "single_person_pct": 10,
+    "top_ethnic_origins": [
+      {"origin": "Italian", "pct": 45},
+      {"origin": "English", "pct": 9},
+      {"origin": "Canadian", "pct": 8},
+      {"origin": "Scottish", "pct": 6},
+      {"origin": "Irish", "pct": 6}
+    ],
+    "first_gen_immigrants_pct": 33,
+    "second_gen_immigrants_pct": 41,
+    "homeownership_pct": 92,
+    "renter_pct": 8,
+    "crime_rate_vs_national": "35% lower than national average",
+    "unemployment_rate_pct": 3.7,
+    "age_0_14_pct": 20,
+    "age_15_64_pct": 67,
+    "age_65plus_pct": 11,
+    "source": "https://hoodq.com/explore/vaughan-on/kleinburg"
+  },
+
+  "home_types": {
+    "detached_dominant": true,
+    "active_listings": {
+      "total": 125,
+      "detached": 101,
+      "condo": 1,
+      "townhome": 19
+    },
+    "construction_notes": "Mix of heritage homes in village core (pre-1960), 1980-2000 executive builds, and recent luxury estate construction post-2010",
+    "sub_communities": ["Old Kleinburg", "Copperwood", "Nashville", "The Boulevard", "National Estates", "Pine Valley Estates"],
+    "source": "Zolo + web search"
+  },
+
+  "market_data": {
+    "period": "April–June 2026",
+    "avg_sold_price_all_types": 1699848,
+    "avg_list_townhouse": 1063000,
+    "townhouse_range": {"low": 899000, "high": 1199999},
+    "detached_start": 1600000,
+    "luxury_estates": "3,000,000+",
+    "sell_to_list_ratio_pct": 93.8,
+    "avg_days_on_market": 26,
+    "yearly_price_change_pct": 10,
+    "sources": [
+      "https://www.zolo.ca/vaughan-real-estate/kleinburg/trends",
+      "https://thenapolitanoteam.ca/homes-for-sale-in-kleinburg-ontario/"
+    ]
+  },
+
+  "transit": {
+    "go_bus": "GO Bus stop on Islington Avenue (main street) — service to Hwy 400 corridor",
+    "subway_nearest": "Vaughan Metropolitan Centre (VMC) subway station — York-Spadina extension — ~40 min drive. Direct to downtown Toronto.",
+    "drive_to_toronto": "40–45 min via Hwy 400/427",
+    "walk_score_note": "Village core walkable for shops/cafes. Surrounding estate areas fully car-dependent.",
+    "source": "https://www.comeexplorecanada.com/ontario/kleinburg + Google Maps"
+  },
+
+  "schools": {
+    "secondary_public": [
+      {
+        "name": "Tommy Douglas Secondary School",
+        "board": "York Region District School Board (YRDSB)",
+        "type": "public",
+        "fraser_rating": "7.5/10",
+        "fraser_rank": "#141 of 747 Ontario secondary schools",
+        "fraser_year": "2025",
+        "source": "communitysearch.ca Vaughan high schools guide 2025"
+      },
+      {
+        "name": "Emily Carr Secondary School",
+        "board": "York Region District School Board (YRDSB)",
+        "type": "public",
+        "fraser_rating": "not confirmed in research",
+        "fraser_year": "2025"
+      },
+      {
+        "name": "King City Secondary School",
+        "board": "York Region District School Board (YRDSB)",
+        "type": "public",
+        "fraser_rating": "6.3/10",
+        "fraser_rank": "not confirmed from 747 total",
+        "fraser_year": "2025",
+        "note": "Above Ontario provincial average of 6.0/10",
+        "source": "communitysearch.ca King City schools guide 2025"
+      }
+    ],
+    "secondary_catholic": [
+      {
+        "name": "Cardinal Carter Catholic Secondary School",
+        "board": "York Catholic District School Board (YCDSB)",
+        "type": "catholic",
+        "fraser_rating": "not confirmed in research",
+        "note": "verify at fraserinstitute.org"
+      },
+      {
+        "name": "St. Jean de Brebeuf Catholic High School",
+        "board": "York Catholic District School Board (YCDSB)",
+        "type": "catholic",
+        "fraser_rating": "not confirmed in research"
+      }
+    ],
+    "elementary": [
+      {"name": "Kleinburg Public School", "board": "YRDSB", "type": "public"},
+      {"name": "St. Stephen Catholic Elementary School", "board": "YCDSB", "type": "catholic"},
+      {"name": "Holy Name Catholic Elementary School", "board": "YCDSB", "type": "catholic"},
+      {"name": "San Marco Catholic Elementary School", "board": "YCDSB", "type": "catholic"}
+    ],
+    "special_programs": ["French Immersion", "International Baccalaureate", "Montessori", "Advanced Placement", "Christian"],
+    "total_public_schools_serving": 11,
+    "total_catholic_schools_serving": 14,
+    "total_private_schools_serving": 2,
+    "source": "https://hoodq.com/explore/vaughan-on/kleinburg"
+  },
+
+  "parks_and_recreation": {
+    "named_parks": [
+      {"name": "Bindertwine Park", "features": ["Humber River trails", "Connection to McMichael Gallery trail"]},
+      {"name": "East Corners Park"},
+      {"name": "Secord Park"},
+      {"name": "Summit Park"},
+      {"name": "Tinsmith Parkette"},
+      {"name": "Wishing Well Park"}
+    ],
+    "conservation_areas": [
+      {"name": "Kortright Centre for Conservation", "features": ["Maple syrup experience", "Nature programs", "Cross-country ski trails"]},
+      {"name": "Boyd Conservation Area", "features": ["Swimming", "Camping", "Hiking"]}
+    ],
+    "mcmichael_trail": "1.5km trail down into Humber River Valley connecting to Bindertwine Park",
+    "source": "Google Search + comeexplorecanada.com"
+  },
+
+  "amenities": {
+    "landmark": "McMichael Canadian Art Collection — 100 acres, 7,000+ works, Group of Seven, First Nations art. Crown corporation of Ontario since 1972.",
+    "village_core": "Islington Avenue — boutique shops, cafes (Cookie Crumble Café), restaurants (Avenue Cibi e Vini, The Doctor's House), spas, galleries",
+    "nearby_big_box": "Vaughan Mills Mall (~15 min), Woodbridge retail corridors",
+    "source": "Google Search + comeexplorecanada.com"
+  },
+
+  "history": {
+    "founded": "1848 by German settler John Nicholas Kline (Henry Klein served as first postmaster and Reeve of Vaughan Township 1859-1860)",
+    "heritage_status": "Heritage Conservation District under Ontario Heritage Act — protects village character",
+    "mcmichael_gallery_history": "Robert and Signe McMichael purchased land in 1951. First acquisition: Tom Thomson painting for C$250 in 1955. Donated to Province of Ontario in 1965 (194 works, buildings, land). Formally incorporated as Crown corporation November 1972.",
+    "mills": "Original economy based on flour and wheat mills along Humber River",
+    "group_of_seven_connection": "McMichaels and six members of the Group of Seven are buried in the McMichael cemetery on the gallery grounds",
+    "source": "https://www.comeexplorecanada.com/ontario/kleinburg + Wikipedia McMichael"
+  }
+}
