@@ -1,0 +1,160 @@
+{
+  "neighbourhood": "King City",
+  "city": "King Township",
+  "municipality": "Township of King, York Region",
+  "research_date": "2026-06-05",
+  "researcher": "Live browser research — Zolo, Wikipedia, HoodQ, ComeExploreCanada, communitysearch.ca, Statistics Canada",
+
+  "seo": {
+    "target_keyword": "king city homes for sale",
+    "volume": 720,
+    "kd": 15,
+    "target_url": "/king-city-homes-for-sale",
+    "city_pillar": "/king-township-real-estate"
+  },
+
+  "location": {
+    "description": "King City is an unincorporated community and the largest settlement in the Township of King, York Region, Ontario. Located 40 km north of downtown Toronto on the southern slope of the Oak Ridges Moraine. The East Humber River has its headwaters in King City. Characterized by rolling hills, kettle lakes, mature forests, and the Northern Railway corridor running through the community since 1853.",
+    "highway_access": ["Highway 400 (15 min east via King Road)", "Highway 404 (20 min east via Davis Drive)", "Highway 27 (south to Toronto)"],
+    "commute_to_toronto_drive": "45–55 min to downtown Toronto by car",
+    "go_train": "King City GO Station — Barrie GO line — daily service to Union Station approximately 50–60 min. One of Ontario's oldest railway stops (1852 original station). Station opened for GO service September 7, 1982.",
+    "commute_notes": "King City GO Station is a key asset — rare for a community this size to have direct GO Train access. York Region Transit serves King City with bus connections.",
+    "source": "Wikipedia King City GO Station; comeexplorecanada.com/ontario/king-city; Google Maps"
+  },
+
+  "demographics": {
+    "population_king_city": 8396,
+    "population_year": "2021 Census",
+    "dwellings": 2730,
+    "population_king_township": 31175,
+    "median_age_township": 43.2,
+    "median_hh_income_township": 141000,
+    "homeownership_pct": 88.2,
+    "households_township": 8970,
+    "avg_household_size": 3.0,
+    "families_with_kids_pct": 55,
+    "couples_no_kids_pct": 27,
+    "single_person_pct": 15,
+    "top_ethnic_origins": [
+      {"origin": "Italian", "pct": 35.1, "note": "Largest Italian-Canadian concentration of any Canadian census subdivision"},
+      {"origin": "English", "pct": "secondary"},
+      {"origin": "Canadian", "pct": "secondary"},
+      {"origin": "Russian", "pct": 2.6, "note": "mother tongue"},
+      {"origin": "Mandarin", "pct": 2.0, "note": "mother tongue"}
+    ],
+    "english_mother_tongue_pct": 67.5,
+    "italian_mother_tongue_pct": 8.6,
+    "first_gen_immigrants_pct": 20.5,
+    "religion_catholic_pct": 47,
+    "religion_christian_pct": 69.3,
+    "religion_none_pct": 21.2,
+    "source": "Statistics Canada 2021 Census King Township; HoodQ King City; Wikipedia King City Ontario; point2homes.com King demographics"
+  },
+
+  "home_types": {
+    "detached_dominant": true,
+    "detached_share_pct": 89,
+    "condo_share_pct": 6,
+    "townhouse_share_pct": 4,
+    "character": "Mix of heritage homes on King Road and Keele Street (pre-1960), custom estate builds on large lots, and newer subdivisions from 2000s–present replacing older stock. Many heritage Victorian/Edwardian homes being redeveloped into custom builds.",
+    "lot_sizes": "Typically 0.5–5 acres for estate properties; smaller lots in village core (50–100 ft frontage)",
+    "source": "Wikipedia King City; squareyards.ca King City neighbourhood guide; Zolo King City real estate"
+  },
+
+  "market_data": {
+    "period": "2025–2026",
+    "king_city_median_home_value": 1391369,
+    "king_city_avg_sales_price": 3962500,
+    "king_township_all_types_median": 1375000,
+    "king_detached_median_sold": 1899000,
+    "king_detached_yoy_change_pct": -3.6,
+    "king_detached_avg_listing": 3825000,
+    "king_condo_median": 649000,
+    "king_townhouse_median": 1299000,
+    "king_city_active_listings": 94,
+    "days_on_market": 33,
+    "sell_to_list_ratio_pct": 95.55,
+    "neighbourhood_ranking": {
+      "Rural King (most expensive)": 4880000,
+      "Nobleton avg sold": 1831276,
+      "King City median value": 1391369,
+      "Schomberg avg sold": 1380000,
+      "Schomberg condos": 591000
+    },
+    "sources": [
+      "https://www.zolo.ca/king-real-estate/king-city/trends",
+      "https://www.zolo.ca/king-real-estate/trends",
+      "https://www.honestdoor.com/cities/on/king/king-city",
+      "https://www.homesfound.ca/blog/king-township-real-estate-market-analysis-2026/"
+    ]
+  },
+
+  "transit": {
+    "go_train_station": "King City GO Station — Barrie Line. Daily service to Union Station ~50–60 min. Station opened September 7, 1982 for GO service. Original 1852 station (oldest surviving railway station in Canada) now at King Township Museum grounds.",
+    "yrт_bus": "York Region Transit bus service connecting King City to GO station and surrounding communities",
+    "highway_access": "Hwy 400 (15 min east), Hwy 27 (south to Toronto ~50 min)",
+    "drive_to_toronto": "45–55 min to downtown Toronto",
+    "go_history": "Ontario's first steam locomotive 'Toronto' ran through King City (then Springhill) on May 16, 1853 on the Ontario, Simcoe & Huron Railway. GO Transit took over commuter service 1982 after VIA Rail 'Pepin cuts' eliminated Barrie line service.",
+    "source": "Wikipedia King City GO Station; transittoronto.ca Barrie Line history; Wikipedia Barrie line"
+  },
+
+  "schools": {
+    "secondary_public": [
+      {
+        "name": "King City Secondary School",
+        "board": "York Region District School Board (YRDSB)",
+        "type": "public",
+        "fraser_rating_historical": "6.3/10 (2008), 7.8/10 (2013, ranked 94/725 Ontario)",
+        "fraser_rating_2025": "verify at fraserinstitute.org — exact 2025 score not confirmed in research",
+        "note": "Historically trending upward from 6.3 to 7.8 over 2008–2013 reporting period. 2025 rating: check compareschoolrankings.org",
+        "source": "King Weekly Sentinel 2013 (reports 2013 Fraser rating 7.8/10 #94/725); research note on 6.3 reference from previous session"
+      }
+    ],
+    "secondary_catholic": [
+      {
+        "name": "Cardinal Carter Catholic Secondary School",
+        "board": "York Catholic District School Board (YCDSB)",
+        "type": "catholic",
+        "fraser_rating": "not confirmed in research — verify at fraserinstitute.org",
+        "note": "Serves King City and surrounding King Township communities"
+      }
+    ],
+    "elementary": [
+      {"name": "King City Public School", "board": "YRDSB", "type": "public"},
+      {"name": "Huron Heights Public School", "board": "YRDSB", "type": "public"},
+      {"name": "St. Andrew Catholic Elementary School", "board": "YCDSB", "type": "catholic"}
+    ],
+    "source": "communitysearch.ca King City schools guide 2025; YRDSB school locator"
+  },
+
+  "parks_and_recreation": {
+    "oak_ridges_moraine": "King City sits on the southern slope of the Oak Ridges Moraine — a UNESCO-recognized glacial landform with rolling hills, kettle lakes, temperate forests. Regulates precipitation for the Toronto watershed.",
+    "humber_river_headwaters": "East Humber River headwaters originate within King City — one of Ontario's most ecologically significant river systems.",
+    "trails": [
+      {"name": "Oak Ridges Trail", "description": "Extensive trail network through King City portion of the Moraine"},
+      {"name": "King City Trail", "description": "Community trail network under development"},
+      {"name": "Greenbelt trail connections", "description": "King Township lies within protected Greenbelt lands"}
+    ],
+    "cultural": "King Heritage & Cultural Centre at 2920 King Road — houses 8,000+ artifacts of King Township history. King Township Museum on grounds of original (1852) King railway station — designated heritage site 1990.",
+    "source": "Wikipedia King City Ontario; comeexplorecanada.com/ontario/king-city; King Township cultural heritage"
+  },
+
+  "amenities": {
+    "village_core": "King Road and Keele Street intersection — local shops, restaurants, coffee, professional services",
+    "nearby_big_box": "Vaughan Mills Mall (~20 min south via Hwy 400), Aurora GO and retail (~15 min east)",
+    "equestrian": "King Township has significant equestrian culture — horse farms, riding facilities, rural estate lifestyle",
+    "private_schools": "Close proximity to several private school campuses: The Country Day School, Villanova College (nearby Aurora), Pickering College (Newmarket)",
+    "source": "Google Search; comeexplorecanada.com; King Township Tourism"
+  },
+
+  "history": {
+    "indigenous": "Oak Ridges Moraine and Humber River headwaters were traditional Indigenous travel and gathering routes for thousands of years.",
+    "founding": "1836: Settlement of Springhill established. 1853: Ontario, Simcoe & Huron Railway arrives — Ontario's first steam locomotive 'Toronto' passes through May 16, 1853 on inaugural run to Aurora. Settlement expands rapidly with railway access.",
+    "incorporation": "1890: Reeve of King Township James Whiting Crossley merges hamlets of Springhill, Kinghorn, Laskay, and Eversley into King City.",
+    "railway_station": "King Station built 1852 — believed to be the oldest surviving railway station in Canada. Moved to Boyd Conservation Area 1968, then to King Township Museum grounds 1989. Designated heritage site 1990.",
+    "go_transit": "GO Transit began commuter service at King City station September 7, 1982 — rescuing the route after VIA Rail's 'Pepin cuts' eliminated Barrie line service in 1981.",
+    "heritage_homes": "Heritage Victorian and Edwardian homes along King Road and Keele Street. King Heritage & Cultural Centre houses 8,000+ township artifacts. Eleven designated Heritage Sites in King Township.",
+    "italian_community": "King City has the highest concentration of Italian-Canadians of any Canadian census subdivision — 35.1% of population. Italian community established through post-WWII immigration and has shaped King City's culture, construction trades, and residential character.",
+    "source": "Wikipedia King City Ontario; Wikipedia King City GO Station; King Township Museum; comeexplorecanada.com/ontario/king-city"
+  }
+}

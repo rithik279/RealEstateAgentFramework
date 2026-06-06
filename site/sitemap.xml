@@ -111,4 +111,19 @@
     <priority>0.9</priority>
   </url>
 
+  <!-- King Township City Pillar -->
+  <url>
+    <loc>https://anukabli.com/king-township-real-estate</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <!-- King Township Neighbourhood Pages -->
+  <url>
+    <loc>https://anukabli.com/king-city-homes-for-sale</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>

@@ -53,6 +53,12 @@ services:
       - type: rewrite
         source: /bolton-homes-for-sale
         destination: /bolton-homes-for-sale.html
+      - type: rewrite
+        source: /king-township-real-estate
+        destination: /king-township-real-estate.html
+      - type: rewrite
+        source: /king-city-homes-for-sale
+        destination: /king-city-homes-for-sale.html
 
   - type: web
     name: real-estate-agent
