@@ -345,28 +345,116 @@ teamarora.com already has `/acton-homes-for-sale` getting 30/mo. Zero real compe
 
 ---
 
-## MASTER OPPORTUNITY RANKING (All Research Combined)
+## NEW EXPANSION RESEARCH — ROUND 2 (June 5, 2026 — Session 2)
+*Full detail in: seo-research/new-keyword-opportunities-june2026.md*
 
-Ranked by: (Volume × Feasibility) — fastest to rank + highest value
+28 new keywords checked via SEMrush Canada (db=ca). Key finds:
 
-| Rank | Page | Keyword | Vol/mo | KD% | City | Status |
-|---|---|---|---|---|---|---|
-| 1 | /kleinburg-homes-for-sale | kleinburg homes for sale | 1,300 | 16 | Vaughan | ❌ Build |
-| 2 | /georgetown-homes-for-sale | georgetown homes for sale | 1,300 | 16 | Halton Hills | ❌ NEW — Build |
-| 3 | /northwood-park-brampton | homes for sale northwood park | 1,000 | 15 | Brampton | ✅ Live |
-| 4 | /condos-for-sale-brampton | condos for sale in brampton | 880 | 13 | Brampton | ❌ Build |
-| 5 | /halton-hills-real-estate | halton hills homes for sale | 720 | 19 | Halton Hills | ❌ NEW — Build |
-| 6 | /condos-for-sale-milton | condos for sale in milton ontario | 720 | 14 | Milton | ❌ Build |
-| 7 | /woodbridge-homes-for-sale | woodbridge homes for sale | 480 | 15 | Vaughan | ❌ Build |
-| 8 | /scarborough-real-estate-agent | real estate agents scarborough | 390 | 11 | Scarborough | ❌ NEW — FASTEST WIN |
-| 9 | /port-credit-mississauga | port credit mississauga homes | 390 | 13 | Mississauga | ❌ Build |
-| 10 | /lorne-park-mississauga | lorne park mississauga homes | 210 | 10 | Mississauga | ❌ Build — KD=10 EASIEST |
-| 11 | /mimico-homes-for-sale | mimico homes for sale | 210 | 14 | Etobicoke | ❌ NEW — Build |
-| 12 | /caledon-east-homes | caledon east homes for sale | 170 | 16 | Caledon | ❌ Build |
-| 13 | /old-oakville | old oakville homes for sale | 170 | 13 | Oakville | ❌ Build |
-| 14 | /rosedale-village-brampton | rosedale village homes | 70 | 1 | Brampton | ✅ Live — KD=1 |
+### 🔴 BIGGEST DISCOVERIES
+
+**Ancaster (1,900/mo, KD 14)** — Hamilton region. Same volume as Brampton pillar page but 2x easier KD. Nobody in Anu's network targeting this. One page = 200–380 visitors/mo in 6 weeks.
+
+**Nobleton (480/mo, KD 11)** — King Township luxury rural community. Avg home $1.5M+. KD 11 = near-zero competition. Ranks with zero backlinks.
+
+**Schomberg (260/mo, KD 10)** + **Palgrave (170/mo, KD 10)** — KD 10 is the floor of competition. Both rank instantly. Serve luxury rural buyers in King/Caledon.
+
+**Bolton (590/mo, KD 14)** — Caledon's commercial hub, 30min from Brampton, large South Asian population. High-intent local buyers.
+
+**Stoney Creek (590/mo, KD 14)** — Hamilton bedroom community. Same profile as Bolton. Completely untapped.
+
+### Round 2 Tier 1 Targets (KD 10–14)
+
+| Keyword | Vol/mo | KD | URL |
+|---|---|---|---|
+| ancaster homes for sale | 1,900 | 14 | /ancaster-homes-for-sale |
+| bolton homes for sale | 590 | 14 | /bolton-homes-for-sale |
+| stoney creek homes for sale | 590 | 14 | /stoney-creek-homes-for-sale |
+| nobleton homes for sale | 480 | 11 | /nobleton-homes-for-sale |
+| port credit homes for sale | 390 | 13 | /port-credit-homes-for-sale |
+| schomberg homes for sale | 260 | 10 | /schomberg-homes-for-sale |
+| dundas ontario homes for sale | 210 | 14 | /dundas-ontario-homes-for-sale |
+| mimico homes for sale | 210 | 14 | /mimico-homes-for-sale |
+| unionville homes for sale | 170 | 14 | /unionville-homes-for-sale |
+| palgrave homes for sale | 170 | 10 | /palgrave-homes-for-sale |
+| aldershot homes for sale | 140 | 15 | /aldershot-homes-for-sale |
+| streetsville homes for sale | 140 | 14 | /streetsville-homes-for-sale |
+| long branch homes for sale | 140 | 14 | /long-branch-homes-for-sale |
+| glen abbey homes for sale | 90 | 13 | /glen-abbey-homes-for-sale |
+| agincourt homes for sale | 90 | 14 | /agincourt-homes-for-sale |
+| acton ontario homes for sale | 90 | 14 | /acton-homes-for-sale |
+| bronte oakville homes for sale | 70 | 14 | /bronte-oakville-homes-for-sale |
+| river oaks oakville homes for sale | 70 | 13 | /river-oaks-oakville-homes-for-sale |
+
+### Round 2 Tier 2 Targets (KD 15–16)
+
+| Keyword | Vol/mo | KD | URL |
+|---|---|---|---|
+| kleinburg homes for sale | 1,300 | 16 | /kleinburg-homes-for-sale |
+| georgetown homes for sale | 1,300 | 16 | /georgetown-homes-for-sale |
+| stouffville homes for sale | 880 | 16 | /stouffville-homes-for-sale |
+| king city homes for sale | 720 | 15 | /king-city-homes-for-sale |
+| newmarket homes for sale | 720 | 16 | /newmarket-homes-for-sale |
+| maple homes for sale | 590 | 16 | /maple-homes-for-sale |
+| woodbridge homes for sale | 480 | 15 | /woodbridge-homes-for-sale |
+| thornhill homes for sale | 390 | 15 | /thornhill-homes-for-sale |
+| lorne park homes for sale | 260 | 15 | /lorne-park-homes-for-sale |
+| caledon east homes for sale | 170 | 16 | /caledon-east-homes-for-sale |
+| erin mills homes for sale | 170 | 16 | /erin-mills-homes-for-sale |
+
+### Skipped — Too High KD
+| aurora homes for sale | 1,000 | 20 | Revisit month 3 |
+| richmond hill homes for sale | 590 | 25 | Skip |
+| scarborough homes for sale | 1,900 | 28 | Portal-dominated |
 
 ---
 
-*Last updated: June 5, 2026*
+## MASTER OPPORTUNITY RANKING (All Research Combined — Updated Round 2)
+
+Ranked by: volume + KD feasibility + strategic value
+
+| Rank | Page | Keyword | Vol/mo | KD% | Region | Status |
+|---|---|---|---|---|---|---|
+| 1 | /ancaster-homes-for-sale | ancaster homes for sale | 1,900 | 14 | Hamilton | ❌ 🔴 BUILD FIRST |
+| 2 | /kleinburg-homes-for-sale | kleinburg homes for sale | 1,300 | 16 | Vaughan | ❌ Build |
+| 3 | /georgetown-homes-for-sale | georgetown homes for sale | 1,300 | 16 | Halton Hills | ❌ Build |
+| 4 | /northwood-park-brampton | homes for sale northwood park | 1,000 | 15 | Brampton | ✅ Live |
+| 5 | /stouffville-homes-for-sale | stouffville homes for sale | 880 | 16 | York Region | ❌ Build |
+| 6 | /condos-for-sale-brampton | condos for sale in brampton | 880 | 13 | Brampton | ❌ Build |
+| 7 | /king-city-homes-for-sale | king city homes for sale | 720 | 15 | King Twp | ❌ Build |
+| 8 | /newmarket-homes-for-sale | newmarket homes for sale | 720 | 16 | York Region | ❌ Build |
+| 9 | /halton-hills-real-estate | halton hills homes for sale | 720 | 19 | Halton Hills | ❌ Build |
+| 10 | /condos-for-sale-milton | condos for sale in milton ontario | 720 | 14 | Milton | ❌ Build |
+| 11 | /bolton-homes-for-sale | bolton homes for sale | 590 | 14 | Caledon | ❌ 🔴 Build |
+| 12 | /stoney-creek-homes-for-sale | stoney creek homes for sale | 590 | 14 | Hamilton | ❌ 🔴 Build |
+| 13 | /maple-homes-for-sale | maple homes for sale | 590 | 16 | Vaughan | ❌ Build |
+| 14 | /woodbridge-homes-for-sale | woodbridge homes for sale | 480 | 15 | Vaughan | ❌ Build |
+| 15 | /nobleton-homes-for-sale | nobleton homes for sale | 480 | 11 | King Twp | ❌ 🔴 Build |
+| 16 | /scarborough-real-estate-agent | real estate agents scarborough | 390 | 11 | Scarborough | ❌ FASTEST WIN |
+| 17 | /thornhill-homes-for-sale | thornhill homes for sale | 390 | 15 | York Region | ❌ Build |
+| 18 | /port-credit-homes-for-sale | port credit homes for sale | 390 | 13 | Mississauga | ❌ 🔴 Build |
+| 19 | /lorne-park-homes-for-sale | lorne park homes for sale | 260 | 15 | Mississauga | ❌ Build |
+| 20 | /schomberg-homes-for-sale | schomberg homes for sale | 260 | 10 | King Twp | ❌ 🔴 KD=10 |
+| 21 | /dundas-ontario-homes-for-sale | dundas ontario homes for sale | 210 | 14 | Hamilton | ❌ Build |
+| 22 | /mimico-homes-for-sale | mimico homes for sale | 210 | 14 | Etobicoke | ❌ Build |
+| 23 | /caledon-east-homes-for-sale | caledon east homes for sale | 170 | 16 | Caledon | ❌ Build |
+| 24 | /unionville-homes-for-sale | unionville homes for sale | 170 | 14 | Markham | ❌ Build |
+| 25 | /erin-mills-homes-for-sale | erin mills homes for sale | 170 | 16 | Mississauga | ❌ Build |
+| 26 | /palgrave-homes-for-sale | palgrave homes for sale | 170 | 10 | Caledon | ❌ 🔴 KD=10 |
+| 27 | /aldershot-homes-for-sale | aldershot homes for sale | 140 | 15 | Burlington | ❌ Build |
+| 28 | /streetsville-homes-for-sale | streetsville homes for sale | 140 | 14 | Mississauga | ❌ Build |
+| 29 | /long-branch-homes-for-sale | long branch homes for sale | 140 | 14 | Etobicoke | ❌ Build |
+| 30 | /old-oakville | old oakville homes for sale | 170 | 13 | Oakville | ❌ Build |
+| 31 | /glen-abbey-homes-for-sale | glen abbey homes for sale | 90 | 13 | Oakville | ❌ Build |
+| 32 | /agincourt-homes-for-sale | agincourt homes for sale | 90 | 14 | Scarborough | ❌ Build |
+| 33 | /acton-homes-for-sale | acton ontario homes for sale | 90 | 14 | Halton Hills | ❌ Build |
+| 34 | /rosedale-village-brampton | rosedale village homes | 70 | 1 | Brampton | ✅ Live — KD=1 |
+| 35 | /bronte-oakville-homes-for-sale | bronte oakville homes for sale | 70 | 14 | Oakville | ❌ Build |
+| 36 | /river-oaks-oakville-homes-for-sale | river oaks oakville homes for sale | 70 | 13 | Oakville | ❌ Build |
+
+**🔴 = Build in next 2 weeks. Sorted by volume × (16-KD) score.**
+
+---
+
+*Last updated: June 5, 2026 — Round 2 expansion research added*
 *Research sources: SEMrush Canada db=ca, Google Canada SERPs, Zolo, WOWA, insauga.com, Fraser Institute 2025, TRREB/MLS® data*
+*Full Round 2 detail: seo-research/new-keyword-opportunities-june2026.md*
