@@ -59,6 +59,12 @@ services:
       - type: rewrite
         source: /king-city-homes-for-sale
         destination: /king-city-homes-for-sale.html
+      - type: rewrite
+        source: /nobleton-homes-for-sale
+        destination: /nobleton-homes-for-sale.html
+      - type: rewrite
+        source: /schomberg-homes-for-sale
+        destination: /schomberg-homes-for-sale.html
 
   - type: web
     name: real-estate-agent

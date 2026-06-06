@@ -1,0 +1,85 @@
+{
+  "neighbourhood": "Nobleton",
+  "city": "King Township",
+  "municipality": "Township of King, York Region",
+  "research_date": "2026-06-05",
+  "researcher": "Live browser research — Zolo, Wikipedia, mosquitotoronto.com, comeexplorecanada, neighbourhoodguide.com, getleo.com",
+
+  "seo": {
+    "target_keyword": "nobleton homes for sale",
+    "volume": 480,
+    "kd": 11,
+    "target_url": "/nobleton-homes-for-sale",
+    "city_pillar": "/king-township-real-estate"
+  },
+
+  "location": {
+    "description": "Nobleton is an unincorporated village in the Township of King, York Region, Ontario. Located south of the Oak Ridges Moraine — distinguishing it from King City (on the Moraine) and Schomberg (north of the Moraine). Positioned midway between King City and Bolton on the east-west route, and between Kleinburg and Schomberg on the north-south route. The Humber River meanders through the southwestern part of the community.",
+    "highway_access": ["Highway 27 (main north-south corridor)", "Highway 400 (20 min east via King Road)", "Highway 50 (east-west connection to Bolton)"],
+    "commute_to_toronto_drive": "30–45 min to downtown Toronto via Hwy 27/400",
+    "commute_to_pearson": "less than 30 min to Toronto Pearson International Airport",
+    "go_train_note": "No GO Train in Nobleton. Nearest GO station: King City GO (~10 min east) or Kleinburg GO Bus stop. Car-dependent commuter community.",
+    "source": "Wikipedia Nobleton Ontario; comeexplorecanada.com/ontario/nobleton; Google Maps"
+  },
+
+  "demographics": {
+    "population": 6500,
+    "population_note": "est. 2025-2026, up from under 5,000 several years ago — rapid growth community",
+    "homeownership_pct": 88.3,
+    "renter_pct": 11.7,
+    "median_monthly_mortgage": 8200,
+    "top_ethnic_origins": ["Italian", "English", "Canadian", "Scottish"],
+    "community_character": "Family-oriented, tight-knit, equestrian culture, Italian-Canadian heritage, surrounded by horse farms",
+    "source": "getleo.com Nobleton 2025; Zolo Nobleton real estate data; neighbourhoodguide.com/york/king/nobleton"
+  },
+
+  "market_data": {
+    "period": "2025–2026",
+    "avg_sold": 1831276,
+    "avg_listing": 3421000,
+    "avg_listing_note": "1% above King Township average — luxury estate segment skews listing price heavily",
+    "townhouse_avg_listing": 1219000,
+    "active_listings": 34,
+    "detached_listings": 32,
+    "condo_listings": 0,
+    "townhome_listings": 1,
+    "days_on_market": 38,
+    "sell_to_list_ratio_pct": 95.8,
+    "pct_sell_above_asking": 10,
+    "pct_sell_in_under_10_days": 20,
+    "sources": [
+      "https://www.zolo.ca/king-real-estate/nobleton/trends",
+      "https://www.homesfound.ca/blog/king-township-real-estate-market-analysis-2026/"
+    ]
+  },
+
+  "history": {
+    "founding": "1812 — Joseph Noble, a tavern keeper, settles at the northeast corner of Lot 5, Concession 9 (9th Concession and King Sideroad crossroads). He builds a homestead, general store, and tavern. The village grows around this crossroads and is named after him.",
+    "early_growth": "Early settlers from England, Scotland, and the US. Taverns and hotels built to serve travellers. General stores and post office established. 1850s: board-and-batten blacksmith shop built in Nobleton — later moved to Black Creek Pioneer Village (where it still stands today).",
+    "religion": "First congregation in 1840s. Wesleyan Methodist Church was Nobleton's first — closed 1896. Its materials were used to build the United Church, which still stands in Nobleton today.",
+    "arena": "1949 — Nobleton Arena built entirely by the community. One of the first community arenas in Ontario. Demolished 1977; replaced by the Nobleton Community Centre and Arena.",
+    "heritage_buildings": "Hambly House — a majestic Victorian structure at the intersection of Hwy 27 and King Rd, one of Nobleton's most recognized heritage landmarks.",
+    "agricultural": "King Township sustains over 41,000 acres of agricultural production across 239 farms — Nobleton sits within this working agricultural belt.",
+    "equestrian": "Horse farms predominate on Nobleton's eastern periphery. Equestrian livestock breeding has been central to the area's character since the 19th century.",
+    "source": "Wikipedia Nobleton Ontario; mosquitotoronto.com history of Nobleton; nobletonrealtors.ca"
+  },
+
+  "natural_environment": {
+    "humber_river": "Humber River meanders through the southwestern part of Nobleton. Designated Canadian Heritage River 1999.",
+    "king_creek": "King Creek — a tributary of the East Humber — flows southerly from near Hwy 27 and 16th Side Road to meet the East Humber south of King Road, east of Nobleton.",
+    "moraine_position": "South of Oak Ridges Moraine — rolling hills terrain without being on the Moraine ridge itself. Different natural character from King City (on-Moraine) and Schomberg (north of Moraine).",
+    "conservation": "Conservation area covers the southwest of the community along the Humber River corridor.",
+    "source": "Wikipedia Nobleton Ontario; Wikipedia Humber River Ontario"
+  },
+
+  "schools": {
+    "secondary_public": "King City Secondary School (YRDSB) — Nobleton students typically attend King City SS or Schomberg-area schools",
+    "secondary_catholic": "Cardinal Carter Catholic Secondary School (YCDSB)",
+    "elementary": [
+      {"name": "Nobleton Public School", "board": "YRDSB"},
+      {"name": "Holy Cross Catholic Elementary School", "board": "YCDSB"}
+    ],
+    "private": "The Country Day School (King Township, JK–Gr 12, IB programs) — accessible from Nobleton",
+    "source": "YRDSB school locator; YCDSB school directory"
+  }
+}

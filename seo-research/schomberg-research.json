@@ -1,0 +1,93 @@
+{
+  "neighbourhood": "Schomberg",
+  "city": "King Township",
+  "municipality": "Township of King, York Region",
+  "research_date": "2026-06-05",
+  "researcher": "Live browser research — Zolo, Wikipedia, schomberg.ca, onthisspot.ca, ontarioplaques.com, comeexplorecanada",
+
+  "seo": {
+    "target_keyword": "schomberg homes for sale",
+    "volume": 260,
+    "kd": 10,
+    "target_url": "/schomberg-homes-for-sale",
+    "city_pillar": "/king-township-real-estate"
+  },
+
+  "location": {
+    "description": "Schomberg is an unincorporated village in northwestern King Township, York Region. Uniquely positioned NORTH of the Oak Ridges Moraine — distinguishing it from both King City (on the Moraine) and Nobleton (south of the Moraine). The village's northern edge transitions into the Holland River watershed and the Holland Marsh agricultural corridor. Highway 9 is the primary east-west route connecting Schomberg to Highway 400 and beyond.",
+    "highway_access": ["Highway 9 (east to Hwy 400, west to Orangeville)", "Highway 400 (20 min east)", "Highway 27 (south)"],
+    "commute_to_toronto_drive": "50–60 min to downtown Toronto via Hwy 9/400",
+    "commute_to_vaughan": "15–20 min south via Hwy 27/400 to Vaughan employment area",
+    "go_train_note": "No GO Train in Schomberg. Nearest station: King City GO (~15 min drive east). Right-of-way from the historic Schomberg and Aurora Railway (1902-1927) is still visible east of town.",
+    "source": "Wikipedia Schomberg Ontario; comeexplorecanada.com/ontario/schomberg; Google Maps"
+  },
+
+  "demographics": {
+    "population": 2656,
+    "population_year": "2021 Census",
+    "homeownership_pct": 88.3,
+    "renter_pct": 11.7,
+    "median_monthly_mortgage": 13900,
+    "median_monthly_rent": 3200,
+    "top_ethnic_origins": [
+      {"origin": "Italian", "pct": 31.2},
+      {"origin": "English", "pct": 21.5},
+      {"origin": "Scottish", "pct": 17.3}
+    ],
+    "community_character": "Smallest of King Township's three villages. Most preserved Victorian main street in King Township. Strong agricultural identity via Holland Marsh proximity. Quaker founding heritage.",
+    "source": "Statistics Canada 2021 Census; Wikipedia Schomberg Ontario"
+  },
+
+  "market_data": {
+    "period": "2025–2026",
+    "avg_sold": 1380000,
+    "avg_listing": 2627000,
+    "avg_listing_note": "33% BELOW King Township average — most affordable village in King; rural estate segment skews listings",
+    "detached_3bed_avg": 1795400,
+    "detached_4bed_avg": 3093000,
+    "townhouse_avg": 899900,
+    "condo_avg_listing": 591000,
+    "condo_most_affordable": 499000,
+    "condo_most_expensive": 699000,
+    "active_listings": 45,
+    "avg_listing_days": 18,
+    "median_sold_days": 8,
+    "sell_to_list_ratio_pct": 96.9,
+    "pct_sell_in_under_10_days": 50,
+    "king_township_ranking": "#1 of 6 neighbourhoods in King Township (based on speed of sale and sell-to-list ratio)",
+    "sources": [
+      "https://www.zolo.ca/king-real-estate/schomberg/trends",
+      "https://www.homesfound.ca/blog/king-township-real-estate-market-analysis-2026/",
+      "https://www.greatertorontohomepros.com/king-township/schomberg/"
+    ]
+  },
+
+  "history": {
+    "indigenous": "Earliest evidence of human presence in Schomberg area dates back 10,000 years. Traditional territory of the Anishinaabeg, Huron-Wendat, Petun, Mississaugas of the Credit, and Haudenosaunee peoples.",
+    "founding": "c.1830 — Founded by Irish-American Quaker brothers Thomas and John R. Brown, immigrants from Pennsylvania. Thomas Brown built the community's only flour mill in 1836, stimulating development. Originally named 'Brownsville.'",
+    "renaming": "1862 — Community applied for a post office but was rejected because another 'Brownsville' post office already existed in York County (now Woodbridge, in Vaughan). Renamed 'Schomberg' — name suggested by Thomas Roberts Ferguson, likely chosen for the 3rd Duke of Schomberg and 1st Duke of Leinster (1641–1719), a general under King William III of England.",
+    "great_flood": "June 6, 1890 — Great Flood devastates Schomberg. A massive storm causes catastrophic flooding that destroys buildings, leaves residents homeless, sweeps away two mill dams, and carries one building downstream to rest on a nearby farm.",
+    "railway": "1902 — Schomberg and Aurora Railway opens, connecting Schomberg to the Toronto and York Radial Railway on Yonge Street. Electrified 1916. Railway brought Toronto shoppers and day-trippers to the village. Closed 1927 with rise of automobiles. Rails removed 1928. Right-of-way still visible east of the village today.",
+    "feed_mill": "1884 — Schomberg Feed Mill built. Now repurposed as an art gallery, café, and popular restaurant — one of the village's most distinctive heritage landmarks.",
+    "schomberg_fair": "1852 — First Schomberg Fair held. Annual agricultural fair, now held every last weekend in May. One of King Township's oldest continuous community traditions.",
+    "film": "1970 — Canadian film 'Homer' shot mainly in downtown Schomberg (fictional town called 'Schomberg, Wisconsin' in the film). TV series 'La Femme Nikita' also used Schomberg as a filming location.",
+    "quaker_heritage": "The founding Brown brothers were Quakers (Society of Religious Friends) — pacifists with strong views against violence and slavery, and unusual (for the era) beliefs in gender equality. Their values shaped Schomberg's early community character.",
+    "inuksuk": "Largest inuksuk in the area located at Allstone Quarry on Highway 27 north of 18th Sideroad — built by a local stone quarry as a roadside landmark.",
+    "source": "Wikipedia Schomberg Ontario; schomberg.ca/schomberg-history; ontarioplaques.com York13; onthisspot.ca Schomberg main street history"
+  },
+
+  "natural_and_agricultural": {
+    "moraine_position": "North of Oak Ridges Moraine — the only King Township village in this position. Different ecosystem character: transitions into Holland River watershed and Holland Marsh agricultural landscape.",
+    "holland_marsh": "Ontario's 'salad bowl' — 7,000 acres across 125 farms northeast of Schomberg. Drained between 1925 and 1930. Produces approximately 90% of Asian vegetables eaten in Ontario. Also grows carrots, onions, lettuce, cabbage, potatoes. Annual Holland Marsh Soupfest in October connects Schomberg's community to the agricultural region.",
+    "source": "Wikipedia Holland Marsh; ontarioplaques.com Plaque_York13 (Dutch Settlement of Holland Marsh)"
+  },
+
+  "schools": {
+    "elementary": [
+      {"name": "Schomberg Public School", "board": "YRDSB", "type": "public"},
+      {"name": "St. Patrick Catholic Elementary School", "board": "YCDSB", "type": "catholic"}
+    ],
+    "secondary": "King City Secondary School (YRDSB public) and Cardinal Carter Catholic SS (YCDSB) — both accessible via Hwy 27 drive from Schomberg",
+    "source": "greatertorontohomepros.com/king-township/schomberg; YRDSB school locator"
+  }
+}
