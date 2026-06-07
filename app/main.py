@@ -1162,6 +1162,105 @@ def reactivation_calls(limit: int = 200) -> list[dict[str, Any]]:
 
 
 # ---------------------------------------------------------------------------
+# Reactivation job queue management
+# ---------------------------------------------------------------------------
+
+@app.get("/reactivation/jobs")
+def reactivation_jobs(status: str = "queued", limit: int = 100) -> list[dict[str, Any]]:
+    """List scheduled call/SMS jobs for reactivation leads."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    statuses = status.split(",")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                select j.id, j.type, j.status, j.run_at, j.attempts, j.last_error,
+                       l.id as lead_id, l.name, l.phone_e164 as phone, l.area
+                from jobs j
+                left join leads l on l.id = (j.payload->>'lead_id')
+                where j.type in ('call_lead','reactivation_sms','send_followup_sms')
+                  and j.status = any(%s)
+                order by j.run_at asc nulls last
+                limit %s
+                """,
+                (statuses, limit),
+            )
+            cols = [d.name for d in cur.description]
+            rows = cur.fetchall()
+    result = []
+    for row in rows:
+        d = dict(zip(cols, row))
+        for k, v in d.items():
+            if hasattr(v, "isoformat"):
+                d[k] = v.isoformat()
+        result.append(d)
+    return result
+
+
+@app.post("/reactivation/jobs/seed-calls")
+def seed_reactivation_calls_now(daily_limit: int = 20, interval_minutes: int = 5) -> dict[str, Any]:
+    """Manually trigger today's reactivation call seeding."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    if interval_minutes < 5:
+        raise HTTPException(status_code=400, detail="interval_minutes must be >= 5 (hard rule)")
+    if daily_limit > 50:
+        raise HTTPException(status_code=400, detail="daily_limit max 50")
+    from app.orchestrator.reactivation import seed_reactivation_call_jobs
+    count = seed_reactivation_call_jobs(
+        db=orchestrator_repo.db,
+        tz=settings.app_timezone,
+        window_start_hour=settings.call_window_start_hour,
+        window_end_hour=settings.call_window_end_hour,
+        daily_limit=daily_limit,
+        interval_minutes=interval_minutes,
+    )
+    return {"seeded": count, "interval_minutes": interval_minutes, "daily_limit": daily_limit}
+
+
+@app.post("/reactivation/jobs/seed-sms")
+def seed_reactivation_sms_now(daily_limit: int = 20) -> dict[str, Any]:
+    """Manually trigger today's reactivation SMS seeding."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    if daily_limit > 50:
+        raise HTTPException(status_code=400, detail="daily_limit max 50")
+    from app.orchestrator.reactivation import seed_reactivation_sms_jobs
+    count = seed_reactivation_sms_jobs(
+        db=orchestrator_repo.db,
+        tz=settings.app_timezone,
+        window_start_hour=settings.reactivation_sms_window_start,
+        window_end_hour=settings.reactivation_sms_window_end,
+        daily_limit=daily_limit,
+    )
+    return {"seeded": count, "daily_limit": daily_limit}
+
+
+@app.delete("/reactivation/jobs/{job_id}")
+def cancel_reactivation_job(job_id: int) -> dict[str, Any]:
+    """Cancel a queued reactivation job."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE jobs SET status='cancelled'
+                WHERE id=%s AND status='queued'
+                AND type in ('call_lead','reactivation_sms','send_followup_sms')
+                RETURNING id
+                """,
+                (job_id,),
+            )
+            row = cur.fetchone()
+        conn.commit()
+    if not row:
+        raise HTTPException(status_code=404, detail="Job not found or not cancellable")
+    return {"cancelled": job_id}
+
+
+# ---------------------------------------------------------------------------
 # Audit log (compliance — RECO best practice)
 # ---------------------------------------------------------------------------
 

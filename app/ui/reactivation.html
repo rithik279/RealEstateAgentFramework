@@ -155,6 +155,9 @@
   <div class="tab" data-tab="calls" onclick="switchTab('calls')">
     Call History <span class="badge" id="calls-badge" style="display:none;background:var(--accent)">0</span>
   </div>
+  <div class="tab" data-tab="jobs" onclick="switchTab('jobs')">
+    Jobs <span class="badge" id="jobs-badge" style="display:none;background:var(--warm)">0</span>
+  </div>
 </div>
 
 <!-- ===== OVERVIEW TAB ===== -->
@@ -182,6 +185,37 @@
 <div id="tab-calls" class="panel">
   <div id="calls-container">
     <div class="loading"><span class="dot-pulse"></span> Loading call history...</div>
+  </div>
+</div>
+
+<!-- ===== JOBS TAB ===== -->
+<div id="tab-jobs" class="panel">
+  <div style="padding:20px 24px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <select id="jobs-status-filter" onchange="loadJobs()" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;">
+        <option value="queued">Queued</option>
+        <option value="succeeded">Succeeded</option>
+        <option value="failed">Failed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <select id="jobs-type-filter" onchange="loadJobs()" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;">
+        <option value="">All types</option>
+        <option value="call_lead">Calls only</option>
+        <option value="reactivation_sms">SMS only</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="seed-btn" onclick="seedCalls()" id="seed-calls-btn" style="font-size:13px;padding:7px 16px;">
+        📞 Seed 20 Calls
+      </button>
+      <button class="seed-btn" onclick="seedSMS()" id="seed-sms-btn" style="background:var(--reply);font-size:13px;padding:7px 16px;">
+        💬 Seed 20 SMS
+      </button>
+    </div>
+  </div>
+  <div id="seed-msg" style="padding:0 24px 8px;font-size:12px;color:var(--muted);"></div>
+  <div id="jobs-container" style="padding:0 24px 24px;">
+    <div class="loading"><span class="dot-pulse"></span> Loading jobs...</div>
   </div>
 </div>
 
@@ -220,6 +254,7 @@ function switchTab(name) {
   if (name === 'inbox') loadInbox();
   if (name === 'queue') loadQueue();
   if (name === 'calls') loadCalls();
+  if (name === 'jobs') loadJobs();
 }
 
 // ---- Helpers ----
@@ -552,6 +587,125 @@ function closeTxModal() {
 document.getElementById('transcript-modal').addEventListener('click', function(e) {
   if (e.target === this) closeTxModal();
 });
+
+// ---- JOBS ----
+function jobTypeLabel(t) {
+  if (t === 'call_lead') return '📞 Call';
+  if (t === 'reactivation_sms') return '💬 SMS';
+  if (t === 'send_followup_sms') return '💬 Follow-up';
+  return t;
+}
+function jobStatusColor(s) {
+  if (s === 'queued') return 'var(--warm)';
+  if (s === 'succeeded') return 'var(--early)';
+  if (s === 'failed') return 'var(--hot)';
+  if (s === 'cancelled') return 'var(--muted)';
+  if (s === 'running') return 'var(--accent)';
+  return 'var(--muted)';
+}
+
+async function loadJobs() {
+  const el = document.getElementById('jobs-container');
+  const status = document.getElementById('jobs-status-filter').value;
+  const typeFilter = document.getElementById('jobs-type-filter').value;
+  el.innerHTML = '<div class="loading"><span class="dot-pulse"></span> Loading...</div>';
+  try {
+    const r = await fetch(`${BASE}/reactivation/jobs?status=${status}&limit=100`);
+    let jobs = await r.json();
+    if (typeFilter) jobs = jobs.filter(j => j.type === typeFilter);
+
+    // Update badge
+    const queued = jobs.filter(j => j.status === 'queued').length;
+    const badge = document.getElementById('jobs-badge');
+    if (queued > 0) { badge.textContent = queued; badge.style.display = 'inline-flex'; }
+    else badge.style.display = 'none';
+
+    if (!jobs.length) {
+      el.innerHTML = `<div class="empty-inbox"><h2>No ${status} jobs</h2><p>Use the seed buttons above to schedule today's batch.</p></div>`;
+      return;
+    }
+
+    const rows = jobs.map(j => `
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+          <div style="background:var(--card);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;color:${jobStatusColor(j.status)};white-space:nowrap;">
+            ${jobTypeLabel(j.type)}
+          </div>
+          <div style="min-width:0;">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${j.name || 'Unknown'}</div>
+            <div style="font-size:11px;color:var(--muted);">${j.phone || ''}</div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:12px;color:var(--muted);">${j.run_at ? fmt(j.run_at) : 'ASAP'}</div>
+          <div style="font-size:11px;color:${jobStatusColor(j.status)};margin-top:2px;font-weight:600;">${j.status.toUpperCase()}</div>
+          ${j.last_error ? `<div style="font-size:10px;color:var(--hot);margin-top:2px;max-width:200px;overflow:hidden;text-overflow:ellipsis;" title="${j.last_error}">${j.last_error.substring(0,60)}...</div>` : ''}
+        </div>
+        ${j.status === 'queued' ? `
+        <button onclick="cancelJob(${j.id})" title="Cancel job"
+          style="background:none;border:1px solid var(--hot);color:var(--hot);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+          Cancel
+        </button>` : ''}
+      </div>`).join('');
+
+    el.innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">${jobs.length} job${jobs.length!==1?'s':''} shown</div>${rows}`;
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--hot);padding:20px;">Error: ${e.message}</div>`;
+  }
+}
+
+async function cancelJob(id) {
+  if (!confirm(`Cancel job #${id}?`)) return;
+  try {
+    const r = await fetch(`${BASE}/reactivation/jobs/${id}`, {method:'DELETE'});
+    if (r.ok) { loadJobs(); }
+    else { const d = await r.json(); alert('Error: ' + d.detail); }
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function seedCalls() {
+  const btn = document.getElementById('seed-calls-btn');
+  const msg = document.getElementById('seed-msg');
+  btn.disabled = true; btn.textContent = '⏳ Seeding...';
+  try {
+    const r = await fetch(`${BASE}/reactivation/jobs/seed-calls`, {method:'POST'});
+    const d = await r.json();
+    if (r.ok) {
+      msg.style.color = 'var(--early)';
+      msg.textContent = `✓ Seeded ${d.seeded} call jobs — 1 every ${d.interval_minutes} min`;
+      loadJobs();
+    } else {
+      msg.style.color = 'var(--hot)';
+      msg.textContent = '✗ ' + d.detail;
+    }
+  } catch(e) {
+    msg.style.color = 'var(--hot)';
+    msg.textContent = '✗ ' + e.message;
+  }
+  btn.disabled = false; btn.textContent = '📞 Seed 20 Calls';
+}
+
+async function seedSMS() {
+  const btn = document.getElementById('seed-sms-btn');
+  const msg = document.getElementById('seed-msg');
+  btn.disabled = true; btn.textContent = '⏳ Seeding...';
+  try {
+    const r = await fetch(`${BASE}/reactivation/jobs/seed-sms`, {method:'POST'});
+    const d = await r.json();
+    if (r.ok) {
+      msg.style.color = 'var(--early)';
+      msg.textContent = `✓ Seeded ${d.seeded} SMS jobs — fires 4–8pm today`;
+      loadJobs();
+    } else {
+      msg.style.color = 'var(--hot)';
+      msg.textContent = '✗ ' + d.detail;
+    }
+  } catch(e) {
+    msg.style.color = 'var(--hot)';
+    msg.textContent = '✗ ' + e.message;
+  }
+  btn.disabled = false; btn.textContent = '💬 Seed 20 SMS';
+}
 
 // ---- INIT ----
 function loadAll() {
