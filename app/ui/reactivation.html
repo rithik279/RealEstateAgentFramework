@@ -27,10 +27,10 @@
     header .brand { display: flex; align-items: center; gap: 12px; }
     header h1 { font-size: 17px; font-weight: 600; }
     header .subtitle { color: var(--muted); font-size: 12px; margin-top: 2px; }
-    .nav-links { display: flex; gap: 8px; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid transparent; transition: all 0.15s; }
-    .nav-links a:hover { color: var(--text); border-color: var(--border); }
-    .nav-links a.active { color: var(--accent); border-color: var(--accent); }
+    .app-nav { background: #0a1020; border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 4px; height: 38px; }
+    .app-nav a { color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 500; padding: 0 12px; height: 38px; display: flex; align-items: center; border-bottom: 2px solid transparent; transition: all 0.15s; }
+    .app-nav a:hover { color: var(--text); }
+    .app-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
     .refresh-btn { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
     .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -128,21 +128,19 @@
 </head>
 <body>
 
+<div class="app-nav">
+  <a href="/dashboard">📊 Leads</a>
+  <a href="/reactivation" class="active">🔄 Reactivation</a>
+  <a href="/control">⚙️ Control Center</a>
+</div>
 <header>
   <div class="brand">
     <div>
       <h1>Reactivation Drip</h1>
-      <div class="subtitle">SMS campaign — Anu Kabli</div>
+      <div class="subtitle">SMS + Voice campaign — Anu Kabli</div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div class="nav-links">
-      <a href="/dashboard">Leads</a>
-      <a href="/reactivation" class="active">Reactivation</a>
-      <a href="/control">Control</a>
-    </div>
-    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
-  </div>
+  <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
 </header>
 
 <!-- TABS -->
