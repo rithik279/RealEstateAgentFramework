@@ -1,0 +1,160 @@
+{
+  "neighbourhood": "Georgetown",
+  "city": "Halton Hills",
+  "region": "Halton Region",
+  "research_date": "2026-06-07",
+  "researcher": "Live browser research via Chrome MCP — all 7 required URLs visited",
+
+  "visited_urls": [
+    { "purpose": "demographics", "url": "https://hoodq.com/explore/halton-hills-on/georgetown", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "amenities", "url": "https://wahi.com/ca/en/neighbourhoods/ontario/gta/halton-hills/georgetown", "status": "404", "visited": "2026-06-07" },
+    { "purpose": "prices", "url": "https://www.zolo.ca/halton-hills-real-estate/georgetown/trends", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "school", "url": "https://ontarioschoolrankings.ca/schools/georgetown-georgetown/", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "walk_score", "url": "https://www.walkscore.com/ONT/Georgetown", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "go_transit", "url": "https://en.wikipedia.org/wiki/Georgetown_GO_Station", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "history", "url": "https://en.wikipedia.org/wiki/Georgetown,_Ontario", "status": "200", "visited": "2026-06-07" }
+  ],
+
+  "location": {
+    "description": "Georgetown is the main urban centre of the Town of Halton Hills, Halton Region. Sits on the Credit River, approximately 40 km west of Toronto. Population 39,620.",
+    "source": "https://en.wikipedia.org/wiki/Georgetown,_Ontario"
+  },
+
+  "demographics": {
+    "population": 39620,
+    "families_with_kids_pct": 55,
+    "single_person_households_pct": 18,
+    "couples_without_children_pct": 22,
+    "top_ethnic_origins": [
+      {"origin": "English", "pct": 31},
+      {"origin": "Canadian", "pct": 29},
+      {"origin": "Scottish", "pct": 24},
+      {"origin": "Irish", "pct": 22},
+      {"origin": "German", "pct": 10}
+    ],
+    "household_income": {
+      "over_200k_pct": 15,
+      "150k_to_199k_pct": 16,
+      "125k_to_149k_pct": 11,
+      "100k_to_124k_pct": 12,
+      "under_100k_pct": 46
+    },
+    "top_occupations": ["Sales and service 23%", "Business/finance/admin 16%", "Management 14%"],
+    "top_industries": ["Manufacturing 12%", "Retail trade 12%", "Educational services 9%"],
+    "education_bachelor_or_higher_pct": 31,
+    "homeownership_pct": 85,
+    "renters_pct": 14,
+    "employed_pct": 70,
+    "commute_to_another_city_pct": 66,
+    "vehicle_commuters_pct": 91,
+    "transit_commuters_pct": 4,
+    "source": "https://hoodq.com/explore/halton-hills-on/georgetown"
+  },
+
+  "home_types": {
+    "single_detached_pct": 68,
+    "semi_detached_pct": 4,
+    "duplex_pct": 3,
+    "row_house_pct": 12,
+    "low_rise_apt_pct": 6,
+    "high_rise_apt_pct": 5,
+    "condominium_pct": 9,
+    "bedrooms_4plus_pct": 43,
+    "bedrooms_3_pct": 39,
+    "construction_period": {
+      "pre_1960": "18%",
+      "1961_to_1980": "23%",
+      "1981_to_1990": "8%",
+      "1991_to_2000": "22%",
+      "2001_to_2005": "13%",
+      "2006_to_2010": "9%",
+      "2011_to_2016": "6%"
+    },
+    "source": "https://hoodq.com/explore/halton-hills-on/georgetown"
+  },
+
+  "market_data": {
+    "period": "June 2026",
+    "avg_sold_price": 961778,
+    "yoy_change_pct": 12.3,
+    "monthly_change_pct": 4.8,
+    "median_dom": 24,
+    "sell_to_list_ratio_pct": 98,
+    "new_listings_56_days": 235,
+    "sold_56_days": 82,
+    "active_listings": 127,
+    "market_condition": "Active — 98% sell-to-list, 24 DOM, +12.3% YoY",
+    "sources": ["https://www.zolo.ca/halton-hills-real-estate/georgetown/trends"]
+  },
+
+  "schools": {
+    "secondary": [
+      {
+        "name": "Georgetown District High School",
+        "address": "70 Guelph Street, Georgetown",
+        "board": "Halton District School Board",
+        "type": "public",
+        "grades": "9-12",
+        "fraser_rating": "7.7/10",
+        "fraser_rank": "#119 of 747",
+        "fraser_percentile": "top 16% of all Ontario secondary schools",
+        "fraser_year": "2025",
+        "eqao_data_year": "2023-2024",
+        "source": "https://ontarioschoolrankings.ca/schools/georgetown-georgetown/"
+      }
+    ],
+    "ontario_provincial_avg": "6.0/10"
+  },
+
+  "transit": {
+    "go_line": "Kitchener line",
+    "go_station": "Georgetown GO Station",
+    "station_address": "55 Queen Street, Georgetown",
+    "station_opened": "1858",
+    "station_note": "Heritage station building. Opened 1858 as GTR station, GO Transit service since 1974.",
+    "fare_zone": 35,
+    "commute_union_station": "approximately 55-65 minutes to Union Station",
+    "commute_note": "Not verified via direct trip planner. HoodQ shows 27% of residents take 45+ min commute; fare zone 35 confirms long journey. Verify at gotransit.com.",
+    "vehicle_commuters_pct": 91,
+    "transit_commuters_pct": 4,
+    "walk_score": 86,
+    "walk_score_label": "Very Walkable",
+    "walk_score_note": "86/100 — unusually high for a 40km-from-Toronto town. Reflects walkable Main Street downtown core.",
+    "walk_score_source": "https://www.walkscore.com/ONT/Georgetown"
+  },
+
+  "parks_and_recreation": {
+    "total_parks": 34,
+    "total_rec_facilities": 104,
+    "notable_feature": "Credit River through Georgetown — trail access and natural green space",
+    "source": "https://hoodq.com/explore/halton-hills-on/georgetown"
+  },
+
+  "amenities": {
+    "named_restaurants": [],
+    "named_shops": [],
+    "amenities_note": "Wahi 404. No named amenity data from required sources. Georgetown has walkable Main Street downtown (Walk Score 86) but specific restaurant/shop names not confirmed via verified source.",
+    "source": "Wahi 404 visited 2026-06-07"
+  },
+
+  "history": {
+    "founding_year": "1821",
+    "founder": "George Kennedy — settled Credit River banks, built mills",
+    "original_name": "Hungry Hollow",
+    "key_events": [
+      "1821: George Kennedy settles, builds mills on Credit River",
+      "1828: John Galt (Canada Company) opens York-to-Guelph Road (now Highway 7)",
+      "1837: Barber brothers purchase Kennedy's mills, rename settlement Georgetown",
+      "1854: Barber brothers start paper-making using electricity from Credit River dynamo — early Canadian industrial electricity use",
+      "1856: Railway arrives in Halton Hills area",
+      "1858: Georgetown station opens — still standing as heritage building",
+      "Early 1840s: Philo Dayfoot starts leather industry",
+      "Berwick Hall (John R. Barber's home) still stands at Main and Park Streets",
+      "Nearby Norval: Lucy Maud Montgomery (Anne of Green Gables) lived 1926-1935",
+      "1974: Georgetown dissolved into Halton Hills municipality"
+    ],
+    "indigenous_territory": "Mississauga Nation (Ojibwa) — British government purchased territory 1818",
+    "heritage_buildings": ["Georgetown GO Station (1858)", "Berwick Hall at Main and Park Streets"],
+    "source": "https://en.wikipedia.org/wiki/Georgetown,_Ontario; https://en.wikipedia.org/wiki/Georgetown_GO_Station"
+  }
+}

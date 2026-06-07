@@ -65,6 +65,30 @@ services:
       - type: rewrite
         source: /schomberg-homes-for-sale
         destination: /schomberg-homes-for-sale.html
+      - type: rewrite
+        source: /mississauga-real-estate
+        destination: /mississauga-real-estate.html
+      - type: rewrite
+        source: /port-credit-homes-for-sale
+        destination: /port-credit-homes-for-sale.html
+      - type: rewrite
+        source: /lorne-park-homes-for-sale
+        destination: /lorne-park-homes-for-sale.html
+      - type: rewrite
+        source: /halton-hills-real-estate
+        destination: /halton-hills-real-estate.html
+      - type: rewrite
+        source: /georgetown-homes-for-sale
+        destination: /georgetown-homes-for-sale.html
+      - type: rewrite
+        source: /milton-real-estate
+        destination: /milton-real-estate.html
+      - type: rewrite
+        source: /condos-for-sale-milton
+        destination: /condos-for-sale-milton.html
+      - type: rewrite
+        source: /brampton-homes-for-sale
+        destination: /brampton-homes-for-sale.html
 
   - type: web
     name: real-estate-agent

@@ -1,0 +1,139 @@
+{
+  "city": "Milton",
+  "region": "Halton Region",
+  "research_date": "2026-06-07",
+  "researcher": "Live browser research via Chrome MCP — all 7 required URLs visited",
+
+  "visited_urls": [
+    { "purpose": "demographics", "url": "https://hoodq.com/explore/milton-on/old-milton", "status": "200", "visited": "2026-06-07", "note": "HoodQ Old Milton sub-neighbourhood only (pop 2,009). City-wide demographics from Statistics Canada 2021 Census." },
+    { "purpose": "amenities", "url": "https://wahi.com/ca/en/neighbourhoods/ontario/gta/milton/old-milton", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "prices", "url": "https://www.zolo.ca/milton-real-estate/trends", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "school", "url": "https://ontarioschoolrankings.ca/city/milton/", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "walk_score", "url": "https://www.walkscore.com/ONT/Milton", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "go_transit", "url": "https://en.wikipedia.org/wiki/Milton_GO_Station", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "history", "url": "https://en.wikipedia.org/wiki/Milton,_Ontario", "status": "200", "visited": "2026-06-07" }
+  ],
+
+  "location": {
+    "description": "Town of Milton, Halton Region, Ontario. Located 54 km west of Downtown Toronto on Highway 401. Western terminus of GO Transit Milton line. Situated on the Niagara Escarpment — a UNESCO World Biosphere Reserve. Fastest-growing municipality in Canada 2001-2011.",
+    "source": "https://en.wikipedia.org/wiki/Milton,_Ontario"
+  },
+
+  "demographics": {
+    "population_2021": 132979,
+    "population_growth_2016_2021_pct": 20.7,
+    "historical_growth_note": "Fastest-growing municipality in Canada 2001-2011: +71.4% population growth",
+    "median_age": 36,
+    "pct_under_15": 24,
+    "pct_65_plus": 9.9,
+    "source": "Statistics Canada 2021 Census; Wikipedia Milton, Ontario"
+  },
+
+  "market_data": {
+    "period": "June 2026",
+    "avg_all_types": 990007,
+    "yoy_change_pct": 8.6,
+    "monthly_change_pct": 0.3,
+    "quarterly_change_pct": 1.5,
+    "median_dom": 28,
+    "sell_to_list_ratio_pct": 98,
+    "new_listings_28_days": 455,
+    "sold_28_days": 153,
+    "avg_detached_4bed": 1300000,
+    "note": "Old JSON had -9% YoY. Live data shows +8.6% YoY — market has recovered significantly since old research.",
+    "sources": ["https://www.zolo.ca/milton-real-estate/trends visited 2026-06-07"]
+  },
+
+  "schools": {
+    "city_avg_fraser": "6.9/10",
+    "secondary": [
+      {
+        "name": "Bishop Paul Francis Reding CSS",
+        "board": "Halton Catholic DSB",
+        "type": "catholic",
+        "fraser_rating": "8.2/10",
+        "fraser_rank": "#65 of 747",
+        "trend": "Stable",
+        "source": "https://ontarioschoolrankings.ca/city/milton/ visited 2026-06-07"
+      },
+      {
+        "name": "Milton District High School",
+        "board": "Halton District School Board",
+        "type": "public",
+        "fraser_rating": "8.0/10",
+        "fraser_rank": "#86 of 747",
+        "trend": "IMPROVING",
+        "source": "https://ontarioschoolrankings.ca/city/milton/ visited 2026-06-07"
+      },
+      {
+        "name": "Craig Kielburger Secondary School",
+        "board": "Halton District School Board",
+        "type": "public",
+        "fraser_rating": "6.8/10",
+        "fraser_rank": "#254 of 747",
+        "trend": "Stable",
+        "source": "https://ontarioschoolrankings.ca/city/milton/ visited 2026-06-07"
+      },
+      {
+        "name": "Elsie MacGill Secondary",
+        "board": "Halton District School Board",
+        "type": "public",
+        "fraser_rating": "6.5/10",
+        "fraser_rank": "#311 of 747",
+        "source": "https://ontarioschoolrankings.ca/city/milton/ visited 2026-06-07"
+      },
+      {
+        "name": "Jean Vanier",
+        "board": "Halton Catholic DSB",
+        "type": "catholic",
+        "fraser_rating": "6.5/10",
+        "fraser_rank": "#311 of 747",
+        "source": "https://ontarioschoolrankings.ca/city/milton/ visited 2026-06-07"
+      }
+    ],
+    "ontario_provincial_avg": "6.0/10",
+    "halton_dSB_note": "Halton DSB is one of Ontario's highest-performing boards. Milton's city average of 6.9/10 is above provincial average."
+  },
+
+  "transit": {
+    "go_line": "Milton line",
+    "go_station": "Milton GO Station (terminus)",
+    "station_address": "780 Main Street East, Milton",
+    "station_opened": "October 25, 1981",
+    "fare_zone": 24,
+    "commute_union_station": "approximately 50-60 minutes to Union Station",
+    "commute_note": "Wahi confirms ~50 min by car. Fare zone 24 (closer than Georgetown zone 35). Walk Score shows Milton GO is 16 min walk from main Milton area.",
+    "walk_to_go_station": "16 minutes walk from town centre",
+    "walk_score": 75,
+    "walk_score_label": "Very Walkable",
+    "walk_score_source": "https://www.walkscore.com/ONT/Milton visited 2026-06-07"
+  },
+
+  "natural_features": {
+    "niagara_escarpment": "UNESCO World Biosphere Reserve. Rattlesnake Point and Crawford Lake Conservation Area directly accessible from Milton.",
+    "conservation_areas": ["Crawford Lake Conservation Area", "Rattlesnake Point Conservation Area", "Hilton Falls Conservation Area", "Kelso Conservation Area", "Mount Nemo Conservation Area"],
+    "note": "Five large parks operated by Conservation Halton reside in Milton. This is a key differentiator vs. Brampton and Mississauga.",
+    "source": "https://en.wikipedia.org/wiki/Milton,_Ontario"
+  },
+
+  "amenities": {
+    "wahi_restaurants_score": "3/5 — some restaurants within walking distance",
+    "wahi_shopping_score": "2/5 — some shops within walking distance",
+    "heritage_attractions": ["Country Heritage Park (formerly Ontario Agricultural Museum)", "Halton Region Museum", "Halton County Radial Railway Museum"],
+    "source": "https://wahi.com/ca/en/neighbourhoods/ontario/gta/milton/old-milton visited 2026-06-07"
+  },
+
+  "history": {
+    "founded": "1820-1837",
+    "key_events": [
+      "1820: Jasper and Sarah Martin granted 100 acres, built grist mill on 16 Mile Creek — settlement called Martin's Mill",
+      "1837: Named after English poet John Milton when population reached ~100. Martin and Foster families were principal landowners — their names still in Milton buildings and streets.",
+      "1818: Crown purchased Mississauga of the Credit territory",
+      "1981: Milton GO Station opens (October 25)",
+      "2001-2011: Fastest-growing municipality in Canada (+71.4%)",
+      "Niagara Escarpment designated UNESCO World Biosphere Reserve — runs through Milton"
+    ],
+    "indigenous_territory": "Mississaugas of the Credit — sold 648,000 acres to Crown in 1818",
+    "source": "https://en.wikipedia.org/wiki/Milton,_Ontario visited 2026-06-07; https://wahi.com/ca/en/neighbourhoods/ontario/gta/milton/old-milton visited 2026-06-07"
+  }
+}

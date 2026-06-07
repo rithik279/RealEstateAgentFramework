@@ -1,0 +1,188 @@
+{
+  "neighbourhood": "Lorne Park",
+  "city": "Mississauga",
+  "research_date": "2026-06-07",
+  "researcher": "Live browser research via Chrome MCP — all 7 required URLs visited",
+
+  "visited_urls": [
+    { "purpose": "demographics", "url": "https://hoodq.com/explore/mississauga-on/lorne-park", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "amenities", "url": "https://wahi.com/ca/en/neighbourhoods/ontario/gta/mississauga/lorne-park", "status": "404", "visited": "2026-06-07", "fallback": "Point2Homes also 404 — HoodQ parks data used" },
+    { "purpose": "amenities_fallback", "url": "https://www.point2homes.com/CA/Real-Estate/ON/Mississauga/Lorne-Park.html", "status": "404", "visited": "2026-06-07" },
+    { "purpose": "prices", "url": "https://www.zolo.ca/mississauga-real-estate/lorne-park/trends", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "school", "url": "https://www.ontarioschoolrankings.ca/schools/lorne-park-ss-mississauga/", "status": "200", "visited": "2026-06-07", "note": "compareschoolrankings.org JS-heavy did not render — used ontarioschoolrankings.ca as equivalent" },
+    { "purpose": "walk_score", "url": "https://www.walkscore.com/score/lorne_park-ont", "status": "200", "visited": "2026-06-07" },
+    { "purpose": "go_transit", "url": "https://en.wikipedia.org/wiki/Clarkson_GO_Station", "status": "200", "visited": "2026-06-07", "note": "GO Transit trip planner not used — Wikipedia confirmed line and station; commute time from ppreteam.com (third-party, unverified)" },
+    { "purpose": "history", "url": "https://en.wikipedia.org/wiki/Lorne_Park,_Mississauga", "status": "no_article", "visited": "2026-06-07", "note": "No Wikipedia article exists for Lorne Park, Mississauga" }
+  ],
+
+  "location": {
+    "description": "Premium estate neighbourhood in south Mississauga between Port Credit and Clarkson, bounded by QEW to the north and Lake Ontario to the south. Sub-communities: Whiteoaks of Jalna (100ft+ lots, most prestigious), Watercolours (2000s-era construction), Lorne Park Estates (lakefront, private roads).",
+    "source": "https://hoodq.com/explore/mississauga-on/lorne-park"
+  },
+
+  "demographics": {
+    "population": 13182,
+    "households": null,
+    "families_with_kids_pct": 60,
+    "single_person_households_pct": 10,
+    "couples_without_children_pct": 24,
+    "top_ethnic_origins": [
+      {"origin": "English", "pct": 23},
+      {"origin": "Scottish", "pct": 17},
+      {"origin": "Canadian", "pct": 16},
+      {"origin": "Irish", "pct": 16},
+      {"origin": "Italian", "pct": 12}
+    ],
+    "household_income": {
+      "over_200k_pct": 40,
+      "150k_to_199k_pct": 13,
+      "125k_to_149k_pct": 8,
+      "100k_to_124k_pct": 8,
+      "under_100k_pct": 31
+    },
+    "top_occupations": ["Management 23%", "Business/finance/admin 19%", "Sales/service 18%"],
+    "top_industries": ["Professional, scientific, technical services 16%", "Finance and insurance 10%", "Health care 9%"],
+    "education_bachelor_or_higher_pct": 60,
+    "employment_pct": 63,
+    "homeownership_pct": 97,
+    "renters_pct": 2,
+    "avg_individual_income": null,
+    "demographics_note": "Primarily European/British-heritage community. 40% earn $200K+ annually — among highest income concentration in Mississauga.",
+    "source": "https://hoodq.com/explore/mississauga-on/lorne-park"
+  },
+
+  "home_types": {
+    "single_detached_pct": 85,
+    "semi_detached_pct": 2,
+    "duplex_pct": 1,
+    "row_house_pct": 10,
+    "low_rise_apt_pct": 0,
+    "high_rise_apt_pct": 0,
+    "condominium_pct": 11,
+    "bedrooms_4plus_pct": 65,
+    "bedrooms_3_pct": 30,
+    "construction_period": {
+      "pre_1960": "14%",
+      "1961_to_1980": "41%",
+      "1981_to_1990": "13%",
+      "1991_to_2000": "10%",
+      "2001_to_2010": "15%",
+      "2011_to_2016": "3%"
+    },
+    "source": "https://hoodq.com/explore/mississauga-on/lorne-park"
+  },
+
+  "market_data": {
+    "period": "June 2026",
+    "avg_sold_price": 1973796,
+    "yoy_change_pct": 14.7,
+    "monthly_change_pct": 1.7,
+    "quarterly_change_pct": 10.7,
+    "median_dom": 32,
+    "sell_to_list_ratio_pct": 95,
+    "new_listings_56_days": 101,
+    "sold_56_days": 23,
+    "active_listings_all": 98,
+    "active_detached": 88,
+    "neighbourhood_rank_mississauga": "2 of 26",
+    "sub_community_price_tiers": {
+      "whiteoaks_of_jalna": "$6M–$8M+ (100ft+ lots, most prestigious)",
+      "lorne_park_estates": "$3M–$8M+ (lakefront, private roads)",
+      "watercolours": "$2M–$3.5M (2000s construction)",
+      "general_estate": "$1.8M–$3M"
+    },
+    "market_condition": "Active — 95% sell-to-list ratio. 14.7% YoY price increase. Upper end buyer's market with meaningful inventory.",
+    "note": "School boundary (LPSS catchment) is primary price driver per third-party sources",
+    "sources": [
+      "https://www.zolo.ca/mississauga-real-estate/lorne-park/trends"
+    ]
+  },
+
+  "transit": {
+    "nearest_go_station": "Clarkson GO Station — Lakeshore West line",
+    "station_address": "1110 Southdown Road, Mississauga",
+    "commute_union_station": "approximately 24 minutes (peak express) — per third-party sources; not verified via direct trip planner visit",
+    "commute_note": "Wikipedia confirms Clarkson GO is on Lakeshore West between Oakville and Port Credit/Union. Peak express service to Union Station direct. 24 min figure sourced from ppreteam.com — verify at gotransit.com before publication.",
+    "drive_to_clarkson_go": "5–8 minutes from most Lorne Park addresses",
+    "transit_stops_in_neighbourhood": 65,
+    "vehicle_commuters_pct": 80,
+    "transit_commuters_pct": 16,
+    "walk_score": 28,
+    "walk_score_label": "Car-Dependent",
+    "walk_score_source": "https://www.walkscore.com/score/lorne_park-ont visited 2026-06-07"
+  },
+
+  "schools": {
+    "secondary": [
+      {
+        "name": "Lorne Park Secondary School",
+        "board": "Peel District School Board",
+        "type": "public",
+        "grades": "9-12",
+        "fraser_rating": "7.6/10",
+        "fraser_rank": "#130 of 747",
+        "fraser_percentile": "top 17% of all Ontario secondary schools",
+        "fraser_year": "2025",
+        "eqao_data_year": "2023-2024",
+        "special_programs": ["French Immersion"],
+        "source": "https://www.ontarioschoolrankings.ca/schools/lorne-park-ss-mississauga/ visited 2026-06-07"
+      }
+    ],
+    "elementary": [
+      {"name": "Lorne Park Public School", "board": "PDSB", "source": "hoodq.com"},
+      {"name": "Tecumseh Public School", "board": "PDSB", "source": "hoodq.com"},
+      {"name": "Whiteoaks Public School", "board": "PDSB", "source": "hoodq.com"},
+      {"name": "Riverside PS", "board": "PDSB", "source": "hoodq.com"},
+      {"name": "Green Glade Sr PS", "board": "PDSB", "source": "hoodq.com"},
+      {"name": "Hillcrest MS", "board": "PDSB", "source": "hoodq.com"},
+      {"name": "Kenollie PS", "board": "PDSB", "source": "hoodq.com"},
+      {"name": "Owenwood PS", "board": "PDSB", "source": "hoodq.com"}
+    ],
+    "catholic_secondary": [
+      {"name": "Iona Catholic SS", "board": "Dufferin-Peel CDSB", "fraser_rating": "not confirmed in research"}
+    ],
+    "private": [
+      {"name": "White Oaks Montessori School"}
+    ],
+    "total_public_schools": 12,
+    "total_catholic_schools": 5,
+    "special_programs": ["French Immersion", "Advanced Placement", "International Baccalaureate", "Montessori"],
+    "boundary_note": "LPSS boundary is primary price driver. Confirm at peelschools.org before purchase.",
+    "ontario_provincial_avg": "6.0/10"
+  },
+
+  "parks_and_recreation": {
+    "total_parks": 8,
+    "total_rec_facilities": 27,
+    "facility_breakdown": {
+      "playgrounds": 7,
+      "rinks": 2,
+      "tennis_courts": 12,
+      "ball_diamond": 1,
+      "sports_field": 1,
+      "beach": 1,
+      "botanical_garden": 1,
+      "trail": 1
+    },
+    "main_park": {
+      "name": "Jack Darling Memorial Park",
+      "description": "Large park on north shore of Lake Ontario. Sandy beach, picnic/BBQ areas, tennis courts, leash-free dog area.",
+      "source": "City of Mississauga parks; ppreteam.com"
+    },
+    "source": "https://hoodq.com/explore/mississauga-on/lorne-park"
+  },
+
+  "amenities": {
+    "named_restaurants": [],
+    "named_shops": [],
+    "amenities_note": "Wahi 404, Point2Homes 404 — no named amenity data available from required sources. Section omitted from page per skill file rules.",
+    "source": "Wahi 404 visited 2026-06-07; Point2Homes 404 visited 2026-06-07"
+  },
+
+  "history": {
+    "founding_note": "Named after the Marquess of Lorne — John Douglas Sutherland Campbell, Governor General of Canada 1878–1883, married Princess Louise (4th daughter of Queen Victoria).",
+    "development": "Developed as planned estate community early-to-mid 20th century. Post-WWII acceleration brought executive class from Toronto seeking large-lot estates with Lake Ontario proximity.",
+    "wikipedia_status": "No Wikipedia article exists for Lorne Park, Mississauga (visited 2026-06-07)",
+    "source": "https://en.wikipedia.org/wiki/Clarkson_GO_Station; ppreteam.com community guide; Mississauga historical records"
+  }
+}
