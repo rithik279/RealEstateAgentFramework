@@ -89,6 +89,12 @@ services:
       - type: rewrite
         source: /brampton-homes-for-sale
         destination: /brampton-homes-for-sale.html
+      - type: rewrite
+        source: /condos-for-sale-brampton
+        destination: /condos-for-sale-brampton.html
+      - type: rewrite
+        source: /ontario-land-transfer-tax-calculator
+        destination: /ontario-land-transfer-tax-calculator.html
 
   - type: web
     name: real-estate-agent

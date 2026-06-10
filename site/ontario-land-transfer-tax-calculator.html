@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ontario Land Transfer Tax Calculator 2026 | First-Time Buyer Rebate | Anu Kabli</title>
+  <meta name="description" content="Free Ontario Land Transfer Tax calculator 2026. Includes Toronto Municipal LTT, first-time buyer rebates up to $8,475. Instant results. Anu Kabli REALTOR® (647) 200-5779." />
+  <link rel="canonical" href="https://anukabli.com/ontario-land-transfer-tax-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Ontario Land Transfer Tax Calculator 2026",
+    "url": "https://anukabli.com/ontario-land-transfer-tax-calculator",
+    "description": "Calculate Ontario and Toronto land transfer tax for any purchase price, with first-time buyer rebates.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+    "author": {
+      "@type": "RealEstateAgent",
+      "name": "Anu Kabli",
+      "telephone": "+16472005779",
+      "url": "https://www.anukabli.com"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How is Ontario land transfer tax calculated in 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ontario Land Transfer Tax is calculated on a graduated (marginal) scale: 0.5% on the first $55,000; 1.0% on $55,001–$250,000; 1.5% on $250,001–$400,000; 2.0% on $400,001–$2,000,000; and 2.5% on any amount over $2,000,000. For example, a $750,000 home incurs: ($55,000 × 0.5%) + ($195,000 × 1.0%) + ($150,000 × 1.5%) + ($350,000 × 2.0%) = $275 + $1,950 + $2,250 + $7,000 = $11,475. The tax is paid at closing through your real estate lawyer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the first-time home buyer land transfer tax rebate in Ontario?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "First-time home buyers in Ontario receive a rebate of up to $4,000 on Provincial Land Transfer Tax. For homes priced at $368,000 or less, the rebate covers the entire Ontario LTT. For homes over $368,000, you pay Ontario LTT only on the amount above $368,000 (you still receive the full $4,000 rebate regardless of purchase price). To qualify: you must be a Canadian citizen or permanent resident, at least 18 years old, have never owned a home anywhere in the world, and occupy the home as your principal residence within 9 months of closing. Source: Ontario Ministry of Finance."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Toronto have an extra land transfer tax?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Properties within the City of Toronto (not Mississauga, Brampton, Vaughan, or other 905 municipalities — only within Toronto's city boundary) pay a second Municipal Land Transfer Tax (MLTT) on top of the provincial Ontario LTT. Toronto MLTT rates: 0.5% on first $55,000; 1.0% on $55,001–$400,000; 1.5% on $400,001–$2,000,000; 2.0% on amounts over $2,000,000. Toronto first-time buyers receive a separate Toronto MLTT rebate of up to $4,475. Total rebates for Toronto first-time buyers: up to $8,475 ($4,000 Ontario + $4,475 Toronto). Buying in the 905 (Brampton, Mississauga, Milton, etc.) means you pay only provincial LTT — no Toronto MLTT."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When do you pay land transfer tax in Ontario?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Land transfer tax is paid on the closing day of your real estate transaction — not at time of offer, not during the mortgage approval process. Your real estate lawyer collects and remits the tax on your behalf when registering the deed. It must be paid in full before the deed can be registered. You cannot defer or finance the land transfer tax through your mortgage — it must come from your own funds (along with other closing costs like legal fees and title insurance)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What other closing costs should I budget for in Ontario?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Beyond land transfer tax, typical Ontario closing costs include: Legal fees ($1,500–$2,500), Title insurance ($200–$400), Home inspection ($400–$600), CMHC mortgage insurance premium (if down payment is under 20% — up to 4% of mortgage amount), Property tax adjustment (prorated at closing), and moving costs. As a rough guide, budget 1.5%–3% of purchase price for total closing costs excluding LTT. On a $800,000 home, that is $12,000–$24,000 plus LTT of approximately $12,475."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --black: #0d0d0d; --black2: #141414; --black3: #1c1c1c; --red: #c41e3a; --gold: #c9a84c; --gold-light: #e0c068; --white: #ffffff; --gray: rgba(255,255,255,0.65); --green: #2ecc71; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--black); color: var(--white); }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 68px; background: var(--black2); border-bottom: 1px solid rgba(201,168,76,0.2); position: sticky; top: 0; z-index: 100; }
+    .nav-logo a { text-decoration: none; display: flex; flex-direction: column; }
+    .nav-logo .name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); }
+    .nav-logo .brokerage { font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
+    .nav-phone a { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 600; }
+    .nav-phone a:hover { color: var(--gold-light); }
+
+    .hero { padding: 60px 5% 50px; background: linear-gradient(160deg, #0d0d0d 0%, #0b0b0e 60%, #0d0d0d 100%); border-bottom: 1px solid rgba(201,168,76,0.12); }
+    .hero-inner { max-width: 820px; }
+    .breadcrumb { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
+    .breadcrumb a { color: rgba(255,255,255,0.35); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--gold); }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--red); margin-bottom: 14px; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 4vw, 48px); font-weight: 700; line-height: 1.18; margin-bottom: 18px; }
+    .hero h1 span { color: var(--gold); }
+    .hero-sub { font-size: 16px; color: var(--gray); line-height: 1.75; max-width: 640px; }
+
+    /* CALCULATOR */
+    .calc-section { max-width: 1120px; margin: 0 auto; padding: 56px 5% 0; }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+
+    .calc-card { background: var(--black2); border: 1px solid rgba(201,168,76,0.2); border-radius: 10px; padding: 32px; }
+    .calc-card h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--white); margin-bottom: 24px; }
+
+    .calc-field { margin-bottom: 20px; }
+    .calc-field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+    .price-input-wrap { position: relative; }
+    .price-input-wrap .dollar { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.4); pointer-events: none; }
+    .price-input-wrap input { width: 100%; background: var(--black3); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 14px 14px 14px 28px; color: var(--white); font-size: 22px; font-weight: 700; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+    .price-input-wrap input:focus { outline: none; border-color: var(--gold); }
+    .price-slider { width: 100%; margin-top: 12px; -webkit-appearance: none; appearance: none; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; }
+    .price-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+    .price-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--gold); cursor: pointer; border: none; }
+    .slider-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+    .slider-labels span { font-size: 11px; color: rgba(255,255,255,0.25); }
+
+    .toggle-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .toggle-btn { flex: 1; min-width: 120px; background: var(--black3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 11px 16px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; text-align: center; }
+    .toggle-btn.active { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); }
+    .toggle-btn:hover:not(.active) { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.75); }
+
+    /* RESULTS */
+    .results-card { background: linear-gradient(135deg, #121212 0%, #0f0f12 100%); border: 1px solid rgba(201,168,76,0.25); border-radius: 10px; padding: 32px; }
+    .results-card h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--white); margin-bottom: 24px; }
+
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .result-row:last-of-type { border-bottom: none; }
+    .result-label { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .result-label .sub { font-size: 11px; color: rgba(255,255,255,0.25); display: block; margin-top: 2px; }
+    .result-val { font-size: 18px; font-weight: 700; color: var(--white); font-family: 'Inter', sans-serif; }
+    .result-val.gold { color: var(--gold); }
+    .result-val.red { color: #e07070; }
+    .result-val.green { color: #6dd49a; }
+    .result-val.big { font-size: 28px; }
+
+    .result-divider { height: 1px; background: rgba(201,168,76,0.15); margin: 8px 0; }
+
+    .rebate-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(46,204,113,0.12); border: 1px solid rgba(46,204,113,0.25); border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; color: #6dd49a; margin-top: 8px; }
+
+    .breakdown-toggle { display: block; width: 100%; text-align: left; background: none; border: none; color: rgba(255,255,255,0.3); font-size: 12px; cursor: pointer; padding: 10px 0 0; font-family: 'Inter', sans-serif; transition: color 0.2s; }
+    .breakdown-toggle:hover { color: var(--gold); }
+
+    .breakdown-table { display: none; margin-top: 16px; width: 100%; border-collapse: collapse; }
+    .breakdown-table.visible { display: table; }
+    .breakdown-table th { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.25); padding: 6px 0; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .breakdown-table td { font-size: 12px; color: rgba(255,255,255,0.45); padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .breakdown-table td:last-child { text-align: right; color: rgba(255,255,255,0.6); }
+
+    .disclaimer-note { font-size: 11px; color: rgba(255,255,255,0.2); margin-top: 16px; line-height: 1.6; }
+
+    /* CONTENT BELOW */
+    .page-content { max-width: 1120px; margin: 0 auto; padding: 60px 5% 80px; display: grid; grid-template-columns: 1fr 360px; gap: 60px; }
+    @media (max-width: 860px) { .page-content { grid-template-columns: 1fr; } }
+
+    .content h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; color: var(--gold); margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(201,168,76,0.15); }
+    .content h2:first-child { margin-top: 0; }
+    .content h3 { font-size: 15px; font-weight: 600; color: var(--white); margin: 20px 0 10px; }
+    .content p { font-size: 15px; color: var(--gray); line-height: 1.85; margin-bottom: 16px; }
+    .content ul { list-style: none; padding: 0; margin-bottom: 16px; }
+    .content ul li { font-size: 15px; color: var(--gray); line-height: 1.8; padding-left: 18px; position: relative; margin-bottom: 6px; }
+    .content ul li::before { content: ''; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0.6; }
+
+    .rate-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
+    .rate-table th { background: var(--black3); color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 10px 14px; text-align: left; }
+    .rate-table td { padding: 10px 14px; font-size: 14px; color: var(--gray); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .rate-table td.hl { color: var(--white); font-weight: 600; }
+
+    .example-box { background: var(--black2); border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0; padding: 20px 24px; margin: 20px 0 28px; }
+    .example-box h4 { font-size: 14px; font-weight: 600; color: var(--gold); margin-bottom: 12px; }
+    .example-box p { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 8px; line-height: 1.7; }
+    .example-box p:last-child { margin-bottom: 0; }
+    .example-box strong { color: rgba(255,255,255,0.85); }
+
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.07); padding: 20px 0; }
+    .faq-q { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+    .faq-a { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.8; }
+
+    .sidebar-card { background: var(--black2); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 28px; margin-bottom: 24px; }
+    .sidebar-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+    .sidebar-card .sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.4); display: block; margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; background: var(--black3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 10px 14px; color: var(--white); font-size: 14px; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); }
+    .form-group select option { background: var(--black3); }
+    .form-submit { width: 100%; background: var(--red); color: var(--white); border: none; padding: 13px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
+    .form-submit:hover { background: #a01830; }
+    .form-note { font-size: 11px; color: rgba(255,255,255,0.25); text-align: center; margin-top: 10px; }
+
+    .call-block { text-align: center; padding: 24px; background: linear-gradient(135deg, #1a0a0d, #14080b); border: 1px solid rgba(196,30,58,0.3); border-radius: 8px; }
+    .call-block p { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 12px; }
+    .call-block a { display: block; background: var(--red); color: var(--white); text-decoration: none; padding: 13px; border-radius: 4px; font-size: 15px; font-weight: 700; }
+    .call-block a:hover { background: #a01830; }
+
+    footer { background: #080808; border-top: 1px solid rgba(255,255,255,0.06); padding: 32px 5%; text-align: center; }
+    footer p { font-size: 11px; color: rgba(255,255,255,0.2); }
+    footer a { color: rgba(201,168,76,0.5); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--gold); }
+    .trreb { font-size: 10px; color: rgba(255,255,255,0.15); margin-top: 10px; line-height: 1.6; max-width: 860px; margin-left: auto; margin-right: auto; }
+
+    .explore-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+    .explore-card { display: block; background: var(--black2); border: 1px solid rgba(201,168,76,0.12); border-radius: 6px; padding: 16px 18px; text-decoration: none; transition: border-color 0.2s; }
+    .explore-card:hover { border-color: rgba(201,168,76,0.4); }
+    .explore-name { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+    .explore-desc { font-size: 12px; color: rgba(255,255,255,0.45); }
+
+    .badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+    .badge-ftb { background: rgba(46,204,113,0.15); color: #6dd49a; border: 1px solid rgba(46,204,113,0.25); }
+    .badge-to { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <a href="/">
+      <span class="name">Anu Kabli</span>
+      <span class="brokerage">IQI Global Real Estate</span>
+    </a>
+  </div>
+  <div class="nav-phone"><a href="tel:+16472005779">(647) 200-5779</a></div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="/">Home</a> &rsaquo; Ontario Land Transfer Tax Calculator</div>
+    <div class="hero-label">Free Tool — Updated 2026 Rates</div>
+    <h1>Ontario Land Transfer Tax<br/><span>Calculator 2026</span></h1>
+    <p class="hero-sub">Calculate your exact Ontario LTT instantly — including Toronto Municipal Land Transfer Tax and first-time buyer rebates up to $8,475. No email required. Results update as you type.</p>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<div class="calc-section">
+  <div class="calc-grid">
+
+    <!-- INPUTS -->
+    <div class="calc-card">
+      <h2>Enter Your Details</h2>
+
+      <div class="calc-field">
+        <label>Purchase Price</label>
+        <div class="price-input-wrap">
+          <span class="dollar">$</span>
+          <input type="text" id="priceInput" value="800,000" inputmode="numeric" autocomplete="off" />
+        </div>
+        <input type="range" class="price-slider" id="priceSlider" min="100000" max="3000000" step="5000" value="800000" />
+        <div class="slider-labels"><span>$100K</span><span>$3M</span></div>
+      </div>
+
+      <div class="calc-field">
+        <label>Location</label>
+        <div class="toggle-group">
+          <div class="toggle-btn active" data-loc="ontario" onclick="setLocation(this)">Ontario (905 / not Toronto)</div>
+          <div class="toggle-btn" data-loc="toronto" onclick="setLocation(this)">City of Toronto <span class="badge badge-to">+MLTT</span></div>
+        </div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:8px;line-height:1.5;">Toronto MLTT applies only inside City of Toronto boundaries. Brampton, Mississauga, Vaughan, Milton, etc. — select Ontario (905).</p>
+      </div>
+
+      <div class="calc-field">
+        <label>Buyer Type</label>
+        <div class="toggle-group">
+          <div class="toggle-btn active" data-buyer="repeat" onclick="setBuyer(this)">Repeat Buyer</div>
+          <div class="toggle-btn" data-buyer="ftb" onclick="setBuyer(this)">First-Time Buyer <span class="badge badge-ftb">Rebate</span></div>
+        </div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:8px;line-height:1.5;">First-time buyer: never owned a home anywhere in the world; must occupy as principal residence within 9 months.</p>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-card" id="resultsCard">
+      <h2>Your Land Transfer Tax</h2>
+
+      <div id="resultsInner">
+        <!-- Populated by JS -->
+      </div>
+
+      <button class="breakdown-toggle" id="breakdownToggle" onclick="toggleBreakdown()">▼ Show bracket breakdown</button>
+
+      <table class="breakdown-table" id="breakdownTable">
+        <thead>
+          <tr><th>Bracket</th><th>Rate</th><th>Taxable Amount</th><th>Tax</th></tr>
+        </thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+
+      <p class="disclaimer-note">Rates based on Ontario LTT Act R.S.O. 1990 and City of Toronto Act. Always verify with your real estate lawyer before closing. Rates subject to change by legislation.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-content">
+  <div class="content">
+
+    <h2>Ontario Land Transfer Tax Rates 2026</h2>
+    <p>Ontario Land Transfer Tax (LTT) is paid when you buy property in Ontario. It is calculated on a <strong>marginal (graduated) basis</strong> — each bracket applies only to the portion of the purchase price within that bracket, exactly like income tax.</p>
+
+    <table class="rate-table">
+      <thead><tr><th>Purchase Price Range</th><th>Marginal Rate</th><th>Cumulative Tax at Top of Bracket</th></tr></thead>
+      <tbody>
+        <tr><td class="hl">First $55,000</td><td>0.5%</td><td>$275</td></tr>
+        <tr><td class="hl">$55,001 – $250,000</td><td>1.0%</td><td>$2,225</td></tr>
+        <tr><td class="hl">$250,001 – $400,000</td><td>1.5%</td><td>$4,475</td></tr>
+        <tr><td class="hl">$400,001 – $2,000,000</td><td>2.0%</td><td>$36,475</td></tr>
+        <tr><td class="hl">Over $2,000,000</td><td>2.5%</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="example-box">
+      <h4>Worked Example — $800,000 Home (Brampton, Mississauga, or other 905)</h4>
+      <p>First $55,000 × 0.5% = <strong>$275</strong></p>
+      <p>$55,001–$250,000 ($195,000) × 1.0% = <strong>$1,950</strong></p>
+      <p>$250,001–$400,000 ($150,000) × 1.5% = <strong>$2,250</strong></p>
+      <p>$400,001–$800,000 ($400,000) × 2.0% = <strong>$8,000</strong></p>
+      <p><strong>Total Ontario LTT = $12,475</strong> — paid at closing through your lawyer.</p>
+    </div>
+
+    <h2>Toronto Municipal Land Transfer Tax Rates 2026</h2>
+    <p>If you are buying inside the <strong>City of Toronto boundary</strong> (not Etobicoke-as-905, not Scarborough-as-905 — the actual current City of Toronto), you pay a second full land transfer tax on top of the provincial one. Toronto MLTT uses the same graduated structure but with different bracket endpoints:</p>
+
+    <table class="rate-table">
+      <thead><tr><th>Purchase Price Range</th><th>Toronto MLTT Rate</th><th>Cumulative Toronto MLTT at Top</th></tr></thead>
+      <tbody>
+        <tr><td class="hl">First $55,000</td><td>0.5%</td><td>$275</td></tr>
+        <tr><td class="hl">$55,001 – $400,000</td><td>1.0%</td><td>$3,725</td></tr>
+        <tr><td class="hl">$400,001 – $2,000,000</td><td>1.5%</td><td>$27,725</td></tr>
+        <tr><td class="hl">Over $2,000,000</td><td>2.0%</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="example-box">
+      <h4>Worked Example — $800,000 Toronto Condo (Toronto MLTT on top of Ontario LTT)</h4>
+      <p>Ontario LTT = <strong>$12,475</strong> (same as above)</p>
+      <p>Toronto MLTT: First $55,000 × 0.5% = $275</p>
+      <p>Toronto MLTT: $55,001–$400,000 ($345,000) × 1.0% = $3,450</p>
+      <p>Toronto MLTT: $400,001–$800,000 ($400,000) × 1.5% = $6,000</p>
+      <p>Toronto MLTT = <strong>$9,725</strong></p>
+      <p><strong>Total LTT for Toronto buyer = $12,475 + $9,725 = $22,200</strong></p>
+      <p>vs. same home in Brampton/Mississauga: <strong>$12,475</strong> (Ontario only). Toronto doubles your tax bill.</p>
+    </div>
+
+    <h2>First-Time Buyer Rebates 2026</h2>
+
+    <h3>Ontario First-Time Buyer LTT Rebate — up to $4,000</h3>
+    <p>First-time home buyers in Ontario receive a full rebate of Ontario LTT on the first $368,000 of a purchase price (since Ontario LTT on $368,000 equals exactly $4,000). For homes over $368,000, you still get the full $4,000 rebate applied against your total Ontario LTT — you just pay the portion above.</p>
+
+    <h3>Toronto First-Time Buyer MLTT Rebate — up to $4,475</h3>
+    <p>First-time buyers purchasing in the City of Toronto receive a <em>separate</em> Toronto MLTT rebate of up to $4,475. This applies on top of the Ontario rebate. Combined maximum for Toronto first-time buyers: <strong>$8,475</strong> ($4,000 Ontario + $4,475 Toronto).</p>
+
+    <h3>Rebate Qualification Rules (Both Ontario and Toronto)</h3>
+    <ul>
+      <li>Canadian citizen or permanent resident at the time of purchase</li>
+      <li>At least 18 years old</li>
+      <li><strong>Never owned a home anywhere in the world</strong> — not just in Ontario, not just in Canada</li>
+      <li>Must occupy the home as principal residence within 9 months of closing</li>
+      <li>If purchasing with a spouse/partner: <em>neither</em> of you can have owned a home anywhere in the world (for the Ontario rebate). Toronto's rebate has the same requirement.</li>
+      <li>Applies to new construction, resale, and vacant land with a home to be built</li>
+    </ul>
+
+    <div class="example-box">
+      <h4>First-Time Buyer — $800,000 home in Brampton</h4>
+      <p>Ontario LTT gross: $12,475</p>
+      <p>First-time buyer rebate: − $4,000</p>
+      <p><strong>Net Ontario LTT payable: $8,475</strong> (saves $4,000 vs repeat buyer)</p>
+    </div>
+
+    <div class="example-box">
+      <h4>First-Time Buyer — $800,000 condo in Toronto</h4>
+      <p>Ontario LTT gross: $12,475 → after $4,000 rebate = $8,475</p>
+      <p>Toronto MLTT gross: $9,725 → after $4,475 rebate = $5,250</p>
+      <p><strong>Net total LTT payable (Toronto FTB): $13,725</strong></p>
+      <p>vs. repeat buyer in Toronto at the same price: $22,200. Rebates save $8,475.</p>
+    </div>
+
+    <h2>The Brampton / 905 Advantage</h2>
+    <p>Every buyer purchasing outside the City of Toronto boundary — in Brampton, Mississauga, Vaughan, Milton, Halton Hills, Caledon, Hamilton — pays <strong>only Ontario LTT, not Toronto MLTT</strong>. At $800,000, that is $9,725 less in land transfer tax on closing day compared to buying the same property inside Toronto.</p>
+    <p>That $9,725 in 905 savings has to be funded from somewhere — in Toronto, it comes out of your cash at closing. It is real money that cannot be financed through your mortgage. If you are weighing a Toronto condo vs. a Brampton condo at similar price points, the LTT difference alone is a meaningful part of the equation.</p>
+
+    <h2>When Is Land Transfer Tax Paid?</h2>
+    <p>Land transfer tax is paid on closing day — the day you take possession. Your real estate lawyer collects it and remits it to the province (and to Toronto if applicable) when registering the deed in your name. You cannot defer it, put it on your mortgage, or pay it in installments. It must be in your lawyer's trust account before keys are handed over.</p>
+    <p>First-time buyer rebates are applied automatically at closing — you do not pay first and claim back. Your lawyer applies the rebate and you pay only the net amount.</p>
+
+    <h2>Other Closing Costs to Budget</h2>
+    <ul>
+      <li><strong>Legal fees</strong> — $1,500–$2,500 for a standard purchase. More for complex transactions.</li>
+      <li><strong>Title insurance</strong> — $200–$400. Required by most lenders; protects against title fraud and survey issues.</li>
+      <li><strong>Home inspection</strong> — $400–$600. Technically optional but strongly recommended, especially in the 905 where many homes are 20–40 years old.</li>
+      <li><strong>CMHC mortgage default insurance</strong> — required if down payment is less than 20%. Ranges from 2.8% (10–14.99% down) to 4.0% (5–9.99% down) of the mortgage amount. Added to your mortgage principal, not paid at closing.</li>
+      <li><strong>Property tax adjustment</strong> — if the seller has prepaid property tax past the closing date, you reimburse them the proportional amount at closing.</li>
+      <li><strong>HST on new construction</strong> — resale homes have no HST. New construction includes HST but it is usually included in the purchase price (check your agreement).</li>
+    </ul>
+    <p>As a rough guide for 905 buyers: budget <strong>1.5%–2.5% of purchase price for total closing costs excluding LTT</strong>. On an $800,000 home in Brampton, that is $12,000–$20,000 out of pocket at closing, plus $12,475 in LTT (or $8,475 if first-time buyer). Total closing cash needed: roughly $20,000–$32,000 before your down payment.</p>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">How is Ontario land transfer tax calculated in 2026?</div>
+      <div class="faq-a">Graduated marginal rate. 0.5% on first $55K; 1.0% on $55K–$250K; 1.5% on $250K–$400K; 2.0% on $400K–$2M; 2.5% above $2M. Each rate applies only to the portion of price within that bracket — exactly like income tax brackets. Use the calculator above for instant results.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the first-time home buyer land transfer tax rebate in Ontario?</div>
+      <div class="faq-a">Up to $4,000 on Ontario LTT. If your purchase price is $368,000 or less, you pay zero Ontario LTT. Above $368,000, you still get the full $4,000 rebate subtracted from your total. Must have never owned a home anywhere in the world. Must be 18+, Canadian citizen or PR, must occupy as principal residence within 9 months. Applied automatically at closing — no separate claim needed.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does Toronto have an extra land transfer tax?</div>
+      <div class="faq-a">Yes. Inside City of Toronto boundary only. Toronto MLTT rates: 0.5% on first $55K; 1.0% on $55K–$400K; 1.5% on $400K–$2M; 2.0% above $2M. Toronto first-time buyers get up to $4,475 Toronto rebate on top of the $4,000 Ontario rebate ($8,475 total). Buying in 905 (Brampton, Mississauga, etc.) means no MLTT — only Ontario LTT.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">When do you pay land transfer tax in Ontario?</div>
+      <div class="faq-a">On closing day. Your real estate lawyer collects it and registers the deed. Must be paid in full before keys transfer. Cannot be deferred, financed, or added to your mortgage. First-time buyer rebates are applied at closing — you pay net, not gross.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What other closing costs should I budget for in Ontario?</div>
+      <div class="faq-a">Legal fees ($1,500–$2,500), title insurance ($200–$400), home inspection ($400–$600), CMHC premium if under 20% down (2.8%–4.0% added to mortgage), property tax adjustment, and moving costs. Budget roughly 1.5%–2.5% of purchase price for non-LTT closing costs. On $800K in Brampton: $12K–$20K + $12,475 LTT ($8,475 if FTB).</div>
+    </div>
+
+    <div style="margin-top:48px;padding-top:40px;border-top:1px solid rgba(201,168,76,0.15);">
+      <h2>Find Your Home in the GTA</h2>
+      <p>LTT is one number. Anu can walk you through the full closing cost picture for any specific property — and make sure you are not leaving rebates on the table. Call or submit below.</p>
+      <div class="explore-grid">
+        <a href="/brampton-homes-for-sale" class="explore-card"><div class="explore-name">Brampton</div><div class="explore-desc">$889K avg — no Toronto MLTT</div></a>
+        <a href="/condos-for-sale-brampton" class="explore-card"><div class="explore-name">Brampton Condos</div><div class="explore-desc">$421K avg — 3 GO stations</div></a>
+        <a href="/mississauga-real-estate" class="explore-card"><div class="explore-name">Mississauga</div><div class="explore-desc">$982K avg — no Toronto MLTT</div></a>
+        <a href="/milton-real-estate" class="explore-card"><div class="explore-name">Milton</div><div class="explore-desc">8.0/10 schools — no Toronto MLTT</div></a>
+        <a href="/halton-hills-real-estate" class="explore-card"><div class="explore-name">Halton Hills</div><div class="explore-desc">Georgetown, Acton — affordable</div></a>
+        <a href="/vaughan-real-estate" class="explore-card"><div class="explore-name">Vaughan</div><div class="explore-desc">Kleinburg, Woodbridge, maple</div></a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sidebar">
+    <div id="contact" class="sidebar-card">
+      <h3>Talk to Anu About Your Purchase</h3>
+      <p class="sub">LTT is paid at closing. Anu can tell you exactly what to budget — and what rebates you qualify for.</p>
+      <form action="https://formspree.io/f/REPLACE_WITH_FORM_ID" method="POST">
+        <input type="hidden" name="_subject" value="LTT Calculator — Buyer Inquiry" />
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" name="name" placeholder="Full name" required />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" name="phone" placeholder="(647) 000-0000" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label>Purchase Area</label>
+          <select name="area">
+            <option value="brampton">Brampton</option>
+            <option value="mississauga">Mississauga</option>
+            <option value="toronto">Toronto (City)</option>
+            <option value="vaughan">Vaughan</option>
+            <option value="milton">Milton</option>
+            <option value="halton-hills">Halton Hills</option>
+            <option value="king">King Township</option>
+            <option value="other">Other / Not sure</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Budget Range</label>
+          <select name="budget">
+            <option value="under-600k">Under $600,000</option>
+            <option value="600k-800k">$600,000 – $800,000</option>
+            <option value="800k-1m">$800,000 – $1,000,000</option>
+            <option value="1m-1.5m">$1,000,000 – $1,500,000</option>
+            <option value="over-1.5m">Over $1,500,000</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>First-Time Buyer?</label>
+          <select name="ftb">
+            <option value="yes">Yes — first-time buyer</option>
+            <option value="no">No — repeat buyer</option>
+            <option value="unsure">Not sure / need to check</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit">Get Full Cost Breakdown →</button>
+        <p class="form-note">Anu responds personally within the hour.</p>
+      </form>
+    </div>
+
+    <div class="call-block">
+      <p>Questions about closing costs<br/>or which rebates you qualify for?</p>
+      <a href="tel:+16472005779">&#9742; (647) 200-5779</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p style="margin-bottom:10px;">
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">BRAMPTON:</strong>&nbsp;
+    <a href="/brampton-homes-for-sale">Brampton homes for sale</a>
+    <a href="/condos-for-sale-brampton">Brampton condos</a>
+    <a href="/northwood-park-brampton">Northwood Park</a>
+    <a href="/castlemore-brampton">Castlemore</a>
+    <a href="/brampton-east-homes-for-sale">Brampton East</a>
+    <a href="/mount-pleasant-brampton">Mount Pleasant</a>
+    <a href="/rosedale-village-brampton">Rosedale Village</a>
+    <a href="/credit-valley-brampton">Credit Valley</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">MISSISSAUGA:</strong>&nbsp;
+    <a href="/mississauga-real-estate">Mississauga real estate</a>
+    <a href="/port-credit-homes-for-sale">Port Credit</a>
+    <a href="/lorne-park-homes-for-sale">Lorne Park</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">VAUGHAN:</strong>&nbsp;
+    <a href="/vaughan-real-estate">Vaughan real estate</a>
+    <a href="/kleinburg-homes-for-sale">Kleinburg</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">KING TOWNSHIP:</strong>&nbsp;
+    <a href="/king-township-real-estate">King Township</a>
+    <a href="/king-city-homes-for-sale">King City</a>
+    <a href="/nobleton-homes-for-sale">Nobleton</a>
+    <a href="/schomberg-homes-for-sale">Schomberg</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">HALTON HILLS:</strong>&nbsp;
+    <a href="/halton-hills-real-estate">Halton Hills</a>
+    <a href="/georgetown-homes-for-sale">Georgetown</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">MILTON:</strong>&nbsp;
+    <a href="/milton-real-estate">Milton real estate</a>
+    <a href="/condos-for-sale-milton">Milton condos</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">CALEDON:</strong>&nbsp;
+    <a href="/caledon-real-estate">Caledon real estate</a>
+    <a href="/bolton-homes-for-sale">Bolton</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">HAMILTON:</strong>&nbsp;
+    <a href="/hamilton-homes-for-sale">Hamilton</a>
+    <a href="/ancaster-homes-for-sale">Ancaster</a>
+    &nbsp;|&nbsp;
+    <strong style="color:rgba(201,168,76,0.6);font-size:11px;letter-spacing:.05em;">TOOLS:</strong>&nbsp;
+    <a href="/ontario-land-transfer-tax-calculator">LTT Calculator</a>
+  </p>
+  <p>© 2026 Anu Kabli. Licensed REALTOR® with IQI Global Real Estate. &nbsp;
+    <a href="/">Home</a>
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Use</a>
+  </p>
+  <p class="trreb">This calculator is provided for informational purposes only and does not constitute legal or financial advice. Land transfer tax rates are based on Ontario LTT Act R.S.O. 1990 and City of Toronto Act as of January 2026. Always confirm current rates with your real estate lawyer before closing.</p>
+</footer>
+
+<script>
+  // --- Tax calculation engine ---
+  const ON_BRACKETS = [
+    { limit: 55000,    rate: 0.005 },
+    { limit: 250000,   rate: 0.010 },
+    { limit: 400000,   rate: 0.015 },
+    { limit: 2000000,  rate: 0.020 },
+    { limit: Infinity, rate: 0.025 }
+  ];
+  const TO_BRACKETS = [
+    { limit: 55000,    rate: 0.005 },
+    { limit: 400000,   rate: 0.010 },
+    { limit: 2000000,  rate: 0.015 },
+    { limit: Infinity, rate: 0.020 }
+  ];
+  const ON_FTB_REBATE = 4000;
+  const TO_FTB_REBATE = 4475;
+
+  function calcTax(price, brackets) {
+    let tax = 0;
+    let prev = 0;
+    const breakdown = [];
+    for (const b of brackets) {
+      if (price <= prev) break;
+      const top = Math.min(price, b.limit);
+      const taxable = top - prev;
+      const portion = taxable * b.rate;
+      breakdown.push({ from: prev, to: top, rate: b.rate, taxable, portion });
+      tax += portion;
+      prev = b.limit;
+    }
+    return { tax, breakdown };
+  }
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-CA');
+  }
+  function fmtPct(r) {
+    return (r * 100).toFixed(1) + '%';
+  }
+  function fmtRange(from, to) {
+    if (to === Infinity) return '$' + from.toLocaleString('en-CA') + '+';
+    return '$' + from.toLocaleString('en-CA') + ' – $' + to.toLocaleString('en-CA');
+  }
+
+  let currentPrice = 800000;
+  let location = 'ontario';
+  let buyerType = 'repeat';
+
+  function compute() {
+    const onResult = calcTax(currentPrice, ON_BRACKETS);
+    const onGross = onResult.tax;
+    const onRebate = buyerType === 'ftb' ? Math.min(ON_FTB_REBATE, onGross) : 0;
+    const onNet = onGross - onRebate;
+
+    let toGross = 0, toRebate = 0, toNet = 0, toBreakdown = [];
+    if (location === 'toronto') {
+      const toResult = calcTax(currentPrice, TO_BRACKETS);
+      toGross = toResult.tax;
+      toRebate = buyerType === 'ftb' ? Math.min(TO_FTB_REBATE, toGross) : 0;
+      toNet = toGross - toRebate;
+      toBreakdown = toResult.breakdown;
+    }
+
+    const totalGross = onGross + toGross;
+    const totalRebate = onRebate + toRebate;
+    const totalNet = onNet + toNet;
+
+    // Render results
+    const ri = document.getElementById('resultsInner');
+    let html = '';
+
+    html += `<div class="result-row">
+      <div class="result-label">Purchase Price</div>
+      <div class="result-val">${fmt(currentPrice)}</div>
+    </div>`;
+
+    html += `<div class="result-row">
+      <div class="result-label">Ontario LTT (Gross)<span class="sub">Provincial — all of Ontario</span></div>
+      <div class="result-val">${fmt(onGross)}</div>
+    </div>`;
+
+    if (onRebate > 0) {
+      html += `<div class="result-row">
+        <div class="result-label">Ontario FTB Rebate<span class="sub">First-time buyer — max $4,000</span></div>
+        <div class="result-val green">− ${fmt(onRebate)}</div>
+      </div>`;
+    }
+
+    if (location === 'toronto') {
+      html += `<div class="result-row">
+        <div class="result-label">Toronto MLTT (Gross)<span class="sub">City of Toronto only</span></div>
+        <div class="result-val">${fmt(toGross)}</div>
+      </div>`;
+      if (toRebate > 0) {
+        html += `<div class="result-row">
+          <div class="result-label">Toronto FTB Rebate<span class="sub">Toronto first-time buyer — max $4,475</span></div>
+          <div class="result-val green">− ${fmt(toRebate)}</div>
+        </div>`;
+      }
+    }
+
+    html += '<div class="result-divider"></div>';
+    html += `<div class="result-row">
+      <div class="result-label" style="font-weight:600;color:rgba(255,255,255,0.8);">Total LTT Payable at Closing</div>
+      <div class="result-val gold big">${fmt(totalNet)}</div>
+    </div>`;
+
+    if (totalRebate > 0) {
+      html += `<div style="margin-top:8px;"><span class="rebate-badge">✓ Saving ${fmt(totalRebate)} in rebates</span></div>`;
+    }
+
+    ri.innerHTML = html;
+
+    // Breakdown table
+    const bb = document.getElementById('breakdownBody');
+    let rows = '';
+    for (const b of onResult.breakdown) {
+      if (b.taxable <= 0) continue;
+      rows += `<tr><td>${fmtRange(b.from, b.to)}</td><td>${fmtPct(b.rate)}</td><td>${fmt(b.taxable)}</td><td>${fmt(b.portion)}</td></tr>`;
+    }
+    if (onRebate > 0) rows += `<tr><td colspan="3" style="color:#6dd49a;">Ontario FTB Rebate</td><td style="color:#6dd49a;">− ${fmt(onRebate)}</td></tr>`;
+    if (location === 'toronto') {
+      rows += `<tr><td colspan="4" style="color:rgba(201,168,76,0.6);padding-top:12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Toronto MLTT</td></tr>`;
+      for (const b of toBreakdown) {
+        if (b.taxable <= 0) continue;
+        rows += `<tr><td>${fmtRange(b.from, b.to)}</td><td>${fmtPct(b.rate)}</td><td>${fmt(b.taxable)}</td><td>${fmt(b.portion)}</td></tr>`;
+      }
+      if (toRebate > 0) rows += `<tr><td colspan="3" style="color:#6dd49a;">Toronto FTB Rebate</td><td style="color:#6dd49a;">− ${fmt(toRebate)}</td></tr>`;
+    }
+    bb.innerHTML = rows;
+  }
+
+  // Input handling
+  const priceInput = document.getElementById('priceInput');
+  const priceSlider = document.getElementById('priceSlider');
+
+  priceInput.addEventListener('input', function() {
+    const raw = this.value.replace(/[^0-9]/g, '');
+    const val = parseInt(raw) || 0;
+    currentPrice = val;
+    if (val >= 100000 && val <= 3000000) priceSlider.value = val;
+    compute();
+    this.value = val ? val.toLocaleString('en-CA') : '';
+  });
+
+  priceInput.addEventListener('blur', function() {
+    if (currentPrice) this.value = currentPrice.toLocaleString('en-CA');
+  });
+
+  priceSlider.addEventListener('input', function() {
+    currentPrice = parseInt(this.value);
+    priceInput.value = currentPrice.toLocaleString('en-CA');
+    compute();
+  });
+
+  function setLocation(el) {
+    document.querySelectorAll('[data-loc]').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    location = el.dataset.loc;
+    compute();
+  }
+
+  function setBuyer(el) {
+    document.querySelectorAll('[data-buyer]').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    buyerType = el.dataset.buyer;
+    compute();
+  }
+
+  function toggleBreakdown() {
+    const t = document.getElementById('breakdownTable');
+    const btn = document.getElementById('breakdownToggle');
+    t.classList.toggle('visible');
+    btn.textContent = t.classList.contains('visible') ? '▲ Hide breakdown' : '▼ Show bracket breakdown';
+  }
+
+  // Init
+  compute();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+{
+  "neighbourhood": "Brampton Condos",
+  "city": "Brampton",
+  "research_date": "2026-06-10",
+  "researcher": "Live browser research via Chrome MCP",
+
+  "visited_urls": [
+    { "purpose": "demographics", "url": "https://hoodq.com/explore/brampton-on/downtown-brampton", "status": "200", "visited": "2026-06-10" },
+    { "purpose": "amenities", "url": "https://wahi.com/ca/en/neighbourhoods/ontario/gta/brampton/", "status": "200", "visited": "2026-06-10" },
+    { "purpose": "prices_overall", "url": "https://zolo.ca/brampton-real-estate/trends", "status": "200", "visited": "2026-06-10" },
+    { "purpose": "prices_downtown_condos", "url": "https://zolo.ca/brampton-real-estate/downtown-brampton/trends", "status": "200", "visited": "2026-06-10" },
+    { "purpose": "prices_condos", "url": "https://zolo.ca/brampton-real-estate/condos/trends", "status": "200_no_data", "visited": "2026-06-10" },
+    { "purpose": "school", "url": "n/a — city-wide condos page, no single school boundary", "status": "n/a", "visited": "2026-06-10" },
+    { "purpose": "walk_score", "url": "n/a — varies by building", "status": "n/a", "visited": "2026-06-10" },
+    { "purpose": "go_transit", "url": "https://en.wikipedia.org/wiki/Brampton", "status": "200", "visited": "2026-06-10" },
+    { "purpose": "history", "url": "https://en.wikipedia.org/wiki/Brampton", "status": "200", "visited": "2026-06-10" }
+  ],
+
+  "market_data": {
+    "period": "June 2026",
+    "source_note": "Zolo.ca Brampton trends — May 10 to June 07 2026",
+    "avg_all_types_brampton": 889622,
+    "avg_condo": 421376,
+    "condo_source_note": "From brampton-homes-for-sale page (TRREB/MLS data, April-May 2026)",
+    "downtown_brampton_avg": 761189,
+    "downtown_brampton_dom": 27,
+    "brampton_dom": 26,
+    "new_listings_28days": 1385,
+    "downtown_new_listings_56days": 83,
+    "downtown_condo_inventory": {
+      "2bd_active": 4,
+      "3bd_active": 20,
+      "4bd_active": 11
+    },
+    "sale_to_list_downtown": "94.81% (3-bed condos)",
+    "yoy_detached": "-5%",
+    "yoy_4bd": "-7%",
+    "sources": [
+      "https://zolo.ca/brampton-real-estate/trends",
+      "https://zolo.ca/brampton-real-estate/downtown-brampton/trends"
+    ]
+  },
+
+  "condo_areas": {
+    "downtown_brampton": "Highest condo concentration — 47% high-rise apartments/condos (HoodQ 2021 census), around Queen St & Main St",
+    "bramalea_area": "Mid-rise condos near Bramalea City Centre and Bramalea GO station",
+    "steeles_kennedy": "South Brampton — condos along arterials near Mississauga border",
+    "queen_street_corridor": "New condo developments along Queen Street transit corridor"
+  },
+
+  "demographics_downtown": {
+    "source": "https://hoodq.com/explore/brampton-on/downtown-brampton",
+    "housing_type_high_rise_pct": 47,
+    "housing_type_low_rise_pct": 11,
+    "owner_pct": 42,
+    "renter_pct": 57,
+    "one_person_households_pct": 43,
+    "families_with_kids_pct": 31,
+    "first_gen_immigrants_pct": 35,
+    "vehicle_commute_pct": 75,
+    "transit_commute_pct": 18,
+    "commute_within_city_pct": 43,
+    "commute_to_another_city_pct": 57
+  },
+
+  "transit": {
+    "go_line": "Kitchener Line",
+    "go_stations": [
+      { "name": "Brampton GO (Downtown)", "area": "Downtown Brampton — Queen St W & Nelson St W" },
+      { "name": "Bramalea GO", "area": "East Brampton near Steeles Ave" },
+      { "name": "Mount Pleasant GO", "area": "Northwest Brampton near Bovaird Drive" }
+    ],
+    "commute_union_station_approx": "45-55 minutes",
+    "brampton_transit_ridership_per_weekday": 226500,
+    "source": "https://en.wikipedia.org/wiki/Brampton"
+  },
+
+  "comparison_data": {
+    "toronto_condo_avg_2026": 700000,
+    "mississauga_condo_avg_2026": 550000,
+    "brampton_condo_avg_2026": 421376,
+    "note": "Brampton condos ~40% cheaper than Toronto, ~25% cheaper than Mississauga for comparable sq footage"
+  },
+
+  "history": {
+    "incorporated_village": 1853,
+    "incorporated_town": 1873,
+    "became_city": 1974,
+    "name_origin": "Named after Brampton, Cumberland, England",
+    "flower_town": "Known as 'The Flower Town of Canada' — Edward Dale established flower nursery in 1863, grew to 140 greenhouses, largest cut flower business in North America",
+    "edward_dale": "Immigrant from Dorking, England, arrived 1863 — Dale's Nursery became town's largest employer",
+    "source": "https://en.wikipedia.org/wiki/Brampton"
+  },
+
+  "buyer_profile": {
+    "primary": "First-time buyers priced out of Toronto/Mississauga condos",
+    "secondary": "South Asian families buying for elderly parents (in-law suite alternative)",
+    "tertiary": "Young professionals commuting to Toronto via GO Train",
+    "investor_note": "High renter pct (57% in downtown) supports rental investors"
+  }
+}
