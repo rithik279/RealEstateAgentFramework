@@ -60,7 +60,18 @@ def test_root_endpoint():
     client = TestClient(app)
     response = client.get("/")
     assert response.status_code == 200
-    assert "message" in response.json()
+    assert "text/html" in response.headers.get("content-type", "")
+    assert "Anu Kabli" in response.text
+
+
+def test_api_status_endpoint():
+    from app.main import app
+    client = TestClient(app)
+    response = client.get("/api/status")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert "message" in data
 
 
 def test_lead_create_and_get():
