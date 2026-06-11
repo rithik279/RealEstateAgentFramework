@@ -7,7 +7,6 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.config import ROOT_DIR, settings
@@ -1298,4 +1297,9 @@ def get_audit_log(entity_type: str | None = None, limit: int = 50) -> dict[str, 
         raise HTTPException(status_code=503, detail=str(e))
 
 
-app.mount("/", StaticFiles(directory=site_dir, html=True), name="site")
+@app.get("/{page}", response_class=FileResponse)
+def serve_site_page(page: str) -> FileResponse:
+    file_path = site_dir / f"{page}.html"
+    if file_path.exists():
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="Not Found")
