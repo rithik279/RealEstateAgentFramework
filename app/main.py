@@ -1112,7 +1112,8 @@ def reactivation_queue(limit: int = 100) -> list[dict[str, Any]]:
                     j.payload->>'lead_id' as lead_id,
                     (j.payload->>'touch')::int as touch,
                     j.payload->>'body' as body,
-                    l.name, l.phone_e164 as phone, l.area
+                    coalesce(l.name, l.phone_e164, 'Unknown') as name,
+                    l.phone_e164 as phone, l.area
                 from jobs j
                 left join leads l on l.id = (j.payload->>'lead_id')
                 where j.type = 'reactivation_sms'
@@ -1183,7 +1184,9 @@ def reactivation_jobs(status: str = "queued", limit: int = 100) -> list[dict[str
             cur.execute(
                 """
                 select j.id, j.type, j.status, j.run_at, j.attempts, j.last_error,
-                       l.id as lead_id, l.name, l.phone_e164 as phone, l.area
+                       l.id as lead_id,
+                       coalesce(l.name, l.phone_e164, 'Unknown') as name,
+                       l.phone_e164 as phone, l.area
                 from jobs j
                 left join leads l on l.id = (j.payload->>'lead_id')
                 where j.type in ('call_lead','reactivation_sms','send_followup_sms')
@@ -1265,6 +1268,74 @@ def cancel_reactivation_job(job_id: int) -> dict[str, Any]:
     if not row:
         raise HTTPException(status_code=404, detail="Job not found or not cancellable")
     return {"cancelled": job_id}
+
+
+# ---------------------------------------------------------------------------
+# SMS queue admin — bulk cancel + diagnostics
+# ---------------------------------------------------------------------------
+
+@app.post("/admin/sms-queue/cancel-all")
+def cancel_all_sms_jobs() -> dict[str, Any]:
+    """Cancel all queued SMS jobs (send_followup_sms + reactivation_sms). Does NOT touch calls."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE jobs SET status='cancelled'
+                WHERE status='queued'
+                  AND type IN ('send_followup_sms', 'reactivation_sms', 'classify_sms_reply')
+                RETURNING id, type
+                """
+            )
+            rows = cur.fetchall()
+        conn.commit()
+    by_type: dict[str, int] = {}
+    for _, jtype in rows:
+        by_type[jtype] = by_type.get(jtype, 0) + 1
+    return {"cancelled": len(rows), "by_type": by_type}
+
+
+@app.get("/admin/sms-queue/diagnostics")
+def sms_queue_diagnostics() -> dict[str, Any]:
+    """Count queued SMS jobs, orphaned jobs (no matching lead), and leads eligible for fresh campaign."""
+    if orchestrator_repo is None:
+        raise HTTPException(status_code=503, detail="DB not initialized")
+    with orchestrator_repo.db.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                  COUNT(*) FILTER (WHERE j.type IN ('send_followup_sms','reactivation_sms') AND j.status='queued') AS queued_sms,
+                  COUNT(*) FILTER (WHERE j.type IN ('send_followup_sms','reactivation_sms') AND j.status='queued'
+                                     AND NOT EXISTS (SELECT 1 FROM leads l WHERE l.id = j.payload->>'lead_id')) AS orphaned,
+                  COUNT(*) FILTER (WHERE j.type = 'call_lead' AND j.status='queued') AS queued_calls
+                FROM jobs j
+                """
+            )
+            row = cur.fetchone()
+            cur.execute(
+                """
+                SELECT COUNT(*) FROM leads
+                WHERE do_not_contact = false
+                  AND phone_e164 IS NOT NULL
+                  AND status NOT IN ('opted_out','needs_review','booked','closed','archived')
+                  AND NOT EXISTS (
+                    SELECT 1 FROM jobs j
+                    WHERE j.type IN ('send_followup_sms','reactivation_sms')
+                      AND j.status = 'queued'
+                      AND j.payload->>'lead_id' = leads.id
+                  )
+                """
+            )
+            eligible = cur.fetchone()[0]
+    return {
+        "queued_sms": row[0],
+        "orphaned_jobs": row[1],
+        "queued_calls": row[2],
+        "eligible_for_fresh_campaign": eligible,
+    }
 
 
 # ---------------------------------------------------------------------------

@@ -11,6 +11,7 @@ from app.config import Settings
 from app.orchestrator.crypto import verify_meta_signature, verify_retell_signature
 from app.orchestrator.meta_graph import fetch_meta_lead
 from app.orchestrator.phone import (
+    is_soft_optout,
     is_start_message,
     is_stop_message,
     normalize_na_phone_to_e164,
@@ -219,5 +220,23 @@ async def twilio_inbound_sms(request: Request, response: Response) -> Response:
         repo.set_status(lead_id, "resubscribed")
         sender.send_sms_to_number(to_number=from_e164, body="You're resubscribed. Reply STOP to opt out.")
         return Response(status_code=204)
+
+    # Any other reply — cancel all queued campaign jobs immediately
+    repo.cancel_jobs_for_lead(lead_id)
+
+    if is_soft_optout(body):
+        # Clear opt-out intent without TCPA keyword — treat same as STOP
+        repo.set_do_not_contact(lead_id, True)
+        repo.set_status(lead_id, "opted_out")
+    else:
+        # Ambiguous reply — flag for human review, use OpenAI to classify intent
+        repo.set_status(lead_id, "needs_review")
+        repo.enqueue_job(
+            job_type="classify_sms_reply",
+            dedupe_key=f"lead:{lead_id}:classify_reply",
+            payload={"lead_id": lead_id, "body": body, "phone": from_e164},
+            run_at=utc_now(),
+            max_attempts=3,
+        )
 
     return Response(status_code=204)

@@ -113,6 +113,24 @@ class OpenAIClient:
         except json.JSONDecodeError:
             return None, text
 
+    def classify_sms_reply(self, body: str) -> str:
+        """Returns one of: opted_out | interested | closed | needs_review"""
+        prompt = (
+            "A real estate lead replied to an SMS from their agent. "
+            "Classify their intent with EXACTLY one word from this list:\n"
+            "  opted_out   — they want no more contact ('leave me alone', 'not interested', 'don't text me')\n"
+            "  interested  — they're engaging positively ('yes', 'tell me more', 'I'm looking')\n"
+            "  closed      — they've already bought/found a home ('found a house', 'already purchased')\n"
+            "  needs_review — anything else that a human should read\n\n"
+            "Reply with ONLY the single word, nothing else.\n\n"
+            f"Message: {body}"
+        )
+        payload = self._responses(prompt)
+        text = self._extract_text(payload).strip().lower()
+        if text in {"opted_out", "interested", "closed", "needs_review"}:
+            return text
+        return "needs_review"
+
     def owner_summary(
         self,
         lead_name: str | None,

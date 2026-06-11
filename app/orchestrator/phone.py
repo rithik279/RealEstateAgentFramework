@@ -36,3 +36,29 @@ def is_start_message(body: str) -> bool:
     text = normalize_stop_intent(body)
     return text in {"START", "YES", "UNSTOP"}
 
+
+# Soft opt-out phrases — not TCPA keywords but clear "don't contact me" intent
+_SOFT_OPTOUT_FRAGMENTS = [
+    "LEAVE ME ALONE",
+    "DON'T TEXT ME", "DONT TEXT ME",
+    "DON'T CONTACT", "DONT CONTACT", "DO NOT CONTACT",
+    "NOT INTERESTED",
+    "NO THANK YOU", "NO THANKS",
+    "REMOVE ME",
+    "PLEASE STOP",
+    "STOP TEXTING", "STOP CALLING", "STOP MESSAGING",
+    "FOUND A HOME", "FOUND A HOUSE", "ALREADY FOUND",
+    "ALREADY BOUGHT", "ALREADY PURCHASED",
+    "NOT LOOKING",
+    "GO AWAY",
+    "LEAVE ME",
+    "DON'T WANT", "DONT WANT",
+    "PLEASE DON'T", "PLEASE DONT",
+    "DON'T NEED", "DONT NEED",
+]
+
+
+def is_soft_optout(body: str) -> bool:
+    text = normalize_stop_intent(body)
+    return any(fragment in text for fragment in _SOFT_OPTOUT_FRAGMENTS)
+

@@ -74,6 +74,9 @@ class JobWorker:
         if job_type == "seed_reactivation_sms":
             self._seed_reactivation_sms()
             return
+        if job_type == "classify_sms_reply":
+            self._classify_sms_reply(payload)
+            return
 
         raise ValueError(f"Unknown job type: {job_type}")
 
@@ -411,6 +414,39 @@ class JobWorker:
                     run_at=clamped_call_time,
                     max_attempts=2,
                 )
+
+    def _classify_sms_reply(self, payload: dict[str, Any]) -> None:
+        lead_id = payload["lead_id"]
+        body = payload.get("body", "")
+        phone = payload.get("phone", "")
+
+        if not self.settings.openai_api_key:
+            return
+
+        client = OpenAIClient(
+            api_key=self.settings.openai_api_key,
+            base_url=self.settings.openai_base_url,
+            model=self.settings.openai_model,
+            temperature=0.0,
+        )
+        intent = client.classify_sms_reply(body)
+
+        self.repo.add_event(
+            lead_id=lead_id,
+            event_type="sms_reply_classified",
+            payload={"body": body, "intent": intent},
+        )
+
+        if intent == "opted_out":
+            self.repo.set_do_not_contact(lead_id, True)
+            self.repo.set_status(lead_id, "opted_out")
+        elif intent == "closed":
+            self.repo.set_status(lead_id, "closed")
+        elif intent == "interested" and self.settings.owner_alert_phone:
+            lead = self.repo.get_lead_contact(lead_id)
+            name = (lead.get("name") or phone) if lead else phone
+            alert = f"Reply from {name} ({phone}): \"{body[:160]}\" — they seem interested. Check dashboard."
+            self.sender.send_sms_to_number(to_number=self.settings.owner_alert_phone, body=alert[:320])
 
     def _seed_reactivation_sms(self) -> None:
         count = seed_reactivation_sms_jobs(
