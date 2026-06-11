@@ -61,7 +61,7 @@ def test_root_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers.get("content-type", "")
-    assert "Anu Kabli" in response.text
+    assert "RE Control Center" in response.text
 
 
 def test_api_status_endpoint():

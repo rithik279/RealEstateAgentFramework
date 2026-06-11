@@ -7,10 +7,9 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app.config import ROOT_DIR, settings
+from app.config import settings
 from app.copilot.chunker import chunk_text, chunk_pdf
 from app.services.home_fit_report import HomeFitReportGenerator
 from app.copilot.copilot import KnowledgeCopilot, CopilotResponse
@@ -153,12 +152,10 @@ app = FastAPI(
 app.include_router(admin_router)
 app.include_router(curate_homes_router)
 
-site_dir = ROOT_DIR / "site"
-
 
 @app.get("/", response_class=FileResponse)
 def root() -> FileResponse:
-    return FileResponse(site_dir / "index.html")
+    return FileResponse(settings.ui_file.parent / "login.html")
 
 
 @app.get("/api/status")
@@ -1296,6 +1293,3 @@ def get_audit_log(entity_type: str | None = None, limit: int = 50) -> dict[str, 
                 return {"entries": [dict(zip(cols, r)) for r in rows], "total": len(rows)}
     except Exception as e:
         raise HTTPException(status_code=503, detail=str(e))
-
-
-app.mount("/", StaticFiles(directory=site_dir, html=True), name="site")
