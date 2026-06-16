@@ -532,6 +532,36 @@ pre.json-block {
         <div class="panel-header"><span class="panel-title">PropTx RESO API Status</span></div>
         <div class="panel-body" id="mlsStatusBody"><div class="loading">Checking...</div></div>
       </div>
+
+      <!-- AI Natural Language Search -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">🤖 AI Listing Search</span></div>
+        <div class="panel-body">
+          <p style="color:var(--muted);font-size:12px;margin-bottom:12px">
+            Describe what you're looking for in plain English. Examples:<br>
+            <em>"Find me 5 commercial retail properties for sale in Brampton under $2M"</em><br>
+            <em>"3+ bed detached homes in Mississauga between $800k and $1.2M"</em><br>
+            <em>"10 condos for lease in Toronto"</em>
+          </p>
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <textarea id="mlsChatQuery" rows="2"
+              placeholder="Describe what you're looking for..."
+              style="flex:1;background:var(--panel2);border:1px solid var(--border);border-radius:6px;
+                     color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;font-family:inherit"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatMLS()}"
+            ></textarea>
+            <button class="btn btn-primary" onclick="chatMLS()" style="min-width:90px;height:42px">Search</button>
+          </div>
+          <div id="mlsChatStatus" style="margin-top:8px;font-size:12px;color:var(--muted)"></div>
+        </div>
+      </div>
+
+      <!-- AI Search Results -->
+      <div id="mlsChatResultsPanel" style="display:none;margin-bottom:20px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px" id="mlsChatInterpretation"></div>
+        <div id="mlsChatCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px"></div>
+      </div>
+
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Search Listings (PropTx Live)</span></div>
         <div class="panel-body">
@@ -1043,21 +1073,83 @@ async function loadMLSStatus() {
   }
 }
 
-async function searchMLS() {
-  const body = {
-    city: document.getElementById('mlsCity').value || 'Brampton',
-    price_min: parseInt(document.getElementById('mlsPriceMin').value)||null,
-    price_max: parseInt(document.getElementById('mlsPriceMax').value)||null,
-    bedrooms_min: parseInt(document.getElementById('mlsBeds').value)||null,
-    limit: 20,
-  };
+async function chatMLS() {
+  const query = document.getElementById('mlsChatQuery').value.trim();
+  if (!query) return;
+  const statusEl = document.getElementById('mlsChatStatus');
+  const resultsPanel = document.getElementById('mlsChatResultsPanel');
+  statusEl.textContent = 'Searching...';
+  resultsPanel.style.display = 'none';
   try {
-    const r = await fetch('/mls/search', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const r = await fetch('/mls/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({query, limit: 10}),
+    });
     const data = await r.json();
-    if (!r.ok) { notify(data.detail||'MLS not configured', 'error'); return; }
+    if (!r.ok) { statusEl.textContent = data.detail || 'Error'; notify(data.detail || 'MLS search failed', 'error'); return; }
+    statusEl.textContent = `${data.count} listing${data.count !== 1 ? 's' : ''} found`;
+    renderMLSChatResults(data);
+  } catch(e) { statusEl.textContent = 'Error'; notify('Error contacting MLS', 'error'); }
+}
+
+function renderMLSChatResults(data) {
+  const panel = document.getElementById('mlsChatResultsPanel');
+  const interp = document.getElementById('mlsChatInterpretation');
+  const cards = document.getElementById('mlsChatCards');
+  interp.textContent = data.interpretation ? `🔍 ${data.interpretation}` : '';
+  if (!data.listings || !data.listings.length) {
+    cards.innerHTML = '<p style="color:var(--muted)">No listings matched. Try broadening your search.</p>';
+    panel.style.display = 'block';
+    return;
+  }
+  cards.innerHTML = data.listings.map(l => {
+    const price = l.list_price ? `$${Number(l.list_price).toLocaleString()}` : '—';
+    const beds = l.bedrooms ? `${l.bedrooms} bed` : '';
+    const baths = l.bathrooms ? `${l.bathrooms} bath` : '';
+    const type = l.property_type || '';
+    const dom = l.days_on_market != null ? `${l.days_on_market}d on market` : '';
+    const txn = l.transaction_type || '';
+    const remarks = (l.public_remarks || '').substring(0, 160);
+    const basement = l.basement_suite ? '✓ Basement suite' : l.basement_separate_entrance ? '✓ Sep. entrance' : '';
+    const photoHtml = l.photo_url
+      ? `<img src="${l.photo_url}" alt="listing" style="width:100%;height:180px;object-fit:cover;border-radius:8px 8px 0 0;display:block">`
+      : `<div style="width:100%;height:100px;background:var(--panel2);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:24px">🏠</div>`;
+    return `<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+      ${photoHtml}
+      <div style="padding:14px">
+        <div style="font-weight:600;font-size:15px;color:var(--accent)">${price} <span style="font-size:11px;color:var(--muted);font-weight:400">${txn}</span></div>
+        <div style="font-size:13px;margin:4px 0;color:var(--text)">${l.address || '—'}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${[beds,baths,type].filter(Boolean).join(' · ')}</div>
+        ${dom ? `<div style="font-size:11px;color:var(--muted)">${dom}</div>` : ''}
+        ${basement ? `<div style="font-size:11px;color:var(--success);margin-top:4px">${basement}</div>` : ''}
+        ${remarks ? `<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">${remarks}…</div>` : ''}
+        <div style="font-size:10px;color:var(--muted);margin-top:8px;opacity:0.6">${l.listing_key || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+  panel.style.display = 'block';
+}
+
+async function searchMLS() {
+  const city = document.getElementById('mlsCity').value || 'Brampton';
+  const price_min = parseInt(document.getElementById('mlsPriceMin').value) || null;
+  const price_max = parseInt(document.getElementById('mlsPriceMax').value) || null;
+  const min_bedrooms = parseInt(document.getElementById('mlsBeds').value) || null;
+  const params = new URLSearchParams();
+  params.set('city', city);
+  if (price_min) params.set('min_price', price_min);
+  if (price_max) params.set('max_price', price_max);
+  if (min_bedrooms) params.set('min_bedrooms', min_bedrooms);
+  params.set('limit', '20');
+  try {
+    const r = await fetch(`/listings/search?${params}`);
+    const data = await r.json();
+    if (!r.ok) { notify(data.detail || 'MLS not configured', 'error'); return; }
     renderMLSResults(data);
   } catch(e) { notify('Error searching MLS', 'error'); }
 }
+
 
 function renderMLSResults(data) {
   document.getElementById('mlsResultsPanel').style.display = 'block';

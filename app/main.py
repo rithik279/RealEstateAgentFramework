@@ -968,6 +968,90 @@ def lead_matched_listings(lead_id: str, limit: int = 10) -> dict[str, Any]:
     }
 
 
+class MLSChatRequest(BaseModel):
+    query: str
+    limit: int = 10
+
+
+@app.post("/mls/chat")
+def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
+    """Natural language MLS search: OpenAI parses query → PropTX search → photos."""
+    import json as _json
+    from app.orchestrator.openai_extract import OpenAIClient
+
+    client = _proptx_client()
+
+    if not settings.openai_api_key:
+        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured")
+
+    ai = OpenAIClient(
+        api_key=settings.openai_api_key,
+        base_url=settings.openai_base_url,
+        model=settings.openai_model,
+        temperature=0.0,
+    )
+
+    parse_prompt = (
+        "Parse this real estate search query and return ONLY valid JSON with these exact fields:\n"
+        "{\n"
+        '  "cities": ["City"] or null,\n'
+        '  "property_types": ["Type"] or null,\n'
+        '  "transaction_type": "For Sale" or "For Lease" or null,\n'
+        '  "min_price": number or null,\n'
+        '  "max_price": number or null,\n'
+        '  "min_bedrooms": integer or null,\n'
+        '  "limit": integer (from query like "find me 5", default 10, max 20),\n'
+        '  "interpretation": "brief plain English summary of what we are searching"\n'
+        "}\n\n"
+        "GTA city names: Brampton, Mississauga, Toronto, Vaughan, Markham, Richmond Hill, "
+        "Oakville, Burlington, Caledon, Halton Hills, Milton, Hamilton, Kitchener, London.\n"
+        'PropertyType values: "Residential Freehold" (houses/detached/semi/townhouse/row), '
+        '"Residential Condo & Other" (condos/stacked), "Commercial" (retail/office/industrial/commercial).\n'
+        "Return ONLY the JSON object, no markdown, no backticks.\n\n"
+        f"Query: {payload.query}"
+    )
+
+    try:
+        raw_payload = ai._responses(parse_prompt)
+        text = ai._extract_text(raw_payload).strip()
+        # Strip markdown fences if model adds them
+        if "```" in text:
+            parts = text.split("```")
+            text = parts[1].lstrip("json").strip() if len(parts) > 1 else text
+        params = _json.loads(text)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to parse query: {exc}")
+
+    limit = min(int(params.get("limit") or payload.limit or 10), 20)
+
+    try:
+        listings = client.search(
+            cities=params.get("cities") or None,
+            min_price=params.get("min_price"),
+            max_price=params.get("max_price"),
+            min_bedrooms=params.get("min_bedrooms"),
+            property_types=params.get("property_types") or None,
+            transaction_type=params.get("transaction_type") or None,
+            limit=limit,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"PropTX error: {exc}")
+
+    results = []
+    for listing in listings:
+        d = listing.to_dict()
+        media = client.get_media(listing.listing_key, limit=1)
+        d["photo_url"] = media[0].get("MediaURL") if media else None
+        results.append(d)
+
+    return {
+        "interpretation": params.get("interpretation", ""),
+        "search_params": {k: v for k, v in params.items() if k != "interpretation"},
+        "count": len(results),
+        "listings": results,
+    }
+
+
 # Keep old route for backward compat
 @app.post("/mls/search")
 def mls_search_legacy(

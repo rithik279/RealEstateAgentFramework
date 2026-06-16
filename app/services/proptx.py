@@ -280,6 +280,20 @@ class PropTXClient:
         data = self._get("/Property", params)
         return [PropTXListing.from_raw(r) for r in data.get("value", [])]
 
+    def get_media(self, listing_key: str, limit: int = 3) -> list[dict[str, Any]]:
+        """Fetch photo URLs for a listing from RESO Media resource."""
+        params = {
+            "$filter": f"ResourceRecordKey eq '{listing_key}'",
+            "$select": "MediaURL,Order,MediaCategory",
+            "$orderby": "Order asc",
+            "$top": str(limit),
+        }
+        try:
+            data = self._get("/Media", params)
+            return data.get("value", [])
+        except Exception:
+            return []
+
     def search_for_buyer(self, buyer_profile: dict[str, Any], limit: int = 10) -> list[PropTXListing]:
         """Smart search using buyer profile from extracted_json."""
         # Derive search params from buyer profile
