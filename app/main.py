@@ -1041,21 +1041,38 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "Parse this real estate search query and return ONLY valid JSON with these exact fields:\n"
         "{\n"
         '  "cities": ["City"] or null,\n'
+        '  "postal_code": "L6V 1N2" or null,\n'
         '  "property_types": ["Type"] or null,\n'
+        '  "property_sub_types": ["SubType"] or null,\n'
         '  "transaction_type": "For Sale" or "For Lease" or null,\n'
         '  "exclude_business_sale": true or false,\n'
         '  "min_price": number or null,\n'
         '  "max_price": number or null,\n'
         '  "min_bedrooms": integer or null,\n'
+        '  "min_bedrooms_above_grade": integer or null,\n'
+        '  "min_bathrooms": integer or null,\n'
+        '  "min_parking": integer or null,\n'
+        '  "garage": true or null,\n'
+        '  "max_days_on_market": integer or null,\n'
+        '  "max_association_fee": number or null,\n'
+        '  "min_association_fee": number or null,\n'
+        '  "listed_after": "YYYY-MM-DD" or null,\n'
         '  "limit": integer (from query like "find me 5", default 10, max 20),\n'
         '  "interpretation": "brief plain English summary of what we are searching"\n'
         "}\n\n"
         "GTA city names: Brampton, Mississauga, Toronto, Vaughan, Markham, Richmond Hill, "
         "Oakville, Burlington, Caledon, Halton Hills, Milton, Hamilton, Kitchener, London.\n"
         'PropertyType values: "Residential Freehold" (houses/detached/semi/townhouse/row), '
-        '"Residential Condo & Other" (condos/stacked), "Commercial" (retail/office/industrial/commercial).\n'
-        'TransactionType note: "Sale Of Business" is a separate type meaning the business itself is for sale (not the physical unit). '
-        'Set exclude_business_sale=true if user wants the property/unit only (e.g. "exclude sale of business", "unit only", "not a business sale").\n'
+        '"Residential Condo & Other" (condos/stacked/condo apt/condo townhouse), '
+        '"Commercial" (retail/office/industrial/commercial).\n'
+        'PropertySubType values: "Detached", "Semi-Detached", "Att/Row/Townhouse", "Link", '
+        '"Condo Apt", "Condo Townhouse", "Co-Op Apt", "Co-Ownership Apt", "Leasehold Condo", '
+        '"Retail Store Related", "Office", "Industrial", "Sale Of Business".\n'
+        'TransactionType: "Sale Of Business" means the business is for sale, not the physical unit. '
+        'Set exclude_business_sale=true when user says "unit only", "exclude business sale", "not a business".\n'
+        'max_days_on_market: set when user says "new listings", "fresh", "listed this week" (7), "listed this month" (30).\n'
+        'listed_after: set when user gives a date like "listed after January 1" → "2026-01-01".\n'
+        'max_association_fee: set when user says "condo fee under $X" or "maintenance under $X".\n'
         "Return ONLY the JSON object, no markdown, no backticks.\n\n"
         f"Query: {payload.query}"
     )
@@ -1076,12 +1093,22 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
     try:
         listings = client.search(
             cities=params.get("cities") or None,
+            postal_code=params.get("postal_code") or None,
             min_price=params.get("min_price"),
             max_price=params.get("max_price"),
             min_bedrooms=params.get("min_bedrooms"),
+            min_bedrooms_above_grade=params.get("min_bedrooms_above_grade"),
+            min_bathrooms=params.get("min_bathrooms"),
+            min_parking=params.get("min_parking"),
+            garage=params.get("garage") or None,
             property_types=params.get("property_types") or None,
+            property_sub_types=params.get("property_sub_types") or None,
             transaction_type=params.get("transaction_type") or None,
             exclude_business_sale=bool(params.get("exclude_business_sale")),
+            max_days_on_market=params.get("max_days_on_market"),
+            max_association_fee=params.get("max_association_fee"),
+            min_association_fee=params.get("min_association_fee"),
+            listed_after=params.get("listed_after") or None,
             limit=limit,
         )
     except Exception as exc:

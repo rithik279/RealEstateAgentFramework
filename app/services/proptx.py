@@ -226,22 +226,38 @@ class PropTXClient:
     def search(
         self,
         *,
+        # Location
         cities: list[str] | None = None,
+        postal_code: str | None = None,
+        # Price
         min_price: float | None = None,
         max_price: float | None = None,
+        # Bedrooms / bathrooms / parking
         min_bedrooms: int | None = None,
+        min_bedrooms_above_grade: int | None = None,
+        min_bathrooms: int | None = None,
+        min_parking: int | None = None,
+        garage: bool | None = None,
+        # Property classification
         property_types: list[str] | None = None,
+        property_sub_types: list[str] | None = None,
         transaction_type: str | None = None,   # "For Sale" | "For Lease"
         exclude_business_sale: bool = False,
+        # Listing age / fees
+        max_days_on_market: int | None = None,
+        max_association_fee: float | None = None,
+        min_association_fee: float | None = None,
+        listed_after: str | None = None,       # ISO date "YYYY-MM-DD"
+        # Status
         status: str = "Active",
         limit: int = 20,
     ) -> list[PropTXListing]:
         """Search active listings matching buyer criteria."""
         filters: list[str] = []
 
-        # Status filter
+        # Status — StandardStatus is the RESO universal field
         if status == "Active":
-            filters.append("ContractStatus eq 'Available'")
+            filters.append("StandardStatus eq 'Active'")
         elif status:
             filters.append(f"StandardStatus eq '{status}'")
 
@@ -255,13 +271,16 @@ class PropTXClient:
             if c.lower() == "toronto":
                 expanded.extend([
                     "Toronto", "North York", "Scarborough", "Etobicoke",
-                    "East York", "York", "Toronto W01", "Toronto W02",
+                    "East York", "York",
                 ])
             else:
                 expanded.append(c)
         if expanded:
             city_clauses = " or ".join(f"City eq '{c}'" for c in expanded)
             filters.append(f"({city_clauses})")
+
+        if postal_code:
+            filters.append(f"PostalCode eq '{postal_code}'")
 
         # Price range
         if min_price is not None:
@@ -272,17 +291,48 @@ class PropTXClient:
         # Bedrooms
         if min_bedrooms is not None:
             filters.append(f"BedroomsTotal ge {min_bedrooms}")
+        if min_bedrooms_above_grade is not None:
+            filters.append(f"BedroomsAboveGrade ge {min_bedrooms_above_grade}")
+
+        # Bathrooms
+        if min_bathrooms is not None:
+            filters.append(f"BathroomsTotalInteger ge {min_bathrooms}")
+
+        # Parking
+        if min_parking is not None:
+            filters.append(f"ParkingTotal ge {min_parking}")
+        if garage is True:
+            filters.append("GarageYN eq true")
 
         # Property type
         if property_types:
             type_clauses = " or ".join(f"PropertyType eq '{t}'" for t in property_types)
             filters.append(f"({type_clauses})")
 
-        # Exclude "Sale Of Business" (it's a PropertySubType, not TransactionType)
+        # Property sub-type
+        if property_sub_types:
+            sub_clauses = " or ".join(f"PropertySubType eq '{t}'" for t in property_sub_types)
+            filters.append(f"({sub_clauses})")
+
+        # Exclude "Sale Of Business" (PropertySubType, not TransactionType)
         if exclude_business_sale:
             filters.append("PropertySubType ne 'Sale Of Business'")
 
-        filter_str = " and ".join(filters) if filters else "ContractStatus eq 'Available'"
+        # Days on market
+        if max_days_on_market is not None:
+            filters.append(f"DaysOnMarket le {max_days_on_market}")
+
+        # Association / condo fee
+        if max_association_fee is not None:
+            filters.append(f"AssociationFee le {max_association_fee}")
+        if min_association_fee is not None:
+            filters.append(f"AssociationFee ge {min_association_fee}")
+
+        # Listing date
+        if listed_after:
+            filters.append(f"OriginalEntryTimestamp ge {listed_after}T00:00:00Z")
+
+        filter_str = " and ".join(filters) if filters else "StandardStatus eq 'Active'"
 
         params = {
             "$select": _SELECT,
