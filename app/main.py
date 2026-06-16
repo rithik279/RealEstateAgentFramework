@@ -273,6 +273,9 @@ def config_status() -> dict[str, bool | str]:
         ),
         "retell_configured": bool(settings.retell_api_key and settings.retell_agent_id_en),
         "owner_alert_configured": bool(settings.owner_alert_phone),
+        "auth_configured": bool(settings.admin_password_hash),
+        "secret_key_configured": bool(settings.secret_key and settings.secret_key != "change-me-in-production"),
+        "hash_length": len(settings.admin_password_hash),
     }
 
 
