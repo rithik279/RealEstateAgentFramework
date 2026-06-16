@@ -535,8 +535,8 @@ def create_reso_client() -> ResoClient:
       PROPTX_USER          fallback basic auth
       PROPTX_PASSWORD      fallback basic auth
     """
-    base_url = os.getenv("PROPTX_BASE_URL", "")
-    api_key = os.getenv("PROPTX_API_KEY", "")
+    base_url = os.getenv("PROPTX_BASE_URL", "https://query.ampre.ca/odata")
+    api_key = os.getenv("PROPTX_API_KEY", "") or os.getenv("PROPTX_TOKEN", "")
     user = os.getenv("PROPTX_USER", "")
     password = os.getenv("PROPTX_PASSWORD", "")
 
