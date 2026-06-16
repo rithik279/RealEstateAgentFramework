@@ -275,7 +275,7 @@ def config_status() -> dict[str, bool | str]:
         "owner_alert_configured": bool(settings.owner_alert_phone),
         "auth_configured": bool(settings.admin_password_hash),
         "secret_key_configured": bool(settings.secret_key and settings.secret_key != "change-me-in-production"),
-        "hash_length": len(settings.admin_password_hash),
+        "hash_length": str(len(settings.admin_password_hash)),
     }
 
 
