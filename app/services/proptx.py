@@ -269,9 +269,9 @@ class PropTXClient:
             type_clauses = " or ".join(f"PropertyType eq '{t}'" for t in property_types)
             filters.append(f"({type_clauses})")
 
-        # Exclude "Sale Of Business" transaction type
+        # Exclude "Sale Of Business" (it's a PropertySubType, not TransactionType)
         if exclude_business_sale:
-            filters.append("TransactionType ne 'Sale Of Business'")
+            filters.append("PropertySubType ne 'Sale Of Business'")
 
         filter_str = " and ".join(filters) if filters else "ContractStatus eq 'Available'"
 
