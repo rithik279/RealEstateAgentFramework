@@ -1043,6 +1043,7 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         '  "cities": ["City"] or null,\n'
         '  "property_types": ["Type"] or null,\n'
         '  "transaction_type": "For Sale" or "For Lease" or null,\n'
+        '  "exclude_business_sale": true or false,\n'
         '  "min_price": number or null,\n'
         '  "max_price": number or null,\n'
         '  "min_bedrooms": integer or null,\n'
@@ -1053,6 +1054,8 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "Oakville, Burlington, Caledon, Halton Hills, Milton, Hamilton, Kitchener, London.\n"
         'PropertyType values: "Residential Freehold" (houses/detached/semi/townhouse/row), '
         '"Residential Condo & Other" (condos/stacked), "Commercial" (retail/office/industrial/commercial).\n'
+        'TransactionType note: "Sale Of Business" is a separate type meaning the business itself is for sale (not the physical unit). '
+        'Set exclude_business_sale=true if user wants the property/unit only (e.g. "exclude sale of business", "unit only", "not a business sale").\n'
         "Return ONLY the JSON object, no markdown, no backticks.\n\n"
         f"Query: {payload.query}"
     )
@@ -1078,6 +1081,7 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
             min_bedrooms=params.get("min_bedrooms"),
             property_types=params.get("property_types") or None,
             transaction_type=params.get("transaction_type") or None,
+            exclude_business_sale=bool(params.get("exclude_business_sale")),
             limit=limit,
         )
     except Exception as exc:

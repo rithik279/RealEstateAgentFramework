@@ -232,6 +232,7 @@ class PropTXClient:
         min_bedrooms: int | None = None,
         property_types: list[str] | None = None,
         transaction_type: str | None = None,   # "For Sale" | "For Lease"
+        exclude_business_sale: bool = False,
         status: str = "Active",
         limit: int = 20,
     ) -> list[PropTXListing]:
@@ -267,6 +268,10 @@ class PropTXClient:
         if property_types:
             type_clauses = " or ".join(f"PropertyType eq '{t}'" for t in property_types)
             filters.append(f"({type_clauses})")
+
+        # Exclude "Sale Of Business" transaction type
+        if exclude_business_sale:
+            filters.append("TransactionType ne 'Sale Of Business'")
 
         filter_str = " and ".join(filters) if filters else "ContractStatus eq 'Available'"
 
