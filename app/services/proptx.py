@@ -249,9 +249,18 @@ class PropTXClient:
         if transaction_type:
             filters.append(f"TransactionType eq '{transaction_type}'")
 
-        # City filter
-        if cities:
-            city_clauses = " or ".join(f"City eq '{c}'" for c in cities)
+        # City filter — expand "Toronto" to all PropTx sub-cities
+        expanded: list[str] = []
+        for c in (cities or []):
+            if c.lower() == "toronto":
+                expanded.extend([
+                    "Toronto", "North York", "Scarborough", "Etobicoke",
+                    "East York", "York", "Toronto W01", "Toronto W02",
+                ])
+            else:
+                expanded.append(c)
+        if expanded:
+            city_clauses = " or ".join(f"City eq '{c}'" for c in expanded)
             filters.append(f"({city_clauses})")
 
         # Price range
@@ -283,6 +292,7 @@ class PropTXClient:
         }
 
         data = self._get("/Property", params)
+        self._last_filter = filter_str
         return [PropTXListing.from_raw(r) for r in data.get("value", [])]
 
     def get_media(self, listing_key: str, limit: int = 3) -> list[dict[str, Any]]:

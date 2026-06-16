@@ -1097,6 +1097,7 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
     return {
         "interpretation": params.get("interpretation", ""),
         "search_params": {k: v for k, v in params.items() if k != "interpretation"},
+        "_debug_filter": getattr(client, "_last_filter", None),
         "count": len(results),
         "listings": results,
     }
