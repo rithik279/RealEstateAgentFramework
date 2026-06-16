@@ -155,9 +155,13 @@ app.include_router(curate_homes_router)
 site_dir = ROOT_DIR / "site"
 
 
-@app.get("/", response_class=FileResponse)
-def root() -> FileResponse:
-    return FileResponse(site_dir / "index.html")
+@app.get("/")
+def root(request: Request) -> Any:
+    from fastapi.responses import FileResponse, RedirectResponse
+    host = request.headers.get("host", "")
+    if "anukabli" in host:
+        return FileResponse(site_dir / "index.html")
+    return RedirectResponse(url="/login", status_code=302)
 
 
 @app.get("/api/status")
