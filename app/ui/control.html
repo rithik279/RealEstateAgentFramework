@@ -32,11 +32,6 @@ body {
   display: flex;
   min-height: 100vh;
 }
-/* App-wide top nav */
-.app-nav { position: fixed; top: 0; left: 0; right: 0; height: 38px; background: #0a1020; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 4px; padding: 0 16px; z-index: 200; }
-.app-nav a { color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 500; padding: 0 12px; height: 38px; display: flex; align-items: center; border-bottom: 2px solid transparent; transition: all 0.15s; }
-.app-nav a:hover { color: var(--text); }
-.app-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* Sidebar */
 #sidebar {
@@ -46,7 +41,7 @@ body {
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 38px; left: 0; bottom: 0;
+  top: 0; left: 0; bottom: 0;
   z-index: 100;
 }
 .sidebar-logo {
@@ -87,7 +82,7 @@ nav a .nav-icon { width: 18px; text-align: center; font-size: 16px; }
 /* Main */
 #main {
   margin-left: var(--sidebar-w);
-  margin-top: 38px;
+  margin-top: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -374,15 +369,6 @@ pre.json-block {
 </head>
 <body>
 
-<!-- App Nav -->
-<div class="app-nav">
-  <a href="#" onclick="navigate('overview');return false">📊 Overview</a>
-  <a href="#" onclick="navigate('leads');return false">👥 Leads</a>
-  <a href="#" onclick="navigate('reactivation');return false">🔄 Reactivation</a>
-  <a href="#" onclick="navigate('mls');return false">🏡 MLS Search</a>
-  <a href="#" onclick="navigate('copilot');return false">🧠 Copilot</a>
-  <a href="/control" class="active">⚙️ Control Center</a>
-</div>
 
 <!-- Sidebar -->
 <div id="sidebar">

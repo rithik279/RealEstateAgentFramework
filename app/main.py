@@ -183,9 +183,12 @@ async def require_auth_middleware(request: Request, call_next: Any) -> Any:
         "/listings", "/copilot",
         "/mvp", "/dashboard",
     )
-    # These are always public even if they start with a protected prefix
-    PUBLIC_PREFIXES = ("/webhooks/", "/api/curate-homes", "/api/auth")
-    PUBLIC_EXACT = {"/health", "/login", "/control", "/", "/api/status", "/config-status"}
+    # Always public even if they start with a protected prefix
+    PUBLIC_PREFIXES = ("/webhooks/", "/api/curate-homes")
+    PUBLIC_EXACT = {
+        "/health", "/login", "/control", "/", "/api/status", "/config-status",
+        "/admin/login", "/admin/logout",   # auth endpoints must stay public
+    }
 
     needs_auth = (
         path.startswith(PROTECTED_PREFIXES)
