@@ -169,15 +169,51 @@ def api_status() -> dict[str, Any]:
     }
 
 
+@app.middleware("http")
+async def require_auth_middleware(request: Request, call_next: Any) -> Any:
+    """Protect all internal dashboard routes with session auth."""
+    from fastapi.responses import JSONResponse, RedirectResponse as _Redirect
+    from app.auth import SESSION_COOKIE, verify_session_token
+
+    path = request.url.path
+
+    PROTECTED_PREFIXES = (
+        "/leads", "/reactivation", "/admin",
+        "/mls/chat", "/mls/sync",
+        "/listings", "/copilot",
+        "/mvp", "/dashboard",
+    )
+    # These are always public even if they start with a protected prefix
+    PUBLIC_PREFIXES = ("/webhooks/", "/api/curate-homes", "/api/auth")
+    PUBLIC_EXACT = {"/health", "/login", "/control", "/", "/api/status", "/config-status"}
+
+    needs_auth = (
+        path.startswith(PROTECTED_PREFIXES)
+        and path not in PUBLIC_EXACT
+        and not any(path.startswith(p) for p in PUBLIC_PREFIXES)
+    )
+
+    if needs_auth:
+        token = request.cookies.get(SESSION_COOKIE)
+        if not token or not verify_session_token(token):
+            accept = request.headers.get("accept", "")
+            if "text/html" in accept:
+                return _Redirect(url="/login", status_code=302)
+            return JSONResponse({"detail": "Not authenticated."}, status_code=401)
+
+    return await call_next(request)
+
+
 @app.get("/mvp", response_class=FileResponse)
 def mvp_ui() -> FileResponse:
     return FileResponse(settings.ui_file)
 
 
-@app.get("/dashboard", response_class=FileResponse)
-def dashboard_ui() -> FileResponse:
-    """Lead scoring dashboard — view all leads with readiness scores and tags."""
-    return FileResponse(settings.ui_file.parent / "dashboard.html")
+@app.get("/dashboard")
+def dashboard_ui() -> Any:
+    """Redirect old dashboard URL to control center."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/control", status_code=302)
 
 
 @app.get("/login", response_class=FileResponse)
@@ -1095,8 +1131,9 @@ def reactivation_seed_now() -> dict[str, Any]:
 
 @app.get("/reactivation")
 def reactivation_ui() -> Any:
-    """Reactivation drip dashboard — SMS stats, reply inbox, queue."""
-    return FileResponse(settings.ui_file.parent / "reactivation.html")
+    """Redirect reactivation page to control center (reactivation tab)."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/control", status_code=302)
 
 
 @app.get("/reactivation/replies")
