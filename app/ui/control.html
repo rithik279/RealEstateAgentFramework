@@ -1078,6 +1078,28 @@ function applySuggestion(suggestion) {
   chatMLS();
 }
 
+async function fetchMLSSuggestions(data) {
+  try {
+    const r = await fetch('/mls/suggest', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        search_params: data.search_params,
+        listings: data.listings,
+        total: data.total,
+      }),
+    });
+    const s = await r.json();
+    if (!s.suggestions || !s.suggestions.length) return;
+    const sugEl = document.getElementById('mlsChatSuggestions');
+    sugEl.innerHTML = '<span style="font-size:11px;color:var(--muted);margin-right:4px">Narrow by:</span>' +
+      s.suggestions.map(sg =>
+        `<button onclick="applySuggestion('${sg.replace(/'/g,"\\'")}')" style="background:var(--panel);border:1px solid var(--accent);color:var(--accent);border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer">${sg}</button>`
+      ).join('');
+    document.getElementById('mlsChatBanner').style.display = 'block';
+  } catch(e) {}
+}
+
 async function chatMLS() {
   const query = document.getElementById('mlsChatQuery').value.trim();
   if (!query) return;
@@ -1102,7 +1124,9 @@ async function chatMLS() {
     _mlsState.totalLoaded = data.count;
     statusEl.textContent = `${data.count} listing${data.count !== 1 ? 's' : ''} found`;
     renderMLSChatResults(data, false);
-  } catch(e) { statusEl.textContent = 'Error'; notify('Error contacting MLS', 'error'); }
+    // Load suggestions async after results render
+    if (data.listings && data.listings.length) fetchMLSSuggestions(data);
+  } catch(e) { statusEl.textContent = 'Error: ' + (e.message || 'MLS search failed'); notify('MLS search failed', 'error'); }
 }
 
 async function loadMoreMLS() {

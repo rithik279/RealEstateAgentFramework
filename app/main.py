@@ -183,7 +183,7 @@ async def require_auth_middleware(request: Request, call_next: Any) -> Any:
 
     PROTECTED_PREFIXES = (
         "/leads", "/reactivation", "/admin",
-        "/mls/chat", "/mls/sync",
+        "/mls/chat", "/mls/sync", "/mls/suggest",
         "/listings", "/copilot",
         "/mvp", "/dashboard",
     )
@@ -1172,34 +1172,6 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
 
     total = getattr(client, "_last_total_count", None)
 
-    # Generate filter suggestions (only on first page, skip on Load More)
-    suggestions: list[str] = []
-    if offset == 0 and results and settings.openai_api_key:
-        try:
-            from app.orchestrator.openai_extract import OpenAIClient as _OAI
-            _ai = _OAI(api_key=settings.openai_api_key, base_url=settings.openai_base_url,
-                       model=settings.openai_model, temperature=0.0)
-            sample = [{"price": r.get("list_price"), "beds": r.get("bedrooms"),
-                       "baths": r.get("bathrooms"), "type": r.get("property_type"),
-                       "city": r.get("city"), "dom": r.get("days_on_market")} for r in results[:5]]
-            sug_prompt = (
-                f"A real estate search returned {total or len(results)} listings. "
-                f"Current filters: {params}. "
-                f"Sample results: {sample}. "
-                "Suggest exactly 3 short filter refinements to narrow results further. "
-                "Return ONLY a JSON array of 3 strings, each under 8 words, actionable. "
-                'Example: ["Detached only", "Under $1.1M", "3+ bathrooms"]. '
-                "No markdown, no backticks, ONLY the JSON array."
-            )
-            raw = _ai._responses(sug_prompt)
-            sug_text = _ai._extract_text(raw).strip().strip("```json").strip("```").strip()
-            import json as _j
-            suggestions = _j.loads(sug_text)
-            if not isinstance(suggestions, list):
-                suggestions = []
-        except Exception:
-            suggestions = []
-
     return {
         "interpretation": params.get("interpretation", ""),
         "search_params": {k: v for k, v in params.items() if k != "interpretation"},
@@ -1209,9 +1181,45 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "limit": limit,
         "total": total,
         "has_more": len(results) == limit,
-        "suggestions": suggestions,
         "listings": results,
     }
+
+
+class MLSSuggestRequest(BaseModel):
+    search_params: dict[str, Any]
+    listings: list[dict[str, Any]]
+    total: int | None = None
+
+
+@app.post("/mls/suggest")
+def mls_suggest(payload: MLSSuggestRequest) -> dict[str, Any]:
+    """Generate filter refinement suggestions based on current results."""
+    if not settings.openai_api_key:
+        return {"suggestions": []}
+    try:
+        import json as _j
+        from app.orchestrator.openai_extract import OpenAIClient as _OAI
+        ai = _OAI(api_key=settings.openai_api_key, base_url=settings.openai_base_url,
+                  model=settings.openai_model, temperature=0.0)
+        sample = [{"price": r.get("list_price"), "beds": r.get("bedrooms"),
+                   "baths": r.get("bathrooms"), "type": r.get("property_type"),
+                   "city": r.get("city"), "dom": r.get("days_on_market")}
+                  for r in payload.listings[:5]]
+        prompt = (
+            f"A real estate search returned {payload.total or len(payload.listings)} listings. "
+            f"Current filters: {payload.search_params}. "
+            f"Sample results: {sample}. "
+            "Suggest exactly 3 short filter refinements to narrow results further. "
+            "Return ONLY a JSON array of 3 strings, each under 8 words, actionable. "
+            'Example: ["Detached only", "Under $1.1M", "3+ bathrooms"]. '
+            "No markdown, no backticks, ONLY the JSON array."
+        )
+        raw = ai._responses(prompt)
+        text = ai._extract_text(raw).strip().strip("```json").strip("```").strip()
+        suggestions = _j.loads(text)
+        return {"suggestions": suggestions if isinstance(suggestions, list) else []}
+    except Exception:
+        return {"suggestions": []}
 
 
 # Keep old route for backward compat
