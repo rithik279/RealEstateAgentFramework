@@ -248,14 +248,15 @@ class PropTXClient:
         max_association_fee: float | None = None,
         min_association_fee: float | None = None,
         listed_after: str | None = None,       # ISO date "YYYY-MM-DD"
-        # Status
+        # Status / pagination
         status: str = "Active",
-        limit: int = 20,
+        limit: int = 10,
+        offset: int = 0,
     ) -> list[PropTXListing]:
         """Search active listings matching buyer criteria."""
         filters: list[str] = []
 
-        # Status — use both fields to catch all PropTx listing types
+        # Status
         if status == "Active":
             filters.append("(ContractStatus eq 'Available' or StandardStatus eq 'Active')")
         elif status:
@@ -337,6 +338,8 @@ class PropTXClient:
             "$orderby": "ModificationTimestamp desc,ListingKey desc",
             "$top": str(limit),
         }
+        if offset:
+            params["$skip"] = str(offset)
 
         data = self._get("/Property", params)
         self._last_filter = filter_str

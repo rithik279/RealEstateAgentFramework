@@ -548,7 +548,11 @@ pre.json-block {
       <!-- AI Search Results -->
       <div id="mlsChatResultsPanel" style="display:none;margin-bottom:20px">
         <div style="font-size:12px;color:var(--muted);margin-bottom:12px" id="mlsChatInterpretation"></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="mlsChatPagination"></div>
         <div id="mlsChatCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px"></div>
+        <div style="text-align:center;margin-top:20px">
+          <button id="mlsLoadMoreBtn" class="btn btn-secondary" onclick="loadMoreMLS()" style="display:none;min-width:140px">Load More</button>
+        </div>
       </div>
 
       <div class="panel">
@@ -1062,6 +1066,8 @@ async function loadMLSStatus() {
   }
 }
 
+let _mlsState = { query: '', searchParams: null, offset: 0, limit: 10, totalLoaded: 0 };
+
 async function chatMLS() {
   const query = document.getElementById('mlsChatQuery').value.trim();
   if (!query) return;
@@ -1069,30 +1075,69 @@ async function chatMLS() {
   const resultsPanel = document.getElementById('mlsChatResultsPanel');
   statusEl.textContent = 'Searching...';
   resultsPanel.style.display = 'none';
+  document.getElementById('mlsChatCards').innerHTML = '';
+  document.getElementById('mlsChatPagination').textContent = '';
+  document.getElementById('mlsLoadMoreBtn').style.display = 'none';
+  _mlsState = { query, searchParams: null, offset: 0, limit: 10, totalLoaded: 0 };
   try {
     const r = await fetch('/mls/chat', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({query, limit: 10}),
+      body: JSON.stringify({ query, limit: 10, offset: 0 }),
     });
     const data = await r.json();
     if (!r.ok) { statusEl.textContent = data.detail || 'Error'; notify(data.detail || 'MLS search failed', 'error'); return; }
+    _mlsState.searchParams = data.search_params;
+    _mlsState.limit = data.limit || 10;
+    _mlsState.totalLoaded = data.count;
     statusEl.textContent = `${data.count} listing${data.count !== 1 ? 's' : ''} found`;
-    renderMLSChatResults(data);
+    renderMLSChatResults(data, false);
   } catch(e) { statusEl.textContent = 'Error'; notify('Error contacting MLS', 'error'); }
 }
 
-function renderMLSChatResults(data) {
+async function loadMoreMLS() {
+  if (!_mlsState.searchParams) return;
+  const btn = document.getElementById('mlsLoadMoreBtn');
+  btn.textContent = 'Loading...';
+  btn.disabled = true;
+  _mlsState.offset += _mlsState.limit;
+  try {
+    const r = await fetch('/mls/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        query: _mlsState.query,
+        search_params: _mlsState.searchParams,
+        limit: _mlsState.limit,
+        offset: _mlsState.offset,
+      }),
+    });
+    const data = await r.json();
+    if (!r.ok) { notify(data.detail || 'Load more failed', 'error'); btn.textContent = 'Load More'; btn.disabled = false; return; }
+    _mlsState.totalLoaded += data.count;
+    renderMLSChatResults(data, true);
+  } catch(e) { notify('Error loading more', 'error'); btn.textContent = 'Load More'; btn.disabled = false; }
+}
+
+function renderMLSChatResults(data, append) {
   const panel = document.getElementById('mlsChatResultsPanel');
   const interp = document.getElementById('mlsChatInterpretation');
   const cards = document.getElementById('mlsChatCards');
-  interp.textContent = data.interpretation ? `🔍 ${data.interpretation}` : '';
+  const pagination = document.getElementById('mlsChatPagination');
+  const loadMoreBtn = document.getElementById('mlsLoadMoreBtn');
+
+  if (!append) {
+    interp.textContent = data.interpretation ? `🔍 ${data.interpretation}` : '';
+  }
+
   if (!data.listings || !data.listings.length) {
-    cards.innerHTML = '<p style="color:var(--muted)">No listings matched. Try broadening your search.</p>';
+    if (!append) cards.innerHTML = '<p style="color:var(--muted)">No listings matched. Try broadening your search.</p>';
     panel.style.display = 'block';
+    loadMoreBtn.style.display = 'none';
     return;
   }
-  cards.innerHTML = data.listings.map(l => {
+
+  const newCards = data.listings.map(l => {
     const price = l.list_price ? `$${Number(l.list_price).toLocaleString()}` : '—';
     const beds = l.bedrooms ? `${l.bedrooms} bed` : '';
     const baths = l.bathrooms ? `${l.bathrooms} bath` : '';
@@ -1117,6 +1162,23 @@ function renderMLSChatResults(data) {
       </div>
     </div>`;
   }).join('');
+
+  if (append) {
+    cards.innerHTML += newCards;
+  } else {
+    cards.innerHTML = newCards;
+  }
+
+  pagination.textContent = `Showing ${_mlsState.totalLoaded} listing${_mlsState.totalLoaded !== 1 ? 's' : ''} · ${_mlsState.limit} per page`;
+
+  if (data.has_more) {
+    loadMoreBtn.style.display = 'inline-block';
+    loadMoreBtn.textContent = 'Load More';
+    loadMoreBtn.disabled = false;
+  } else {
+    loadMoreBtn.style.display = 'none';
+  }
+
   panel.style.display = 'block';
 }
 

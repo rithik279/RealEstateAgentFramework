@@ -1047,6 +1047,8 @@ def lead_matched_listings(lead_id: str, limit: int = 10) -> dict[str, Any]:
 class MLSChatRequest(BaseModel):
     query: str
     limit: int = 10
+    offset: int = 0
+    search_params: dict[str, Any] | None = None  # pre-parsed params for Load More (skip OpenAI)
 
 
 @app.post("/mls/chat")
@@ -1056,18 +1058,22 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
     from app.orchestrator.openai_extract import OpenAIClient
 
     client = _proptx_client()
+    limit = min(int(payload.limit or 10), 50)
+    offset = max(int(payload.offset or 0), 0)
 
-    if not settings.openai_api_key:
-        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured")
-
-    ai = OpenAIClient(
-        api_key=settings.openai_api_key,
-        base_url=settings.openai_base_url,
-        model=settings.openai_model,
-        temperature=0.0,
-    )
-
-    parse_prompt = (
+    # Load More: skip OpenAI re-parse, use cached search_params from frontend
+    if payload.search_params:
+        params = payload.search_params
+    else:
+        if not settings.openai_api_key:
+            raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured")
+        ai = OpenAIClient(
+            api_key=settings.openai_api_key,
+            base_url=settings.openai_base_url,
+            model=settings.openai_model,
+            temperature=0.0,
+        )
+        parse_prompt = (
         "Parse this real estate search query and return ONLY valid JSON with these exact fields:\n"
         "{\n"
         '  "cities": ["City"] or null,\n'
@@ -1106,20 +1112,21 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         'max_association_fee: set when user says "condo fee under $X" or "maintenance under $X".\n'
         "Return ONLY the JSON object, no markdown, no backticks.\n\n"
         f"Query: {payload.query}"
-    )
+        )
 
-    try:
-        raw_payload = ai._responses(parse_prompt)
-        text = ai._extract_text(raw_payload).strip()
-        # Strip markdown fences if model adds them
-        if "```" in text:
-            parts = text.split("```")
-            text = parts[1].lstrip("json").strip() if len(parts) > 1 else text
-        params = _json.loads(text)
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to parse query: {exc}")
+        try:
+            raw_payload = ai._responses(parse_prompt)
+            text = ai._extract_text(raw_payload).strip()
+            if "```" in text:
+                parts = text.split("```")
+                text = parts[1].lstrip("json").strip() if len(parts) > 1 else text
+            params = _json.loads(text)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Failed to parse query: {exc}")
 
-    limit = min(int(params.get("limit") or payload.limit or 10), 20)
+        # AI-specified limit overrides payload limit (but only on first page)
+        if offset == 0 and params.get("limit"):
+            limit = min(int(params["limit"]), 50)
 
     try:
         listings = client.search(
@@ -1141,6 +1148,7 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
             min_association_fee=params.get("min_association_fee"),
             listed_after=params.get("listed_after") or None,
             limit=limit,
+            offset=offset,
         )
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"PropTX error: {exc}")
@@ -1167,6 +1175,9 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "search_params": {k: v for k, v in params.items() if k != "interpretation"},
         "_debug_filter": getattr(client, "_last_filter", None),
         "count": len(results),
+        "offset": offset,
+        "limit": limit,
+        "has_more": len(results) == limit,
         "listings": results,
     }
 
