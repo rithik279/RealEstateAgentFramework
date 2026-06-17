@@ -548,9 +548,10 @@ pre.json-block {
       <!-- AI Search Results -->
       <div id="mlsChatResultsPanel" style="display:none;margin-bottom:20px">
         <!-- Total + suggestions banner -->
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px" id="mlsChatInterpretation"></div>
         <div id="mlsChatBanner" style="display:none;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px">
           <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px" id="mlsChatTotal"></div>
-          <div id="mlsChatSuggestions" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+          <div id="mlsChatSuggestions" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="mlsChatPagination"></div>
         <div id="mlsChatCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px"></div>
