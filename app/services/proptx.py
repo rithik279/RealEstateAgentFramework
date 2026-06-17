@@ -346,7 +346,9 @@ class PropTXClient:
         except Exception as exc:
             raise RuntimeError(f"PropTx query failed. Filter: {filter_str} | Error: {exc}") from exc
         self._last_filter = filter_str
-        self._last_total_count = None
+        # PropTx may include @odata.count in the response body (OData v4 standard)
+        raw_count = data.get("@odata.count")
+        self._last_total_count = int(raw_count) if raw_count is not None else None
         return [PropTXListing.from_raw(r) for r in data.get("value", [])]
 
     def count_results(self, filter_str: str) -> int | None:
