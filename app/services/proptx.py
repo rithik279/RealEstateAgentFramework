@@ -265,19 +265,16 @@ class PropTXClient:
         if transaction_type:
             filters.append(f"TransactionType eq '{transaction_type}'")
 
-        # City filter — expand "Toronto" to all PropTx sub-cities
-        expanded: list[str] = []
-        for c in (cities or []):
-            if c.lower() == "toronto":
-                expanded.extend([
-                    "Toronto", "North York", "Scarborough", "Etobicoke",
-                    "East York", "York",
-                ])
-            else:
-                expanded.append(c)
-        if expanded:
-            city_clauses = " or ".join(f"City eq '{c}'" for c in expanded)
-            filters.append(f"({city_clauses})")
+        # City filter — Toronto uses district codes (Toronto E05, Toronto W01, etc.)
+        # Use startswith() for Toronto; eq for all other cities
+        if cities:
+            city_clauses = []
+            for c in cities:
+                if c.lower() == "toronto":
+                    city_clauses.append("startswith(City,'Toronto')")
+                else:
+                    city_clauses.append(f"City eq '{c}'")
+            filters.append(f"({' or '.join(city_clauses)})")
 
         if postal_code:
             filters.append(f"PostalCode eq '{postal_code}'")
