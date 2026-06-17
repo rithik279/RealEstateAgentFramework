@@ -914,6 +914,30 @@ class ListingSearchRequest(BaseModel):
     limit: int = 20
 
 
+@app.get("/mls/debug")
+def mls_debug(city: str = "Brampton", limit: int = 5) -> dict[str, Any]:
+    """Return raw PropTx field values to debug exact strings for filters."""
+    client = _proptx_client()
+    import urllib.parse as _up
+    safe = "(),/:@!$'*+"
+    params = {
+        "$select": "ListingKey,StandardStatus,ContractStatus,MlsStatus,TransactionType,PropertyType,PropertySubType,City,ListPrice,BedroomsTotal",
+        "$filter": f"City eq '{city}'",
+        "$top": str(limit),
+    }
+    qs = "&".join(f"{k}={_up.quote(v, safe=safe)}" for k, v in params.items())
+    url = f"{client.base_url}/Property?{qs}"
+    import httpx as _httpx
+    resp = _httpx.get(url, headers={"Authorization": f"Bearer {client.token}", "Accept": "application/json"}, timeout=20)
+    data = resp.json()
+    return {
+        "url_filter": f"City eq '{city}'",
+        "http_status": resp.status_code,
+        "count": len(data.get("value", [])),
+        "listings": data.get("value", []),
+    }
+
+
 @app.get("/mls/status")
 def mls_status() -> dict[str, Any]:
     """Check PropTx RESO API configuration status."""
