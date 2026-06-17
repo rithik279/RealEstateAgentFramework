@@ -255,9 +255,9 @@ class PropTXClient:
         """Search active listings matching buyer criteria."""
         filters: list[str] = []
 
-        # Status — StandardStatus is the RESO universal field
+        # Status — use both fields to catch all PropTx listing types
         if status == "Active":
-            filters.append("StandardStatus eq 'Active'")
+            filters.append("(ContractStatus eq 'Available' or StandardStatus eq 'Active')")
         elif status:
             filters.append(f"StandardStatus eq '{status}'")
 
