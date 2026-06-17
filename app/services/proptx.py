@@ -309,14 +309,14 @@ class PropTXClient:
             type_clauses = " or ".join(f"PropertyType eq '{t}'" for t in property_types)
             filters.append(f"({type_clauses})")
 
-        # Property sub-type
+        # Property sub-type — use startswith() to handle PropTx trailing spaces
         if property_sub_types:
-            sub_clauses = " or ".join(f"PropertySubType eq '{t}'" for t in property_sub_types)
+            sub_clauses = " or ".join(f"startswith(PropertySubType,'{t}')" for t in property_sub_types)
             filters.append(f"({sub_clauses})")
 
-        # Exclude "Sale Of Business" (PropertySubType, not TransactionType)
+        # Exclude "Sale Of Business" — startswith for trailing space safety
         if exclude_business_sale:
-            filters.append("PropertySubType ne 'Sale Of Business'")
+            filters.append("not startswith(PropertySubType,'Sale Of Business')")
 
         # Days on market
         if max_days_on_market is not None:
