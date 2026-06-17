@@ -915,23 +915,29 @@ class ListingSearchRequest(BaseModel):
 
 
 @app.get("/mls/debug")
-def mls_debug(city: str = "Brampton", limit: int = 5) -> dict[str, Any]:
+def mls_debug(city: str | None = None, transaction_type: str | None = None, limit: int = 5) -> dict[str, Any]:
     """Return raw PropTx field values to debug exact strings for filters."""
     client = _proptx_client()
     import urllib.parse as _up
+    import httpx as _httpx
     safe = "(),/:@!$'*+"
+    clauses = []
+    if city:
+        clauses.append(f"City eq '{city}'")
+    if transaction_type:
+        clauses.append(f"TransactionType eq '{transaction_type}'")
+    filter_str = " and ".join(clauses) if clauses else "StandardStatus eq 'Active'"
     params = {
         "$select": "ListingKey,StandardStatus,ContractStatus,MlsStatus,TransactionType,PropertyType,PropertySubType,City,ListPrice,BedroomsTotal",
-        "$filter": f"City eq '{city}'",
+        "$filter": filter_str,
         "$top": str(limit),
     }
     qs = "&".join(f"{k}={_up.quote(v, safe=safe)}" for k, v in params.items())
     url = f"{client.base_url}/Property?{qs}"
-    import httpx as _httpx
     resp = _httpx.get(url, headers={"Authorization": f"Bearer {client.token}", "Accept": "application/json"}, timeout=20)
     data = resp.json()
     return {
-        "url_filter": f"City eq '{city}'",
+        "filter": filter_str,
         "http_status": resp.status_code,
         "count": len(data.get("value", [])),
         "listings": data.get("value", []),
