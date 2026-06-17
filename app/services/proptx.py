@@ -337,12 +337,14 @@ class PropTXClient:
             "$filter": filter_str,
             "$orderby": "ModificationTimestamp desc,ListingKey desc",
             "$top": str(limit),
+            "$count": "true",
         }
         if offset:
             params["$skip"] = str(offset)
 
         data = self._get("/Property", params)
         self._last_filter = filter_str
+        self._last_total_count = data.get("@odata.count")
         return [PropTXListing.from_raw(r) for r in data.get("value", [])]
 
     def get_media(self, listing_key: str, limit: int = 3) -> list[dict[str, Any]]:

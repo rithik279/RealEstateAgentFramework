@@ -547,7 +547,11 @@ pre.json-block {
 
       <!-- AI Search Results -->
       <div id="mlsChatResultsPanel" style="display:none;margin-bottom:20px">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:12px" id="mlsChatInterpretation"></div>
+        <!-- Total + suggestions banner -->
+        <div id="mlsChatBanner" style="display:none;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px" id="mlsChatTotal"></div>
+          <div id="mlsChatSuggestions" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="mlsChatPagination"></div>
         <div id="mlsChatCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px"></div>
         <div style="text-align:center;margin-top:20px">
@@ -1068,6 +1072,12 @@ async function loadMLSStatus() {
 
 let _mlsState = { query: '', searchParams: null, offset: 0, limit: 10, totalLoaded: 0 };
 
+function applySuggestion(suggestion) {
+  const q = document.getElementById('mlsChatQuery');
+  q.value = (_mlsState.query + ', ' + suggestion).replace(/^, /, '');
+  chatMLS();
+}
+
 async function chatMLS() {
   const query = document.getElementById('mlsChatQuery').value.trim();
   if (!query) return;
@@ -1128,6 +1138,23 @@ function renderMLSChatResults(data, append) {
 
   if (!append) {
     interp.textContent = data.interpretation ? `🔍 ${data.interpretation}` : '';
+    // Total count + suggestions banner
+    const banner = document.getElementById('mlsChatBanner');
+    const totalEl = document.getElementById('mlsChatTotal');
+    const sugEl = document.getElementById('mlsChatSuggestions');
+    if (data.total != null) {
+      totalEl.textContent = `${data.total.toLocaleString()} total results found`;
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
+    }
+    sugEl.innerHTML = '';
+    if (data.suggestions && data.suggestions.length) {
+      sugEl.innerHTML = '<span style="font-size:11px;color:var(--muted);margin-right:4px">Narrow by:</span>' +
+        data.suggestions.map(s =>
+          `<button onclick="applySuggestion('${s.replace(/'/g,"\\'")}\")" style="background:var(--panel);border:1px solid var(--accent);color:var(--accent);border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer">${s}</button>`
+        ).join('');
+    }
   }
 
   if (!data.listings || !data.listings.length) {
@@ -1169,7 +1196,10 @@ function renderMLSChatResults(data, append) {
     cards.innerHTML = newCards;
   }
 
-  pagination.textContent = `Showing ${_mlsState.totalLoaded} listing${_mlsState.totalLoaded !== 1 ? 's' : ''} · ${_mlsState.limit} per page`;
+  const from = _mlsState.offset - (append ? 0 : _mlsState.limit) + 1;
+  const to = _mlsState.totalLoaded;
+  const totalStr = data.total != null ? ` of ${data.total.toLocaleString()}` : '';
+  pagination.textContent = `Showing 1–${to}${totalStr}`;
 
   if (data.has_more) {
     loadMoreBtn.style.display = 'inline-block';
