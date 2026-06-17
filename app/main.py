@@ -936,10 +936,16 @@ def mls_debug(city: str | None = None, transaction_type: str | None = None, limi
     url = f"{client.base_url}/Property?{qs}"
     resp = _httpx.get(url, headers={"Authorization": f"Bearer {client.token}", "Accept": "application/json"}, timeout=20)
     data = resp.json()
+    # Also test $count endpoint
+    import urllib.parse as _up2
+    count_url = f"{client.base_url}/Property/$count?$filter={_up2.quote(filter_str, safe=safe)}"
+    count_resp = _httpx.get(count_url, headers={"Authorization": f"Bearer {client.token}", "Accept": "application/json"}, timeout=10)
     return {
         "filter": filter_str,
         "http_status": resp.status_code,
         "count": len(data.get("value", [])),
+        "count_endpoint_status": count_resp.status_code,
+        "count_endpoint_body": count_resp.text[:200],
         "listings": data.get("value", []),
     }
 
