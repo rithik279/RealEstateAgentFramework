@@ -1114,11 +1114,21 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"PropTX error: {exc}")
 
+    import concurrent.futures as _cf
+    def _fetch_photo(listing: Any) -> tuple[str, str | None]:
+        try:
+            media = client.get_media(listing.listing_key, limit=1)
+            return listing.listing_key, media[0].get("MediaURL") if media else None
+        except Exception:
+            return listing.listing_key, None
+
+    with _cf.ThreadPoolExecutor(max_workers=5) as pool:
+        photo_map = dict(pool.map(_fetch_photo, listings))
+
     results = []
     for listing in listings:
         d = listing.to_dict()
-        media = client.get_media(listing.listing_key, limit=1)
-        d["photo_url"] = media[0].get("MediaURL") if media else None
+        d["photo_url"] = photo_map.get(listing.listing_key)
         results.append(d)
 
     return {
