@@ -349,6 +349,20 @@ class PropTXClient:
         self._last_total_count = None
         return [PropTXListing.from_raw(r) for r in data.get("value", [])]
 
+    def count_results(self, filter_str: str) -> int | None:
+        """Total count of results via /Property/$count — returns plain integer."""
+        import urllib.parse as _up
+        safe = "(),/:@!$'*+"
+        qs = f"$filter={_up.quote(filter_str, safe=safe)}"
+        url = f"{self.base_url}/Property/$count?{qs}"
+        try:
+            resp = httpx.get(url, headers=self._headers(), timeout=10.0)
+            if resp.status_code == 200:
+                return int(resp.text.strip())
+        except Exception:
+            pass
+        return None
+
     def get_media(self, listing_key: str, limit: int = 3) -> list[dict[str, Any]]:
         """Fetch photo URLs for a listing from RESO Media resource."""
         params = {

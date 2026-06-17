@@ -183,7 +183,7 @@ async def require_auth_middleware(request: Request, call_next: Any) -> Any:
 
     PROTECTED_PREFIXES = (
         "/leads", "/reactivation", "/admin",
-        "/mls/chat", "/mls/sync", "/mls/suggest",
+        "/mls/chat", "/mls/sync", "/mls/suggest", "/mls/count",
         "/listings", "/copilot",
         "/mvp", "/dashboard",
     )
@@ -1183,6 +1183,14 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "has_more": len(results) == limit,
         "listings": results,
     }
+
+
+@app.get("/mls/count")
+def mls_count(filter_str: str) -> dict[str, Any]:
+    """Return total count of results for a given OData filter string."""
+    client = _proptx_client()
+    total = client.count_results(filter_str)
+    return {"total": total}
 
 
 class MLSSuggestRequest(BaseModel):

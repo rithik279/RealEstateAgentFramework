@@ -1079,6 +1079,24 @@ function applySuggestion(suggestion) {
   chatMLS();
 }
 
+async function fetchMLSTotal(filterStr) {
+  if (!filterStr) return;
+  try {
+    const r = await fetch('/mls/count?filter_str=' + encodeURIComponent(filterStr));
+    const d = await r.json();
+    if (d.total == null) return;
+    _mlsState.total = d.total;
+    document.getElementById('mlsChatTotal').textContent = `${d.total.toLocaleString()} total results found`;
+    document.getElementById('mlsChatBanner').style.display = 'block';
+    updatePagination();
+  } catch(e) {}
+}
+
+function updatePagination() {
+  const totalStr = _mlsState.total != null ? ` of ${_mlsState.total.toLocaleString()}` : '';
+  document.getElementById('mlsChatPagination').textContent = `Showing 1–${_mlsState.totalLoaded}${totalStr}`;
+}
+
 async function fetchMLSSuggestions(data) {
   try {
     const r = await fetch('/mls/suggest', {
@@ -1111,7 +1129,7 @@ async function chatMLS() {
   document.getElementById('mlsChatCards').innerHTML = '';
   document.getElementById('mlsChatPagination').textContent = '';
   document.getElementById('mlsLoadMoreBtn').style.display = 'none';
-  _mlsState = { query, searchParams: null, offset: 0, limit: 10, totalLoaded: 0 };
+  _mlsState = { query, searchParams: null, offset: 0, limit: 10, totalLoaded: 0, total: null };
   try {
     const r = await fetch('/mls/chat', {
       method: 'POST',
@@ -1126,7 +1144,10 @@ async function chatMLS() {
     statusEl.textContent = `${data.count} listing${data.count !== 1 ? 's' : ''} found`;
     renderMLSChatResults(data, false);
     // Load suggestions async after results render
-    if (data.listings && data.listings.length) fetchMLSSuggestions(data);
+    if (data.listings && data.listings.length) {
+      fetchMLSSuggestions(data);
+      fetchMLSTotal(data._debug_filter);
+    }
   } catch(e) { statusEl.textContent = 'Error: ' + (e.message || 'MLS search failed'); notify('MLS search failed', 'error'); }
 }
 
@@ -1221,10 +1242,7 @@ function renderMLSChatResults(data, append) {
     cards.innerHTML = newCards;
   }
 
-  const from = _mlsState.offset - (append ? 0 : _mlsState.limit) + 1;
-  const to = _mlsState.totalLoaded;
-  const totalStr = data.total != null ? ` of ${data.total.toLocaleString()}` : '';
-  pagination.textContent = `Showing 1–${to}${totalStr}`;
+  updatePagination();
 
   if (data.has_more) {
     loadMoreBtn.style.display = 'inline-block';
