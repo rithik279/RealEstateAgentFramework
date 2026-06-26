@@ -1219,7 +1219,6 @@ function renderMLSChatResults(data, append) {
     const type = l.property_type || '';
     const dom = l.days_on_market != null ? `${l.days_on_market}d on market` : '';
     const txn = l.transaction_type || '';
-    const nbhd = l.neighbourhood ? `📍 ${l.neighbourhood}` : '';
     const remarks = (l.public_remarks || '').substring(0, 160);
     const basement = l.basement_suite ? '✓ Basement suite' : l.basement_separate_entrance ? '✓ Sep. entrance' : '';
     const photoHtml = l.photo_url
@@ -1230,7 +1229,7 @@ function renderMLSChatResults(data, append) {
       <div style="padding:14px">
         <div style="font-weight:600;font-size:15px;color:var(--accent)">${price} <span style="font-size:11px;color:var(--muted);font-weight:400">${txn}</span></div>
         <div style="font-size:13px;margin:4px 0;color:var(--text)">${l.address || '—'}</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${[l.city,nbhd,beds,baths,type].filter(Boolean).join(' · ')}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${[l.city,beds,baths,type].filter(Boolean).join(' · ')}</div>
         ${dom ? `<div style="font-size:11px;color:var(--muted)">${dom}</div>` : ''}
         ${basement ? `<div style="font-size:11px;color:var(--success);margin-top:4px">${basement}</div>` : ''}
         ${remarks ? `<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">${remarks}…</div>` : ''}

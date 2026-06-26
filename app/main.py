@@ -1084,7 +1084,6 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "{\n"
         '  "cities": ["City"] or null,\n'
         '  "postal_code": "L5G" or null,\n'
-        '  "neighbourhoods": ["Neighbourhood Name"] or null,\n'
         '  "property_types": ["Type"] or null,\n'
         '  "property_sub_types": ["SubType"] or null,\n'
         '  "transaction_type": "For Sale" or "For Lease" or null,\n'
@@ -1115,7 +1114,7 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "  Oakville: Old Oakville→L6J/L6K, Glen Abbey→L6M, River Oaks→L6H, Bronte→L6L.\n"
         "  Richmond Hill: Oak Ridges→L4E, Bayview Hill→L4B.\n"
         "Use postal_code with the prefix (e.g. 'L5G') when user mentions a GTA neighbourhood. "
-        "Only use neighbourhoods[] for non-GTA areas or when the city-level is already set.\n"
+        "Always also set cities[] with the parent city when using a postal prefix.\n"
         'PropertyType values: "Residential Freehold" (houses/detached/semi/townhouse/row), '
         '"Residential Condo & Other" (condos/stacked/condo apt/condo townhouse), '
         '"Commercial" (retail/office/industrial/commercial).\n'
@@ -1150,7 +1149,6 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         listings = client.search(
             cities=params.get("cities") or None,
             postal_code=params.get("postal_code") or None,
-            neighbourhoods=params.get("neighbourhoods") or None,
             min_price=params.get("min_price"),
             max_price=params.get("max_price"),
             min_bedrooms=params.get("min_bedrooms"),
