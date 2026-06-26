@@ -1083,7 +1083,8 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "Parse this real estate search query and return ONLY valid JSON with these exact fields:\n"
         "{\n"
         '  "cities": ["City"] or null,\n'
-        '  "postal_code": "L6V 1N2" or null,\n'
+        '  "postal_code": "L5G" or null,\n'
+        '  "neighbourhoods": ["Neighbourhood Name"] or null,\n'
         '  "property_types": ["Type"] or null,\n'
         '  "property_sub_types": ["SubType"] or null,\n'
         '  "transaction_type": "For Sale" or "For Lease" or null,\n'
@@ -1104,6 +1105,17 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         "}\n\n"
         "GTA city names: Brampton, Mississauga, Toronto, Vaughan, Markham, Richmond Hill, "
         "Oakville, Burlington, Caledon, Halton Hills, Milton, Hamilton, Kitchener, London.\n"
+        "GTA neighbourhood → postal prefix hints (use postal_code for these, not neighbourhoods, as SubdivisionName may not match):\n"
+        "  Mississauga: Port Credit→L5G/L5H, Erin Mills→L5L/L5M, Streetsville→L5M/L5N, Meadowvale→L5N, "
+        "  City Centre/Square One→L5B, Cooksville→L5A, Lakeview→L5G, Clarkson→L5J, Malton→L4T, Lorne Park→L5J.\n"
+        "  Brampton: Springdale→L6P/L6R, Heart Lake→L6Z, Bramalea→L6T/L6S, Downtown→L6V/L6W/L6X/L6Y, NW Brampton→L7A.\n"
+        "  Toronto: Yorkville→M5R, King West→M6K, Leslieville→M4M, The Beaches→M4E/M4L, "
+        "  Forest Hill→M5P/M6C, Rosedale→M4W, North York→M2M/M2N, Scarborough→M1B-M1X, Etobicoke→M8V/M8W/M9A.\n"
+        "  Vaughan: Woodbridge→L4H/L4L, Maple→L6A, Kleinburg→L0J. "
+        "  Oakville: Old Oakville→L6J/L6K, Glen Abbey→L6M, River Oaks→L6H, Bronte→L6L.\n"
+        "  Richmond Hill: Oak Ridges→L4E, Bayview Hill→L4B.\n"
+        "Use postal_code with the prefix (e.g. 'L5G') when user mentions a GTA neighbourhood. "
+        "Only use neighbourhoods[] for non-GTA areas or when the city-level is already set.\n"
         'PropertyType values: "Residential Freehold" (houses/detached/semi/townhouse/row), '
         '"Residential Condo & Other" (condos/stacked/condo apt/condo townhouse), '
         '"Commercial" (retail/office/industrial/commercial).\n'
@@ -1138,6 +1150,7 @@ def mls_chat(payload: MLSChatRequest) -> dict[str, Any]:
         listings = client.search(
             cities=params.get("cities") or None,
             postal_code=params.get("postal_code") or None,
+            neighbourhoods=params.get("neighbourhoods") or None,
             min_price=params.get("min_price"),
             max_price=params.get("max_price"),
             min_bedrooms=params.get("min_bedrooms"),

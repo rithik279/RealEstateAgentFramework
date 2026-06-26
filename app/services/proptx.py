@@ -26,6 +26,7 @@ _SELECT = ",".join([
     "ListingKey", "StandardStatus", "ContractStatus", "MlsStatus",
     "ListPrice", "UnparsedAddress", "StreetNumber", "StreetName",
     "StreetSuffix", "City", "StateOrProvince", "PostalCode",
+    "SubdivisionName",
     "PropertyType", "PropertySubType",
     "BedroomsTotal", "BedroomsAboveGrade", "BedroomsBelowGrade",
     "BathroomsTotalInteger",
@@ -75,6 +76,7 @@ class PropTXListing:
     modification_ts: str | None
     agent_name: str | None
     office_name: str | None
+    subdivision_name: str | None = None
     # Derived for HomeFitReport
     parking_spaces: int = 0
     basement_separate_entrance: bool = False
@@ -135,6 +137,7 @@ class PropTXListing:
             parking_spaces=parking_int,
             basement_separate_entrance=sep_entrance,
             basement_suite=suite,
+            subdivision_name=raw.get("SubdivisionName"),
         )
 
     def to_home_fit_dict(self) -> dict[str, Any]:
@@ -184,6 +187,7 @@ class PropTXListing:
             "association_fee": self.association_fee,
             "lat": self.lat,
             "lng": self.lng,
+            "neighbourhood": self.subdivision_name,
             "public_remarks": (self.public_remarks or "")[:500],
             "agent_name": self.agent_name,
             "modification_ts": self.modification_ts,
@@ -229,6 +233,7 @@ class PropTXClient:
         # Location
         cities: list[str] | None = None,
         postal_code: str | None = None,
+        neighbourhoods: list[str] | None = None,
         # Price
         min_price: float | None = None,
         max_price: float | None = None,
@@ -278,7 +283,12 @@ class PropTXClient:
             filters.append(f"({' or '.join(city_clauses)})")
 
         if postal_code:
-            filters.append(f"PostalCode eq '{postal_code}'")
+            # Support prefix (e.g. "L5G") or full code — use startswith for either
+            filters.append(f"startswith(PostalCode,'{postal_code}')")
+
+        if neighbourhoods:
+            nbhd_clauses = " or ".join(f"contains(SubdivisionName,'{n}')" for n in neighbourhoods)
+            filters.append(f"({nbhd_clauses})")
 
         # Price range
         if min_price is not None:
