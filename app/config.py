@@ -71,6 +71,12 @@ class Settings:
     retell_agent_id_en: str = os.getenv("RETELL_AGENT_ID_EN", "")
     retell_agent_id_reactivation: str = os.getenv("RETELL_AGENT_ID_REACTIVATION", "")
     retell_base_url: str = os.getenv("RETELL_BASE_URL", "https://api.retellai.com")
+    # Hard daily spend guard on outbound AI calls (0 disables the guard)
+    retell_max_calls_per_day: int = int(os.getenv("RETELL_MAX_CALLS_PER_DAY", "50"))
+
+    # Twilio inbound webhook signature validation. Only disable temporarily if a
+    # proxy mangles the URL and signatures mismatch — never in steady state.
+    twilio_validate_signature: bool = _to_bool(os.getenv("TWILIO_VALIDATE_SIGNATURE"), default=True)
 
     # Reactivation SMS drip
     reactivation_sms_daily_limit: int = int(os.getenv("REACTIVATION_SMS_DAILY_LIMIT", "20"))

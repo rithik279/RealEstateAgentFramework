@@ -183,14 +183,16 @@ async def require_auth_middleware(request: Request, call_next: Any) -> Any:
 
     PROTECTED_PREFIXES = (
         "/leads", "/reactivation", "/admin",
-        "/mls/chat", "/mls/sync", "/mls/suggest", "/mls/count",
+        "/mls",                       # includes /mls/debug and /mls/status — raw MLS data is licensed
         "/listings", "/copilot",
         "/mvp", "/dashboard",
+        "/messages", "/follow-ups",   # can trigger real SMS sends — must never be public
+        "/audit-log", "/config-status",
     )
     # Always public even if they start with a protected prefix
     PUBLIC_PREFIXES = ("/webhooks/", "/api/curate-homes")
     PUBLIC_EXACT = {
-        "/health", "/login", "/control", "/", "/api/status", "/config-status",
+        "/health", "/login", "/control", "/", "/api/status",
         "/admin/login", "/admin/logout",   # auth endpoints must stay public
     }
 
@@ -311,51 +313,19 @@ async def meta_webhook_event(request: Request) -> Response:
             if isinstance(leadgen_id, str) and leadgen_id:
                 lead_ids.append(leadgen_id)
 
-    call_window = CallWindow(
-        tz=settings.app_timezone,
-        start_hour=settings.call_window_start_hour,
-        end_hour=settings.call_window_end_hour,
-    )
+    # ACK Meta immediately and do the Graph API fetch in a worker job.
+    # Fetching inline made webhook latency depend on Graph health — Meta
+    # retries slow webhooks and eventually disables the subscription, and one
+    # bad leadgen_id aborted the whole batch.
     now_utc = datetime.now(timezone.utc)
     for leadgen_id in lead_ids:
-        details = fetch_meta_lead(settings.meta_access_token, leadgen_id)
-        phone_e164 = normalize_na_phone_to_e164(details.phone)
-        consent_ts = _parse_meta_created_time(details.created_time)
-        lead_id, created = orchestrator_repo.create_lead_if_new(
-            source="meta",
-            meta_lead_id=details.meta_lead_id,
-            name=details.full_name,
-            phone_e164=phone_e164,
-            email=details.email,
-            consent_text="Meta Lead Ads opt-in",
-            consent_timestamp=consent_ts,
-            language="en",
-        )
-        orchestrator_repo.add_event(
-            lead_id=lead_id,
-            event_type="meta_lead_webhook_received",
-            payload={"raw": payload, "created": created, "leadgen_id": leadgen_id, "lead_details": details.raw},
-        )
-
-        run_at = call_window.next_allowed(now_utc)
         orchestrator_repo.enqueue_job(
-            job_type="call_lead",
-            dedupe_key=f"lead:{lead_id}:call",
-            payload={"lead_id": lead_id},
-            run_at=run_at,
-            max_attempts=3,
+            job_type="fetch_meta_lead",
+            dedupe_key=f"meta:{leadgen_id}",
+            payload={"leadgen_id": leadgen_id},
+            run_at=now_utc,
+            max_attempts=5,
         )
-
-        # If the lead arrives outside calling hours, send a single acknowledgement SMS right away.
-        if run_at > now_utc:
-            delay_seconds = random.randint(3, 15)
-            orchestrator_repo.enqueue_job(
-                job_type="send_followup_sms",
-                dedupe_key=f"lead:{lead_id}:followup",
-                payload={"lead_id": lead_id},
-                run_at=now_utc + timedelta(seconds=delay_seconds),
-                max_attempts=5,
-            )
 
     return Response(status_code=200)
 
@@ -369,6 +339,14 @@ async def retell_webhook(request: Request) -> Response:
     raw_text = raw_bytes.decode("utf-8", errors="replace")
     signature = request.headers.get("x-retell-signature")
     if not verify_retell_signature(raw_text, settings.retell_api_key, signature):
+        # Loud log — a silently-401ing Retell webhook means no transcripts,
+        # no scoring, and nothing anywhere tells you.
+        import logging
+        logging.getLogger("webhooks").warning(
+            "Retell webhook signature verification FAILED (header=%r). "
+            "If this repeats for legitimate calls, verify the signature scheme "
+            "against the Retell SDK.", signature
+        )
         return Response(status_code=401)
 
     payload = await request.json()
@@ -416,15 +394,51 @@ async def retell_webhook(request: Request) -> Response:
     return Response(status_code=204)
 
 
+def _twilio_external_url(request: Request) -> str:
+    """Reconstruct the URL exactly as Twilio signed it. Behind Render's proxy
+    request.url.scheme is http — the signature is computed over https."""
+    proto = request.headers.get("x-forwarded-proto") or request.url.scheme
+    host = request.headers.get("host") or request.url.netloc
+    url = f"{proto}://{host}{request.url.path}"
+    if request.url.query:
+        url += f"?{request.url.query}"
+    return url
+
+
+async def _verify_twilio_request(request: Request) -> dict[str, str] | None:
+    """Return the form params if the X-Twilio-Signature is valid, else None."""
+    from app.orchestrator.crypto import verify_twilio_signature
+
+    form = await request.form()
+    params = {k: str(v) for k, v in form.items()}
+    if not settings.twilio_validate_signature:
+        return params
+    signature = request.headers.get("x-twilio-signature")
+    if verify_twilio_signature(
+        _twilio_external_url(request), params, settings.twilio_auth_token, signature
+    ):
+        return params
+    import logging
+    logging.getLogger("webhooks").warning(
+        "Twilio webhook signature verification FAILED (path=%s). "
+        "Forged request or proxy URL mismatch — set TWILIO_VALIDATE_SIGNATURE=false "
+        "ONLY to diagnose, never in steady state.", request.url.path
+    )
+    return None
+
+
 @app.post("/webhooks/twilio/sms")
 async def twilio_inbound_sms(request: Request) -> Response:
     if orchestrator_repo is None:
         return Response(status_code=503)
 
-    form = await request.form()
-    from_number_raw = str(form.get("From") or "")
-    body = str(form.get("Body") or "")
-    message_sid = str(form.get("MessageSid") or "")
+    params = await _verify_twilio_request(request)
+    if params is None:
+        return Response(status_code=403)
+
+    from_number_raw = params.get("From") or ""
+    body = params.get("Body") or ""
+    message_sid = params.get("MessageSid") or ""
 
     from_e164 = normalize_na_phone_to_e164(from_number_raw) or from_number_raw
     lead_id = orchestrator_repo.find_lead_id_by_phone(from_e164) if from_e164.startswith("+") else None
@@ -446,18 +460,62 @@ async def twilio_inbound_sms(request: Request) -> Response:
     )
 
     if is_stop_message(body):
-        orchestrator_repo.set_do_not_contact(lead_id, True)
-        orchestrator_repo.set_status(lead_id, "opted_out")
-        orchestrator_repo.cancel_jobs_for_lead(lead_id)
-        sender.send_sms_to_number(to_number=from_e164, body="You’re opted out. Reply START to resubscribe.")
+        # Opt-out is per PERSON, not per lead row — the same phone can exist on
+        # multiple lead rows (Meta lead + legacy import) and every one must stop.
+        affected = orchestrator_repo.set_do_not_contact_by_phone(from_e164, True)
+        for lid in affected or [lead_id]:
+            orchestrator_repo.set_status(lid, "opted_out")
+            orchestrator_repo.cancel_campaign_jobs_for_lead(lid)
+        sender.send_sms_to_number(to_number=from_e164, body="You're opted out. Reply START to resubscribe.")
         return Response(status_code=204)
 
     if is_start_message(body):
-        orchestrator_repo.set_do_not_contact(lead_id, False)
-        orchestrator_repo.set_status(lead_id, "resubscribed")
-        sender.send_sms_to_number(to_number=from_e164, body="You’re resubscribed. Reply STOP to opt out.")
+        affected = orchestrator_repo.set_do_not_contact_by_phone(from_e164, False)
+        for lid in affected or [lead_id]:
+            orchestrator_repo.set_status(lid, "resubscribed")
+        sender.send_sms_to_number(to_number=from_e164, body="You're resubscribed. Reply STOP to opt out.")
         return Response(status_code=204)
 
+    # Any other reply: human is engaging — stop queued campaign touches for this
+    # lead. Processing jobs (transcripts/scoring/alerts) are never canceled.
+    orchestrator_repo.cancel_campaign_jobs_for_lead(lead_id)
+
+    from app.orchestrator.phone import is_soft_optout
+    if is_soft_optout(body):
+        affected = orchestrator_repo.set_do_not_contact_by_phone(from_e164, True)
+        for lid in affected or [lead_id]:
+            orchestrator_repo.set_status(lid, "opted_out")
+            orchestrator_repo.cancel_campaign_jobs_for_lead(lid)
+    else:
+        orchestrator_repo.set_status(lead_id, "needs_review")
+        orchestrator_repo.enqueue_job(
+            job_type="classify_sms_reply",
+            dedupe_key=f"lead:{lead_id}:classify:{message_sid or body[:24]}",
+            payload={"lead_id": lead_id, "body": body, "phone": from_e164},
+            run_at=datetime.now(timezone.utc),
+            max_attempts=3,
+        )
+
+    return Response(status_code=204)
+
+
+@app.post("/webhooks/twilio/status")
+async def twilio_status_callback(request: Request) -> Response:
+    """Delivery receipts — without this, 'sent' really means 'accepted by
+    Twilio' and undelivered messages are invisible."""
+    if orchestrator_repo is None:
+        return Response(status_code=503)
+
+    params = await _verify_twilio_request(request)
+    if params is None:
+        return Response(status_code=403)
+
+    message_sid = params.get("MessageSid") or params.get("SmsSid") or ""
+    message_status = params.get("MessageStatus") or ""
+    if message_sid and message_status:
+        orchestrator_repo.update_message_status(
+            twilio_message_sid=message_sid, status=message_status
+        )
     return Response(status_code=204)
 
 @app.post("/leads", response_model=Lead)
@@ -1320,7 +1378,7 @@ def reactivation_replies(limit: int = 200) -> list[dict[str, Any]]:
                         select max((j.payload->>'touch')::int)
                         from jobs j
                         where j.type = 'reactivation_sms'
-                          and j.status = 'done'
+                          and j.status = 'succeeded'
                           and j.payload->>'lead_id' = l.id
                     ) as touch_sent
                 from leads l
@@ -1536,7 +1594,7 @@ def cancel_reactivation_job(job_id: int) -> dict[str, Any]:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                UPDATE jobs SET status='cancelled'
+                UPDATE jobs SET status='canceled'
                 WHERE id=%s AND status='queued'
                 AND type in ('call_lead','reactivation_sms','send_followup_sms')
                 RETURNING id
@@ -1563,7 +1621,7 @@ def cancel_all_sms_jobs() -> dict[str, Any]:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                UPDATE jobs SET status='cancelled'
+                UPDATE jobs SET status='canceled'
                 WHERE status='queued'
                   AND type IN ('send_followup_sms', 'reactivation_sms', 'classify_sms_reply')
                 RETURNING id, type

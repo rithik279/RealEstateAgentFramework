@@ -15,6 +15,17 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+# Job states that are finished — a dedupe-key re-enqueue on one of these must
+# requeue the row, not silently no-op (dedupe keys are not tombstones).
+TERMINAL_JOB_STATUSES = ("succeeded", "failed", "canceled", "cancelled")
+
+# Outbound-touch job types. These are the ONLY types a lead reply / opt-out may
+# cancel. Processing types (process_retell_call, notify_owner, classify_sms_reply,
+# fetch_meta_lead) must never be canceled — canceling them loses transcripts,
+# scoring, and alerts.
+CAMPAIGN_JOB_TYPES = ("call_lead", "call_retry", "send_followup_sms", "reactivation_sms")
+
+
 @dataclass(frozen=True)
 class OrchestratorRepo:
     db: Database
@@ -215,10 +226,25 @@ class OrchestratorRepo:
                     values (%s,%s,%s::jsonb,%s,%s)
                     on conflict (type, dedupe_key) where dedupe_key is not null do update set
                       payload=excluded.payload,
-                      run_at=least(jobs.run_at, excluded.run_at),
+                      run_at=case when jobs.status = any(%s)
+                                  then excluded.run_at
+                                  else least(jobs.run_at, excluded.run_at) end,
+                      status=case when jobs.status = any(%s)
+                                  then 'queued' else jobs.status end,
+                      attempts=case when jobs.status = any(%s)
+                                    then 0 else jobs.attempts end,
+                      locked_at=case when jobs.status = any(%s)
+                                     then null else jobs.locked_at end,
+                      locked_by=case when jobs.status = any(%s)
+                                     then null else jobs.locked_by end,
                       updated_at=now()
                     """,
-                    (job_type, dedupe_key, json.dumps(payload), run_at, max_attempts),
+                    (
+                        job_type, dedupe_key, json.dumps(payload), run_at, max_attempts,
+                        list(TERMINAL_JOB_STATUSES), list(TERMINAL_JOB_STATUSES),
+                        list(TERMINAL_JOB_STATUSES), list(TERMINAL_JOB_STATUSES),
+                        list(TERMINAL_JOB_STATUSES),
+                    ),
                 )
             conn.commit()
 
@@ -367,16 +393,121 @@ class OrchestratorRepo:
                 )
                 return cur.fetchall() or []
 
-    def cancel_jobs_for_lead(self, lead_id: str) -> None:
+    def cancel_campaign_jobs_for_lead(self, lead_id: str) -> None:
+        """Cancel queued outbound touches only. Never cancels processing jobs
+        (transcript/scoring/alerts) and never touches running jobs."""
         with self.db.connect() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
                     update jobs
                     set status='canceled', updated_at=now()
-                    where status in ('queued','running')
+                    where status = 'queued'
+                      and type = any(%s)
                       and payload->>'lead_id' = %s
                     """,
-                    (lead_id,),
+                    (list(CAMPAIGN_JOB_TYPES), lead_id),
+                )
+            conn.commit()
+
+    # Backwards-compatible alias — old callers meant "stop contacting them".
+    def cancel_jobs_for_lead(self, lead_id: str) -> None:
+        self.cancel_campaign_jobs_for_lead(lead_id)
+
+    def set_do_not_contact_by_phone(self, phone_e164: str, value: bool) -> list[str]:
+        """Latch DNC on EVERY lead row sharing this phone (a person can exist as
+        both a Meta lead and a legacy import). Returns affected lead ids."""
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "update leads set do_not_contact=%s where phone_e164=%s returning id",
+                    (value, phone_e164),
+                )
+                rows = cur.fetchall()
+            conn.commit()
+        return [str(r[0]) for r in rows]
+
+    def reclaim_stale_jobs(self, *, older_than_minutes: int = 10) -> int:
+        """Requeue jobs stuck in 'running' — the worker thread dies with the web
+        process on every deploy, orphaning claimed jobs forever otherwise."""
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    update jobs
+                    set status='queued', locked_at=null, locked_by=null, updated_at=now()
+                    where status='running'
+                      and locked_at < now() - (%s * interval '1 minute')
+                    returning id
+                    """,
+                    (older_than_minutes,),
+                )
+                rows = cur.fetchall()
+            conn.commit()
+        return len(rows)
+
+    def reschedule_job(self, job_id: int, *, run_at: datetime) -> None:
+        """Push a claimed job back to the queue without burning an attempt
+        (used for quiet-hours deferral)."""
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    update jobs
+                    set status='queued', run_at=%s,
+                        attempts=greatest(attempts-1, 0),
+                        locked_at=null, locked_by=null, updated_at=now()
+                    where id=%s
+                    """,
+                    (run_at, job_id),
+                )
+            conn.commit()
+
+    def recent_duplicate_message_exists(
+        self, *, lead_id: str, body: str, within_minutes: int = 60
+    ) -> bool:
+        """Idempotency guard: a retried job whose first attempt actually reached
+        Twilio must not text the lead twice."""
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    select 1 from messages
+                    where lead_id=%s and direction='out' and channel='sms' and body=%s
+                      and created_at > now() - (%s * interval '1 minute')
+                    limit 1
+                    """,
+                    (lead_id, body, within_minutes),
+                )
+                return cur.fetchone() is not None
+
+    def count_recent_leads_with_phone(self, *, phone_e164: str, exclude_lead_id: str, hours: int = 24) -> int:
+        """Same person submitting two ad forms creates two lead rows — used to
+        skip double-calling the same phone within a day."""
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    select count(*) from leads
+                    where phone_e164=%s and id <> %s
+                      and created_at > now() - (%s * interval '1 hour')
+                    """,
+                    (phone_e164, exclude_lead_id, hours),
+                )
+                return int(cur.fetchone()[0])
+
+    def count_calls_created_since(self, since: datetime) -> int:
+        """Daily Retell budget guard."""
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("select count(*) from calls where created_at >= %s", (since,))
+                return int(cur.fetchone()[0])
+
+    def update_message_status(self, *, twilio_message_sid: str, status: str) -> None:
+        with self.db.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "update messages set status=%s where twilio_message_sid=%s",
+                    (status, twilio_message_sid),
                 )
             conn.commit()

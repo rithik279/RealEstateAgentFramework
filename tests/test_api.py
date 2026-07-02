@@ -13,10 +13,16 @@ def test_health_endpoint():
     assert "dry_run" in data
 
 
-def test_config_status_structure():
+def test_config_status_requires_auth():
+    # /config-status leaks integration configuration — must not be public.
     from app.main import app
     client = TestClient(app)
     response = client.get("/config-status")
+    assert response.status_code == 401
+
+
+def test_config_status_structure(auth_client):
+    response = auth_client.get("/config-status")
     assert response.status_code == 200
     data = response.json()
     assert "dry_run" in data
@@ -26,31 +32,24 @@ def test_config_status_structure():
     assert "database_configured" in data
 
 
-def test_config_status_retell_not_configured():
-    from app.main import app
+def test_config_status_retell_not_configured(auth_client):
     from app.config import settings
-    client = TestClient(app)
-    # If RETELL_API_KEY is set but RETELL_AGENT_ID_EN is empty, retell is not configured
-    response = client.get("/config-status")
+    response = auth_client.get("/config-status")
     data = response.json()
     if settings.retell_api_key and not settings.retell_agent_id_en:
         assert data["retell_configured"] is False
 
 
-def test_config_status_retell_configured():
-    from app.main import app
+def test_config_status_retell_configured(auth_client):
     from app.config import settings
-    client = TestClient(app)
-    response = client.get("/config-status")
+    response = auth_client.get("/config-status")
     data = response.json()
     if settings.retell_api_key and settings.retell_agent_id_en:
         assert data["retell_configured"] is True
 
 
-def test_mvp_ui_returns_html():
-    from app.main import app
-    client = TestClient(app)
-    response = client.get("/mvp")
+def test_mvp_ui_returns_html(auth_client):
+    response = auth_client.get("/mvp")
     assert response.status_code == 200
     assert "text/html" in response.headers.get("content-type", "")
 
@@ -74,15 +73,36 @@ def test_api_status_endpoint():
     assert "message" in data
 
 
-def test_lead_create_and_get():
+# ---------------------------------------------------------------------------
+# Auth boundary — endpoints that can send SMS / leak data must reject anon
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize(
+    "method,path",
+    [
+        ("post", "/messages/send"),
+        ("post", "/follow-ups/run"),
+        ("get", "/audit-log"),
+        ("get", "/mls/debug"),
+        ("get", "/mls/status"),
+        ("get", "/leads"),
+        ("get", "/config-status"),
+    ],
+)
+def test_sensitive_endpoints_reject_anonymous(method, path):
     from app.main import app
     client = TestClient(app)
+    response = getattr(client, method)(path)
+    assert response.status_code == 401, f"{method.upper()} {path} must require auth"
+
+
+def test_lead_create_and_get(auth_client):
     payload = {
         "full_name": "Test User",
         "phone": "+16475551234",
         "email": "test@example.com",
     }
-    response = client.post("/leads", json=payload)
+    response = auth_client.post("/leads", json=payload)
     assert response.status_code == 200
     lead = response.json()
     assert lead["full_name"] == "Test User"
@@ -90,17 +110,13 @@ def test_lead_create_and_get():
     assert "id" in lead
 
 
-def test_lead_not_found():
-    from app.main import app
-    client = TestClient(app)
-    response = client.get("/leads/nonexistent-id-123")
+def test_lead_not_found(auth_client):
+    response = auth_client.get("/leads/nonexistent-id-123")
     assert response.status_code == 404
 
 
-def test_list_leads():
-    from app.main import app
-    client = TestClient(app)
-    response = client.get("/leads")
+def test_list_leads(auth_client):
+    response = auth_client.get("/leads")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
@@ -109,35 +125,27 @@ def test_list_leads():
 # v2 Endpoint tests — no DB configured, expect 503 with helpful messages
 # ---------------------------------------------------------------------------
 
-def test_leads_scored_503_without_db():
-    from app.main import app
-    client = TestClient(app)
-    response = client.get("/leads-scored")
+def test_leads_scored_503_without_db(auth_client):
+    response = auth_client.get("/leads-scored")
     assert response.status_code == 503
     assert "Database" in response.json()["detail"]
 
 
-def test_lead_profile_503_without_db():
-    from app.main import app
-    client = TestClient(app)
-    response = client.get("/leads/any-id/profile")
+def test_lead_profile_503_without_db(auth_client):
+    response = auth_client.get("/leads/any-id/profile")
     assert response.status_code == 503
 
 
-def test_home_fit_report_503_without_db():
-    from app.main import app
-    client = TestClient(app)
-    response = client.post(
+def test_home_fit_report_503_without_db(auth_client):
+    response = auth_client.post(
         "/leads/any-id/home-fit-report",
         json={"lead_id": "any-id", "listing": None}
     )
     assert response.status_code == 503
 
 
-def test_copilot_query_503_without_db():
-    from app.main import app
-    client = TestClient(app)
-    response = client.post(
+def test_copilot_query_503_without_db(auth_client):
+    response = auth_client.post(
         "/copilot/query",
         json={"query": "What is dual agency?"}
     )
@@ -145,20 +153,16 @@ def test_copilot_query_503_without_db():
     assert "OPENAI_API_KEY" in response.json()["detail"] or "Copilot" in response.json()["detail"]
 
 
-def test_copilot_ingest_503_without_db():
-    from app.main import app
-    client = TestClient(app)
-    response = client.post(
+def test_copilot_ingest_503_without_db(auth_client):
+    response = auth_client.post(
         "/copilot/ingest",
         json={"text": "test", "doc_id": "test", "source_path": "test.txt"}
     )
     assert response.status_code == 503
 
 
-def test_copilot_ingest_pdf_503_without_db():
-    from app.main import app
-    client = TestClient(app)
-    response = client.post(
+def test_copilot_ingest_pdf_503_without_db(auth_client):
+    response = auth_client.post(
         "/copilot/ingest-pdf",
         json={"pdf_path": "/fake/path.pdf", "doc_id": "test-doc"}
     )
@@ -175,6 +179,7 @@ def test_all_new_routes_registered():
         "/copilot/query",
         "/copilot/ingest",
         "/copilot/ingest-pdf",
+        "/webhooks/twilio/status",
     }
     assert required.issubset(paths), f"Missing routes: {required - paths}"
 
@@ -182,3 +187,48 @@ def test_all_new_routes_registered():
 def test_version_updated():
     from app.main import app
     assert app.version == "0.3.0"
+
+
+# ---------------------------------------------------------------------------
+# Twilio webhook signature enforcement
+# ---------------------------------------------------------------------------
+
+def test_twilio_inbound_rejects_unsigned_when_db_configured():
+    """Forged (unsigned) Twilio posts must be rejected. Without DB the endpoint
+    503s first; with DB it must 403 before touching anything."""
+    from app.main import app, orchestrator_repo
+    client = TestClient(app)
+    response = client.post(
+        "/webhooks/twilio/sms",
+        data={"From": "+16475550000", "Body": "STOP", "MessageSid": "SMfake"},
+    )
+    if orchestrator_repo is None:
+        assert response.status_code == 503
+    else:
+        assert response.status_code == 403
+
+
+def test_twilio_signature_verification_roundtrip():
+    """verify_twilio_signature accepts a correctly-signed request and rejects
+    a tampered one."""
+    import base64
+    import hmac
+    from hashlib import sha1
+
+    from app.orchestrator.crypto import verify_twilio_signature
+
+    url = "https://example.onrender.com/webhooks/twilio/sms"
+    params = {"From": "+16475550000", "Body": "hello", "MessageSid": "SM123"}
+    token = "test_auth_token"
+
+    payload = url + "".join(k + params[k] for k in sorted(params))
+    good_sig = base64.b64encode(
+        hmac.new(token.encode(), payload.encode(), sha1).digest()
+    ).decode()
+
+    assert verify_twilio_signature(url, params, token, good_sig) is True
+    assert verify_twilio_signature(url, params, token, "forged") is False
+    tampered = dict(params, Body="STOP")
+    assert verify_twilio_signature(url, tampered, token, good_sig) is False
+    assert verify_twilio_signature(url, params, "", good_sig) is False
+    assert verify_twilio_signature(url, params, token, None) is False

@@ -367,7 +367,7 @@ def daily_reactivation_report(*, db: Database, tz: str = "America/Toronto") -> d
                 """
                 select count(*) from jobs
                 where type = 'reactivation_sms'
-                  and status = 'done'
+                  and status = 'succeeded'
                   and updated_at >= %s and updated_at < %s
                 """,
                 (today_start_utc, today_end_utc),
@@ -388,7 +388,7 @@ def daily_reactivation_report(*, db: Database, tz: str = "America/Toronto") -> d
 
             # Total sent all time
             cur.execute(
-                "select count(*) from jobs where type = 'reactivation_sms' and status = 'done'"
+                "select count(*) from jobs where type = 'reactivation_sms' and status = 'succeeded'"
             )
             total_sent = cur.fetchone()[0]
 
@@ -428,7 +428,7 @@ def daily_reactivation_report(*, db: Database, tz: str = "America/Toronto") -> d
                 select l.area, count(*)
                 from jobs j
                 join leads l on l.id = (j.payload->>'lead_id')
-                where j.type = 'reactivation_sms' and j.status = 'done'
+                where j.type = 'reactivation_sms' and j.status = 'succeeded'
                 group by l.area
                 order by count(*) desc
                 """

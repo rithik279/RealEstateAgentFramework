@@ -91,6 +91,14 @@ create table if not exists jobs (
 create unique index if not exists jobs_type_dedupe_key_uidx on jobs(type, dedupe_key)
 where dedupe_key is not null;
 
+-- v5: hot-path indexes. The claim query, per-lead job cancels, and dedupe
+-- lookups all seq-scanned before these; painful once the jobs table has a few
+-- months of drip campaign history.
+create index if not exists jobs_status_run_at_idx on jobs(status, run_at);
+create index if not exists jobs_payload_lead_idx on jobs((payload->>'lead_id'));
+create index if not exists messages_lead_created_idx on messages(lead_id, created_at desc);
+create index if not exists leads_phone_idx on leads(phone_e164);
+
 -- v2: buyer profile columns (safe to run on existing DB — add if not exists)
 alter table leads add column if not exists tags jsonb not null default '[]'::jsonb;
 alter table leads add column if not exists readiness_score integer;

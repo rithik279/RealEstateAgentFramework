@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import base64
 import hmac
 import math
 import re
 import time
-from hashlib import sha256
+from hashlib import sha1, sha256
 
 
 def safe_equals(left: str, right: str) -> bool:
@@ -22,6 +23,25 @@ def verify_meta_signature(raw_body: bytes, app_secret: str, signature_header: st
     expected = signature_header.split("=", 1)[1]
     digest = hmac.new(app_secret.encode("utf-8"), raw_body, sha256).hexdigest()
     return safe_equals(digest, expected)
+
+
+def verify_twilio_signature(
+    url: str,
+    params: dict[str, str],
+    auth_token: str,
+    signature_header: str | None,
+) -> bool:
+    """
+    Validate X-Twilio-Signature: base64(HMAC-SHA1(auth_token,
+    full_url + concat(sorted form params as key+value))).
+    https://www.twilio.com/docs/usage/security#validating-requests
+    """
+    if not auth_token or not signature_header:
+        return False
+    payload = url + "".join(k + params[k] for k in sorted(params))
+    digest = hmac.new(auth_token.encode("utf-8"), payload.encode("utf-8"), sha1).digest()
+    expected = base64.b64encode(digest).decode()
+    return hmac.compare_digest(expected, signature_header.strip())
 
 
 _RETELL_SIG_RE = re.compile(r"v=(\d+),d=([a-fA-F0-9]+)$")

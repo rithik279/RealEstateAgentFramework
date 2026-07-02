@@ -21,8 +21,19 @@ class TestComputeTags:
         tags = compute_tags({"pre_approval_status": "approved"})
         assert "pre_approved" in tags
 
-    def test_needs_mortgage_review_when_no_financing(self):
+    def test_no_mortgage_tag_when_no_financing_info(self):
+        # No financing data at all (e.g. call cut short) — don't assume they
+        # need a mortgage review; only tag when they SAID they're working on it
+        # or gave an unrecognized financing answer.
         tags = compute_tags({})
+        assert "needs_mortgage_review" not in tags
+
+    def test_needs_mortgage_review_when_working_on_financing(self):
+        tags = compute_tags({"financing_status": "working on it"})
+        assert "needs_mortgage_review" in tags
+
+    def test_needs_mortgage_review_when_unrecognized_financing(self):
+        tags = compute_tags({"financing_status": "maybe next year"})
         assert "needs_mortgage_review" in tags
 
     def test_needs_mortgage_review_not_added_if_pre_approved(self):

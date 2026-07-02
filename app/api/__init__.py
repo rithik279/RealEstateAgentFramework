@@ -1,3 +1,2 @@
-from app.api.webhooks import router as webhooks_router
-
-__all__ = ["webhooks_router"]
+# Webhook handlers live in app/main.py — the old app.api.webhooks router was
+# never mounted and has been removed.

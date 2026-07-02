@@ -24,6 +24,18 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+class RescheduleJob(Exception):
+    """Raised by a handler to push the job back to the queue (e.g. quiet hours)
+    without burning an attempt."""
+
+    def __init__(self, run_at: datetime, reason: str = "") -> None:
+        super().__init__(reason or f"rescheduled to {run_at.isoformat()}")
+        self.run_at = run_at
+
+
+RECLAIM_INTERVAL_SEC = 60
+
+
 @dataclass
 class JobWorker:
     repo: OrchestratorRepo
@@ -34,7 +46,21 @@ class JobWorker:
     worker_id: str
 
     def run_forever(self) -> None:
+        last_reclaim = 0.0
         while not self.stop_event.is_set():
+            # Requeue jobs orphaned in 'running' by a previous deploy/crash.
+            now_mono = time.monotonic()
+            if now_mono - last_reclaim > RECLAIM_INTERVAL_SEC:
+                last_reclaim = now_mono
+                try:
+                    reclaimed = self.repo.reclaim_stale_jobs(older_than_minutes=10)
+                    if reclaimed:
+                        import logging
+                        logging.getLogger(__name__).warning(
+                            "Reclaimed %d stale running jobs", reclaimed)
+                except Exception:  # noqa: BLE001
+                    pass
+
             job = self.repo.claim_next_job(worker_id=self.worker_id)
             if not job:
                 time.sleep(0.5)
@@ -43,9 +69,19 @@ class JobWorker:
             try:
                 self._handle_job(job)
                 self.repo.mark_job_succeeded(int(job["id"]))
+            except RescheduleJob as rs:
+                self.repo.reschedule_job(int(job["id"]), run_at=rs.run_at)
             except Exception as exc:  # noqa: BLE001
                 backoff = utc_now() + timedelta(seconds=min(60, 2 ** int(job.get("attempts", 1))))
                 self.repo.mark_job_failed(job_id=int(job["id"]), error=str(exc), run_at=backoff)
+
+    def _defer_if_quiet_hours(self) -> None:
+        """No outbound SMS/calls outside the contact window (TCPA/CASL quiet
+        hours). Reschedules the job to the next allowed time instead of sending."""
+        now = utc_now()
+        allowed = self.call_window.next_allowed(now)
+        if allowed > now:
+            raise RescheduleJob(allowed, "outside contact window")
 
     def _handle_job(self, job: dict[str, Any]) -> None:
         job_type = job["type"]
@@ -53,6 +89,9 @@ class JobWorker:
         if isinstance(payload, str):
             payload = json.loads(payload)
 
+        if job_type == "fetch_meta_lead":
+            self._fetch_meta_lead(payload)
+            return
         if job_type == "process_retell_call":
             self._process_retell_call(payload)
             return
@@ -79,6 +118,74 @@ class JobWorker:
             return
 
         raise ValueError(f"Unknown job type: {job_type}")
+
+    def _fetch_meta_lead(self, payload: dict[str, Any]) -> None:
+        """Fetch lead details from the Meta Graph API and kick off the contact
+        flow. Runs as a job so the webhook can ACK Meta instantly — doing this
+        inline made webhook latency depend on Graph API health, and Meta
+        disables slow webhook subscriptions."""
+        from app.orchestrator.meta_graph import fetch_meta_lead
+        from app.orchestrator.phone import normalize_na_phone_to_e164
+
+        leadgen_id = payload["leadgen_id"]
+        details = fetch_meta_lead(self.settings.meta_access_token, leadgen_id)
+        phone_e164 = normalize_na_phone_to_e164(details.phone)
+
+        consent_ts = None
+        if details.created_time:
+            try:
+                consent_ts = datetime.fromisoformat(details.created_time.replace("Z", "+00:00"))
+            except ValueError:
+                pass
+
+        lead_id, created = self.repo.create_lead_if_new(
+            source="meta",
+            meta_lead_id=details.meta_lead_id,
+            name=details.full_name,
+            phone_e164=phone_e164,
+            email=details.email,
+            consent_text="Meta Lead Ads opt-in",
+            consent_timestamp=consent_ts,
+            language="en",
+        )
+        self.repo.add_event(
+            lead_id=lead_id,
+            event_type="meta_lead_fetched",
+            payload={"created": created, "leadgen_id": leadgen_id, "lead_details": details.raw},
+        )
+        if not created:
+            return
+
+        # Same phone submitted via another form within 24h — don't call twice.
+        if phone_e164 and self.repo.count_recent_leads_with_phone(
+            phone_e164=phone_e164, exclude_lead_id=lead_id, hours=24
+        ) > 0:
+            self.repo.add_event(
+                lead_id=lead_id,
+                event_type="duplicate_phone_call_skipped",
+                payload={"phone": phone_e164},
+            )
+            return
+
+        now = utc_now()
+        run_at = self.call_window.next_allowed(now)
+        self.repo.enqueue_job(
+            job_type="call_lead",
+            dedupe_key=f"lead:{lead_id}:call",
+            payload={"lead_id": lead_id},
+            run_at=run_at,
+            max_attempts=3,
+        )
+        # Lead arrived outside call hours — acknowledgement SMS goes out at the
+        # START of the next window, never immediately (quiet hours).
+        if run_at > now:
+            self.repo.enqueue_job(
+                job_type="send_followup_sms",
+                dedupe_key=f"lead:{lead_id}:followup:ack",
+                payload={"lead_id": lead_id},
+                run_at=run_at + timedelta(seconds=random.randint(3, 15)),
+                max_attempts=5,
+            )
 
     def _process_retell_call(self, payload: dict[str, Any]) -> None:
         lead_id = payload["lead_id"]
@@ -136,11 +243,14 @@ class JobWorker:
             },
         )
 
-        # Follow-up SMS (random 3–15s delay) + owner alert
+        # Follow-up SMS (random 3–15s delay) + owner alert.
+        # Dedupe keys include the call id — a lead can have multiple calls and
+        # each deserves its follow-up; a lead-only key fires exactly once ever.
+        call_key = retell_call_id or "na"
         delay_seconds = random.randint(3, 15)
         self.repo.enqueue_job(
             job_type="send_followup_sms",
-            dedupe_key=f"lead:{lead_id}:followup",
+            dedupe_key=f"lead:{lead_id}:followup:{call_key}",
             payload={"lead_id": lead_id, "tier": score_result.tier},
             run_at=utc_now() + timedelta(seconds=delay_seconds),
             max_attempts=5,
@@ -160,7 +270,7 @@ class JobWorker:
             )
         self.repo.enqueue_job(
             job_type="notify_owner",
-            dedupe_key=f"lead:{lead_id}:owner_alert",
+            dedupe_key=f"lead:{lead_id}:owner_alert:{call_key}",
             payload={
                 "lead_id": lead_id,
                 "extracted_json": extracted_json,
@@ -178,14 +288,14 @@ class JobWorker:
             retry_2 = self.call_window.clamp_delay(utc_now() + timedelta(hours=2))
             self.repo.enqueue_job(
                 job_type="call_retry",
-                dedupe_key=f"lead:{lead_id}:retry1",
+                dedupe_key=f"lead:{lead_id}:retry1:{call_key}",
                 payload={"lead_id": lead_id, "retry": 1},
                 run_at=retry_1,
                 max_attempts=3,
             )
             self.repo.enqueue_job(
                 job_type="call_retry",
-                dedupe_key=f"lead:{lead_id}:retry2",
+                dedupe_key=f"lead:{lead_id}:retry2:{call_key}",
                 payload={"lead_id": lead_id, "retry": 2},
                 run_at=retry_2,
                 max_attempts=3,
@@ -197,8 +307,26 @@ class JobWorker:
         if not lead:
             raise ValueError("Lead not found for call.")
         if lead.get("do_not_contact"):
-            self.repo.cancel_jobs_for_lead(lead_id)
+            self.repo.cancel_campaign_jobs_for_lead(lead_id)
             return
+
+        self._defer_if_quiet_hours()
+
+        # Daily Retell budget — a bug or runaway seed must not burn unbounded
+        # call spend. Deferred to tomorrow's window, not dropped.
+        max_daily = self.settings.retell_max_calls_per_day
+        if max_daily > 0:
+            since = utc_now() - timedelta(hours=24)
+            if self.repo.count_calls_created_since(since) >= max_daily:
+                self.repo.add_event(
+                    lead_id=lead_id,
+                    event_type="call_deferred_budget",
+                    payload={"max_daily": max_daily},
+                )
+                raise RescheduleJob(
+                    self.call_window.next_allowed(utc_now() + timedelta(hours=12)),
+                    "daily call budget reached",
+                )
 
         to_number = lead.get("phone_e164")
         if not to_number:
@@ -245,16 +373,22 @@ class JobWorker:
         if not lead:
             return
         if lead.get("do_not_contact"):
-            self.repo.cancel_jobs_for_lead(lead_id)
+            self.repo.cancel_campaign_jobs_for_lead(lead_id)
             return
 
         phone = lead.get("phone_e164")
         if not phone:
             return
 
+        self._defer_if_quiet_hours()
+
         # Nurture sequence messages have a pre-built body — send directly
         body_override = payload.get("body_override")
         if body_override:
+            if self.repo.recent_duplicate_message_exists(lead_id=lead_id, body=body_override):
+                self.repo.add_event(lead_id=lead_id, event_type="sms_duplicate_skipped",
+                                    payload={"kind": "nurture"})
+                return
             send_result = self.sender.send_sms_to_number(to_number=phone, body=body_override)
             self.repo.create_message(
                 lead_id=lead_id, direction="out", channel="sms", body=body_override,
@@ -303,6 +437,11 @@ class JobWorker:
         else:
             body = f"{greeting}{details}. If you want, you can book a quick call here: {booking} Reply STOP to opt out."
 
+        if self.repo.recent_duplicate_message_exists(lead_id=lead_id, body=body):
+            self.repo.add_event(lead_id=lead_id, event_type="sms_duplicate_skipped",
+                                payload={"kind": "followup"})
+            return
+
         send_result = self.sender.send_sms_to_number(to_number=phone, body=body)
         self.repo.create_message(
             lead_id=lead_id,
@@ -325,11 +464,16 @@ class JobWorker:
         lead_id = payload["lead_id"]
         touch = int(payload.get("touch", 1))
         lead = self.repo.get_lead_contact(lead_id)
-        if not lead or lead.get("do_not_contact"):
+        if not lead:
+            return
+        if lead.get("do_not_contact"):
+            self.repo.cancel_campaign_jobs_for_lead(lead_id)
             return
         phone = lead.get("phone_e164")
         if not phone:
             return
+
+        self._defer_if_quiet_hours()
 
         area = lead.get("area")
         name = lead.get("name")
@@ -349,9 +493,15 @@ class JobWorker:
         if not body:
             return
 
-        self.sender.send_sms_to_number(to_number=phone, body=body)
+        if self.repo.recent_duplicate_message_exists(lead_id=lead_id, body=body):
+            self.repo.add_event(lead_id=lead_id, event_type="sms_duplicate_skipped",
+                                payload={"kind": "reactivation", "touch": touch})
+            return
+
+        send_result = self.sender.send_sms_to_number(to_number=phone, body=body)
         self.repo.create_message(
             lead_id=lead_id, direction="out", channel="sms", body=body,
+            twilio_message_sid=send_result.provider_message_id, status=send_result.status,
         )
         self.repo.add_event(
             lead_id=lead_id,

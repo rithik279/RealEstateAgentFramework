@@ -5,6 +5,20 @@ __pycache__/
 .pytest_cache/
 data/store.json
 
+# Lead PII — never commit
+*.csv
+*.xlsx
+Old RE Leads*
+Leads Until*
+_Anu*
+
+# Local tooling / junk
+.tools/
+RealEstateAgentFramework/
+*.pdf
+professional-services-keyword-research/
+seo-research/
+
 # Knowledge base — PDFs are private/owned, don't commit
 knowledge-base/**/*.pdf
 knowledge-base/**/*.PDF
